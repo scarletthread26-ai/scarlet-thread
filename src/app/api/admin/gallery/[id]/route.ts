@@ -32,7 +32,7 @@ export async function PATCH(
       .from("gallery_items")
       .update(body)
       .eq("id", id)
-      .select()
+      .select("*, category:gallery_categories(id, name, slug)")
       .single();
 
     if (error) throw error;
@@ -40,7 +40,8 @@ export async function PATCH(
   } catch (error: any) {
     console.warn("Supabase gallery item PATCH failed. Simulating local success:", error.message || error);
     const { id } = await params;
-    return NextResponse.json({ id, ...await request.json() });
+    const body = await request.clone().json();
+    return NextResponse.json({ id, ...body });
   }
 }
 

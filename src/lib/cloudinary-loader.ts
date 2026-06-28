@@ -30,10 +30,10 @@ export default function cloudinaryLoader({ src, width, quality }: CloudinaryLoad
     }
   }
 
-  // Format transformations: automatic format, automatic quality, and dynamic resizing
+  // Format transformations: automatic format, automatic/numeric quality, and dynamic resizing
   const params = [
     "f_auto",
-    `q_auto:${quality || "auto"}`,
+    quality ? `q_${quality}` : "q_auto",
     `w_${width}`
   ].join(",");
 

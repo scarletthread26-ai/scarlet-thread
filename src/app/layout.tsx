@@ -20,6 +20,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${fontSans.variable} ${fontHeading.variable} font-sans antialiased bg-background text-foreground min-h-screen flex flex-col overflow-x-hidden`}
+        suppressHydrationWarning
       >
         <QueryProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

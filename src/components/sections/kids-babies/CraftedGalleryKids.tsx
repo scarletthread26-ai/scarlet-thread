@@ -1,19 +1,40 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { Heart, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
+import { useState, useEffect } from "react"
 
 export function CraftedGalleryKids() {
-  const mockImages = [
+  const [images, setImages] = useState<{ id: string; media_url: string; title: string }[]>([]);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/gallery?category=kids");
+        if (res.ok) {
+          const data = await res.json();
+          setImages(data);
+        }
+      } catch (err) {
+        console.error("Error loading kids lookbook images:", err);
+      }
+    }
+    load();
+  }, []);
+
+  const fallbackImages = [
     { text: "Myra", image: "/images/scarlet-babie1.png" },
     { text: "Aarav", image: "/images/scarlet-gift.png" },
     { text: "Teddy", image: "/images/scarlet-babie3.png" },
     { text: "Little Princess", image: "/images/scarlet-loved4.png" },
     { text: "Princess", image: "/images/scarlet-loved5.png" },
     { text: "Siya", image: "/images/scarlet-loved6.png" },
-  ]
+  ];
+
+  const displayImages = images.length > 0 ? images.map(img => ({ text: img.title, image: img.media_url })) : fallbackImages;
 
   return (
     <section className="py-12 sm:py-16 bg-[#FAFAFA] overflow-hidden">
@@ -46,7 +67,7 @@ export function CraftedGalleryKids() {
           }}
           className="flex overflow-x-auto gap-4 pb-8 hide-scrollbar justify-start md:justify-center"
         >
-          {mockImages.map((img, index) => (
+          {displayImages.map((img, index) => (
             <motion.div
               key={index}
               variants={{
@@ -74,13 +95,15 @@ export function CraftedGalleryKids() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="text-center"
         >
-          <Button
-            size="sm"
-            className="rounded-full bg-primary text-white hover:bg-primary/90"
-          >
-            View More Creations
-            <ArrowRight className="w-3 h-3 ml-2" />
-          </Button>
+          <Link href="/gallery?category=kids">
+            <Button
+              size="sm"
+              className="rounded-full bg-primary text-white hover:bg-primary/90"
+            >
+              View More Creations
+              <ArrowRight className="w-3 h-3 ml-2" />
+            </Button>
+          </Link>
         </motion.div>
       </div>
 
