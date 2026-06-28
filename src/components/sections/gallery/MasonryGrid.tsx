@@ -56,19 +56,14 @@ export function MasonryGrid({ items }: MasonryGridProps) {
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
 
-                {/* Dark Overlay */}
-                <div className="absolute inset-0 bg-black/20" />
+                {/* Dark Overlay (Fades in on hover) */}
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                {/* Content */}
-                <div className="absolute inset-0 flex flex-col justify-end p-5 z-10 bg-gradient-to-t from-black/60 via-black/10 to-transparent">
-                  <h4 className="text-white font-bold text-base leading-tight mb-1">
+                {/* Content (Bottom-centered, fades and slides up on hover) */}
+                <div className="absolute inset-0 flex flex-col items-center justify-end pb-8 p-5 z-10 text-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-3 group-hover:translate-y-0">
+                  <h4 className="text-white font-bold text-base leading-tight">
                     {item.title}
                   </h4>
-                  {item.description && (
-                    <p className="text-white/80 text-xs line-clamp-2 transition-all duration-300 opacity-0 group-hover:opacity-100 max-h-0 group-hover:max-h-12 overflow-hidden">
-                      {item.description}
-                    </p>
-                  )}
                 </div>
               </div>
             );
