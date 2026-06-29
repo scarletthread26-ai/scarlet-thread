@@ -1,5 +1,6 @@
 "use client"
 
+import React, { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
@@ -7,8 +8,55 @@ import { Button } from "@/components/ui/button"
 import { ArrowRight, CheckCircle2, Heart, Award } from "lucide-react"
 import { staggerContainer, fadeUp } from "@/lib/animations"
 
+function formatHimTitle(titleStr: string) {
+  if (!titleStr) return "";
+  const lower = titleStr.toLowerCase();
+  if (lower === "make every gift personal") {
+    return (
+      <>
+        Make Every Gift <br className="hidden md:block" />
+        <span className="text-primary">Personal</span>
+      </>
+    );
+  }
+  const words = titleStr.split(" ");
+  if (words.length > 1) {
+    const lastWord = words[words.length - 1];
+    const remaining = words.slice(0, -1).join(" ");
+    return (
+      <>
+        {remaining} <br className="hidden md:block" />
+        <span className="text-primary">{lastWord}</span>
+      </>
+    );
+  }
+  return titleStr;
+}
+
 export function HeroHim() {
-  const titleText = "Make Every Gift "
+  const [sectionData, setSectionData] = useState<any>(null);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const res = await fetch("/api/admin/cms/homepage-sections?key=gifts-for-him");
+        if (res.ok) {
+          const json = await res.json();
+          if (json) {
+            setSectionData(json);
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to load gifts-for-him hero section settings:", err);
+      }
+    }
+    loadData();
+  }, []);
+
+  const title = sectionData?.title || "Make Every Gift Personal";
+  const subtitle = sectionData?.subtitle || "Thoughtfully embroidered gifts for husbands, boyfriends, fathers, brothers and best friends.";
+  const desktopImage = sectionData?.content?.image_desktop || "/images/forhimpage/scarlet-forhimbanner.png";
+  const mobileImage = sectionData?.content?.image_mobile || "/images/forhimpage/scarlet-mobilebanner.png";
 
   return (
     <section className="relative bg-[#FFF7FD] py-6 md:py-6 overflow-hidden">
@@ -20,7 +68,7 @@ export function HeroHim() {
         className="absolute inset-0 hidden md:block"
       >
         <Image
-          src="/images/forhimpage/scarlet-forhimbanner.png"
+          src={desktopImage}
           alt="Personalized gifts for him"
           fill
           priority
@@ -37,7 +85,7 @@ export function HeroHim() {
         className="absolute inset-0 md:hidden"
       >
         <Image
-          src="/images/forhimpage/scarlet-mobilebanner.png"
+          src={mobileImage}
           alt="Personalized gifts for him"
           fill
           priority
@@ -83,17 +131,14 @@ export function HeroHim() {
               variants={fadeUp(0.8, 40)}
               className="text-3xl md:text-5xl lg:text-6xl font-heading font-bold text-foreground mb-4 md:mb-5 leading-tight"
             >
-              {titleText}
-              <br className="hidden md:block" />
-              <span className="text-primary">Personal</span>
+              {formatHimTitle(title)}
             </motion.h1>
 
             <motion.p
               variants={fadeUp(0.8, 40)}
               className="text-sm md:text-base text-muted-foreground mb-4 max-w-md"
             >
-              Thoughtfully embroidered gifts for husbands, boyfriends, fathers,
-              brothers and best friends.
+              {subtitle}
             </motion.p>
 
             <motion.p
@@ -113,7 +158,7 @@ export function HeroHim() {
                 whileTap={{ scale: 0.96 }}
               >
                 <Link
-                  href="/gifts-for-him"
+                  href="/products"
                   className="inline-flex h-10 md:h-11 items-center rounded-full bg-primary px-6 text-[0.78rem] md:text-sm font-bold text-white shadow transition-all duration-200 hover:bg-primary/90 hover:-translate-y-px active:translate-y-0"
                 >
                   Shop Best Sellers
@@ -124,7 +169,7 @@ export function HeroHim() {
                 whileTap={{ scale: 0.96 }}
               >
                 <Link
-                  href="/gifts-for-him"
+                  href="/products?category=gifts-for-him"
                   className="inline-flex h-10 md:h-11 items-center rounded-full border border-primary/60 bg-white/60 px-6 text-[0.78rem] md:text-sm font-semibold text-primary backdrop-blur-sm transition-all duration-200 hover:bg-white hover:-translate-y-px active:translate-y-0"
                 >
                   Explore Collection

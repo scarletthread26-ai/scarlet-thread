@@ -1,12 +1,81 @@
 "use client"
 
+import React, { useEffect, useState } from "react"
 import Image from "next/image"
-import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { ArrowRight, ShieldCheck, Heart, Award, Sparkles } from "lucide-react"
+import { ArrowRight, ShieldCheck, Heart, Award } from "lucide-react"
 import { motion } from "framer-motion"
 
+function formatKidsTitle(titleStr: string) {
+  if (!titleStr) return "";
+  const lower = titleStr.toLowerCase();
+  if (lower === "little moments, made personal") {
+    return (
+      <>
+        Little Moments,<br />
+        <span className="text-[#FF69B4]">Made Personal</span>
+      </>
+    );
+  }
+  
+  // If title has a comma, break there
+  const parts = titleStr.split(",");
+  if (parts.length > 1) {
+    const firstPart = parts[0] + ",";
+    const secondPart = parts.slice(1).join(",");
+    const words = secondPart.trim().split(" ");
+    if (words.length > 0) {
+      const lastWord = words[words.length - 1];
+      const remaining = words.slice(0, -1).join(" ");
+      return (
+        <>
+          {firstPart}<br />
+          {remaining} <span className="text-[#FF69B4]">{lastWord}</span>
+        </>
+      );
+    }
+  }
+
+  // Fallback split by space
+  const words = titleStr.split(" ");
+  if (words.length > 1) {
+    const lastWord = words[words.length - 1];
+    const remaining = words.slice(0, -1).join(" ");
+    return (
+      <>
+        {remaining} <span className="text-[#FF69B4]">{lastWord}</span>
+      </>
+    );
+  }
+
+  return titleStr;
+}
+
 export function HeroKids() {
+  const [sectionData, setSectionData] = useState<any>(null);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const res = await fetch("/api/admin/cms/homepage-sections?key=kids-babies");
+        if (res.ok) {
+          const json = await res.json();
+          if (json) {
+            setSectionData(json);
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to load kids-babies hero settings:", err);
+      }
+    }
+    loadData();
+  }, []);
+
+  const title = sectionData?.title || "Little Moments, Made Personal";
+  const subtitle = sectionData?.subtitle || "Adorable embroidered gifts for your little ones, stitched with love and care.";
+  const desktopImage = sectionData?.content?.image_desktop || "/images/scrlet-babiesbanne.png";
+  const mobileImage = sectionData?.content?.image_mobile || "/images/scrlet-babiesbanne.png";
+
   return (
     <section className="relative overflow-hidden bg-[#FFF5F8] w-full py-0 md:py-16 lg:py-0 md:min-h-[500px] lg:h-[550px] flex items-start md:items-center">
       
@@ -18,7 +87,7 @@ export function HeroKids() {
         className="absolute inset-0 z-0 md:hidden"
       >
         <img 
-          src="/images/scrlet-babiesbanne.png" 
+          src={mobileImage} 
           alt="Personalized baby gifts" 
           className="w-full h-full object-cover object-center"
         />
@@ -34,7 +103,7 @@ export function HeroKids() {
         className="absolute right-0 top-0 bottom-0 h-full aspect-[1584/993] z-0 select-none pointer-events-none hidden md:block"
       >
         <img 
-          src="/images/scrlet-babiesbanne.png" 
+          src={desktopImage} 
           alt="Personalized baby gifts in a premium box" 
           className="w-full h-full object-cover object-right"
         />
@@ -76,8 +145,7 @@ export function HeroKids() {
               }}
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-foreground leading-tight"
             >
-              Little Moments,<br />
-              <span className="text-[#FF69B4]">Made Personal</span>
+              {formatKidsTitle(title)}
             </motion.h1>
             
             <motion.p 
@@ -87,7 +155,7 @@ export function HeroKids() {
               }}
               className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-md mx-auto md:mx-0"
             >
-              Adorable embroidered gifts for your little ones, stitched with love and care.
+              {subtitle}
             </motion.p>
 
             <motion.div 
@@ -95,29 +163,37 @@ export function HeroKids() {
                 hidden: { opacity: 0, y: 15 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
               }}
-              className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3 sm:gap-4"
+              className="mb-6 md:mb-8 flex flex-wrap items-center justify-center md:justify-start gap-2.5"
             >
               <motion.div
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="w-full sm:w-auto"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.96 }}
               >
-                <Button size="lg" className="rounded-full px-8 h-11 sm:h-12 text-sm sm:text-base shadow-lg shadow-[#6E3B9B]/20 bg-[#6E3B9B] hover:bg-[#5D2E85] text-white w-full sm:w-auto font-semibold">
+                <Link
+                  href="/products"
+                  className="inline-flex h-10 md:h-11 items-center justify-center rounded-full bg-[#6E3B9B] px-6 text-[0.78rem] md:text-sm font-bold text-white shadow transition-all duration-200 hover:bg-[#5D2E85] hover:-translate-y-px active:translate-y-0"
+                >
                   Shop Best Sellers
-                </Button>
+                </Link>
               </motion.div>
               <motion.div
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="w-full sm:w-auto"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.96 }}
               >
-                <Link href="/kids-babies" className="text-[#6E3B9B] hover:text-[#5D2E85] font-semibold flex items-center justify-center gap-2 text-sm sm:text-base py-2">
-                  Explore Collection 
+                <Link
+                  href="/products?category=kids-babies"
+                  className="inline-flex h-10 md:h-11 items-center rounded-full border border-[#6E3B9B]/60 bg-white/60 px-6 text-[0.78rem] md:text-sm font-semibold text-[#6E3B9B] backdrop-blur-sm transition-all duration-200 hover:bg-white hover:-translate-y-px active:translate-y-0"
+                >
+                  Explore Collection
                   <motion.div
-                    animate={{ x: [0, 4, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                    }}
+                    className="inline-block"
                   >
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="ml-1 h-4 w-4" />
                   </motion.div>
                 </Link>
               </motion.div>
@@ -129,45 +205,21 @@ export function HeroKids() {
                 hidden: { opacity: 0, y: 15 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
               }}
-              className="pt-4 sm:pt-6 border-t border-[#F5E6EC]/60"
+              className="flex flex-wrap items-center justify-center md:justify-start gap-3 md:gap-4 text-xs font-medium text-[#444]"
             >
-              {/* Mobile: strict 2-column grid so badges always align */}
-              <div className="grid grid-cols-2 gap-2 md:hidden">
-                <div className="flex items-center gap-1.5 bg-white/80 border border-[#F5E6EC] px-2.5 py-1.5 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#FF69B4] shrink-0" />
-                  <span className="text-[10px] font-semibold text-muted-foreground">Safe & Baby Friendly</span>
-                </div>
-                <div className="flex items-center gap-1.5 bg-white/80 border border-[#F5E6EC] px-2.5 py-1.5 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-                  <Award className="w-3.5 h-3.5 text-[#FF69B4] shrink-0" />
-                  <span className="text-[10px] font-semibold text-muted-foreground">Premium Quality</span>
-                </div>
-                <div className="flex items-center gap-1.5 bg-white/80 border border-[#F5E6EC] px-2.5 py-1.5 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-                  <Sparkles className="w-3.5 h-3.5 text-[#FF69B4] shrink-0" />
-                  <span className="text-[10px] font-semibold text-muted-foreground">Personalized Just For You</span>
-                </div>
-                <div className="flex items-center gap-1.5 bg-white/80 border border-[#F5E6EC] px-2.5 py-1.5 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-                  <Heart className="w-3.5 h-3.5 text-[#FF69B4] shrink-0" />
-                  <span className="text-[10px] font-semibold text-muted-foreground">Made With Love</span>
-                </div>
+              <div className="flex items-center gap-1.5 rounded-full bg-white/55 px-3 py-2 md:py-2.5 text-[0.7rem] md:text-xs font-medium text-[#444] shadow-sm backdrop-blur-sm">
+                <span className="text-[#FF69B4]"><ShieldCheck className="h-3.5 w-3.5" /></span>
+                Safe & Baby Friendly
               </div>
-              {/* Desktop: 2-column grid */}
-              <div className="hidden md:grid grid-cols-2 gap-3">
-                <div className="flex items-center gap-2 bg-white/80 border border-[#F5E6EC] px-3.5 py-2 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-                  <ShieldCheck className="w-4 h-4 text-[#FF69B4] shrink-0" />
-                  <span className="text-xs font-semibold text-muted-foreground">Safe & Baby Friendly</span>
-                </div>
-                <div className="flex items-center gap-2 bg-white/80 border border-[#F5E6EC] px-3.5 py-2 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-                  <Award className="w-4 h-4 text-[#FF69B4] shrink-0" />
-                  <span className="text-xs font-semibold text-muted-foreground">Premium Quality</span>
-                </div>
-                <div className="flex items-center gap-2 bg-white/80 border border-[#F5E6EC] px-3.5 py-2 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-                  <Sparkles className="w-4 h-4 text-[#FF69B4] shrink-0" />
-                  <span className="text-xs font-semibold text-muted-foreground">Personalized Just For You</span>
-                </div>
-                <div className="flex items-center gap-2 bg-white/80 border border-[#F5E6EC] px-3.5 py-2 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-                  <Heart className="w-4 h-4 text-[#FF69B4] shrink-0" />
-                  <span className="text-xs font-semibold text-muted-foreground">Made With Love</span>
-                </div>
+
+              <div className="flex items-center gap-1.5 rounded-full bg-white/55 px-3 py-2 md:py-2.5 text-[0.7rem] md:text-xs font-medium text-[#444] shadow-sm backdrop-blur-sm">
+                <span className="text-[#FF69B4]"><Award className="h-3.5 w-3.5" /></span>
+                Premium Quality
+              </div>
+
+              <div className="flex items-center gap-1.5 rounded-full bg-white/55 px-3 py-2 md:py-2.5 text-[0.7rem] md:text-xs font-medium text-[#444] shadow-sm backdrop-blur-sm">
+                <span className="text-[#FF69B4]"><Heart className="h-3.5 w-3.5" /></span>
+                Made With Love
               </div>
             </motion.div>
           </motion.div>

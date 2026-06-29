@@ -13,16 +13,16 @@ export default function GiftsForHerPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <HeroHer />
-      <CategoryIconsHer />
+      {/* <CategoryIconsHer /> */}
       <ProductCarouselHer />
-     {/*<LivePreviewFeatureHer />*/}
+      {/*<LivePreviewFeatureHer />*/}
       <OccasionsGridHer />
       {/* <EmbroideryStylesHer /> */}
       <CraftedGalleryHer />
       <ValuePropsHer />
       <Testimonials />
       {/* Reusing the RelatedCategories from Him as it points to same structure */}
-      <RelatedCategories /> 
+      <RelatedCategories />
     </div>
   )
 }

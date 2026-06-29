@@ -3,8 +3,7 @@ import { NextResponse } from "next/server";
 import { deleteFromCloudinary } from "@/lib/cloudinary";
 
 const mockBanners = [
-  { id: "1", title: "Cozy Mama & Family Hoodies", subtitle: "Celebrate connection with custom family collections.", image_url: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=1200&q=80", link_url: "/products/mama-heart-hoodie", banner_type: "featured_banner", is_active: true, display_order: 0 },
-  { id: "2", title: "Eid & Special Occasion Collections", subtitle: "Traditional styles personalized with custom modern script.", image_url: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=1200&q=80", link_url: "/collections/featured-gifts", banner_type: "promo", is_active: true, display_order: 1 }
+  { id: "1", title: "Cozy Mama & Family Hoodies", subtitle: "Celebrate connection with custom family collections.", image_url: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=1200&q=80", link_url: "/products/mama-heart-hoodie", banner_type: "featured_banner", is_active: true, display_order: 0 }
 ];
 
 export async function GET() {

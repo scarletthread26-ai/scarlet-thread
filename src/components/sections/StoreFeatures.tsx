@@ -25,7 +25,7 @@ export function StoreFeatures() {
   ]
 
   return (
-    <section className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 py-8 md:py-10 bg-[#F9F5FF]">
+    <section className="hidden md:block w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 py-8 md:py-10 bg-[#F9F5FF]">
       <div className="bg-[#FAF6FC] border border-primary/5 rounded-3xl p-6 md:p-8 lg:p-10 shadow-sm">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
           {features.map((feature, idx) => (

@@ -5,35 +5,42 @@ import Link from "next/link";
 import {
   FileText,
   Sliders,
-  Image as ImageIcon,
-  MessageSquare,
   ArrowRight,
-  BookOpen,
+  ShoppingBag,
+  Heart,
+  Sparkles,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function CMSHubPage() {
   const sections = [
     {
-      title: "Hero Slider",
-      description: "Manage homepage main headers, backgrounds, and action link buttons.",
+      title: "Home Page Settings",
+      description: "Manage homepage main Hero slider, promotional banners, about section, testimonials and featured items.",
       icon: Sliders,
-      href: "/admin/cms/hero-slider",
-      color: "text-purple-600 bg-purple-50 dark:bg-purple-950/20 border-purple-100/50 dark:border-purple-900/30",
+      href: "/admin/cms/home",
+      color: "text-purple-650 bg-purple-50 dark:bg-purple-950/20 border-purple-100/50 dark:border-purple-900/30",
     },
     {
-      title: "Store Banners",
-      description: "Manage promotional banner placements and sub-headers across storefront grids.",
-      icon: ImageIcon,
-      href: "/admin/cms/banners",
-      color: "text-indigo-600 bg-indigo-50 dark:bg-indigo-950/20 border-indigo-100/50 dark:border-indigo-900/30",
+      title: "Gifts For Him Page",
+      description: "Customize Hero banner headers, descriptive subtext, and banner image slides for Men's catalog.",
+      icon: ShoppingBag,
+      href: "/admin/cms/gifts-for-him",
+      color: "text-blue-600 bg-blue-50 dark:bg-blue-950/20 border-blue-100/50 dark:border-blue-900/30",
     },
     {
-      title: "Customer Testimonials",
-      description: "Add, edit, or delete customer testimonials showing on the storefront.",
-      icon: MessageSquare,
-      href: "/admin/cms/testimonials",
+      title: "Gifts For Her Page",
+      description: "Customize Hero banner headers, descriptive subtext, and banner image slides for Women's catalog.",
+      icon: Heart,
+      href: "/admin/cms/gifts-for-her",
       color: "text-rose-600 bg-rose-50 dark:bg-rose-950/20 border-rose-100/50 dark:border-rose-900/30",
+    },
+    {
+      title: "Kids & Babies Page",
+      description: "Customize Hero banner headers, descriptive subtext, and banner image slides for Children's catalog.",
+      icon: Sparkles,
+      href: "/admin/cms/kids-babies",
+      color: "text-amber-600 bg-amber-50 dark:bg-amber-950/20 border-amber-100/50 dark:border-amber-900/30",
     },
     {
       title: "Bespoke Policies & Legal",

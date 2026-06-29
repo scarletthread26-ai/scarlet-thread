@@ -17,7 +17,7 @@ export function RelatedCategories() {
     },
     {
       name: "Custom Orders",
-      href: "/custom",
+      href: "/products",
       icon: "/images/relatedproduct/scarlet-pencil.png",
     },
   ]

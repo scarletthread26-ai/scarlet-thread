@@ -12,13 +12,13 @@ export default function KidsBabiesPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <HeroKids />
-      <CategoryIconsKids />
+      {/* <CategoryIconsKids /> */}
       <ProductCarouselKids />
       <MidValuePropsKids />
-      <LivePreviewFeatureKids />
+      {/* <LivePreviewFeatureKids /> */}
       <OccasionsGridKids />
       <CraftedGalleryKids />
-      <TestimonialsKids />
+      {/* <TestimonialsKids /> */}
       <BottomValuePropsKids />
     </div>
   )

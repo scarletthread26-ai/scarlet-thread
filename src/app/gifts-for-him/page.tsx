@@ -10,12 +10,12 @@ import { ValueProps } from "@/components/sections/gifts-for-him/ValueProps"
 import { Testimonials } from "@/components/sections/Testimonials"
 import { RelatedCategories } from "@/components/sections/gifts-for-him/RelatedCategories"
 
-// Force Next.js route re-compilation to resolve hydration mismatch cache desync
+// Force route compilation rebuild to clear hydration desync
 export default function GiftsForHimPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <HeroHim />
-      <CategoryIcons />
+      {/* <CategoryIcons /> */}
       <ProductCarousel />
       {/* <LivePreviewFeature /> */}
       <OccasionsGrid />

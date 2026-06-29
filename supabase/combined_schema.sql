@@ -885,12 +885,32 @@ ON CONFLICT (id) DO NOTHING;
 
 -- Homepage sections
 INSERT INTO public.homepage_sections (section_key, title, subtitle, content, is_active) VALUES
-('how-it-works', 'Crafted Just For You', 'The simple path to personalized gifting excellence', '{
+('how-it-works', 'Creating Your Perfect Custom Gift', 'The simple path to personalized gifting excellence', '{
   "steps": [
-    {"number": "01", "title": "Select a Product", "description": "Choose from our premium towels, cozy hoodies, elegant cosmetics cases, or bespoke linen options."},
-    {"number": "02", "title": "Personalize Details", "description": "Specify names, initials, select elegant scripts, thread colors, and customization placements."},
-    {"number": "03", "title": "Meticulous Crafting", "description": "Our expert team hand-threads and embroiders each piece with detailed craftsmanship in our local Dubai studio."},
-    {"number": "04", "title": "Gift-Wrapped Delivery", "description": "We carefully steam, luxury-wrap, and dispatch your custom item within 2-3 business days across the UAE."}
+    {
+      "number": "1",
+      "title": "Choose Your Product",
+      "description": "Find your favorite base product and complete secure payment to lock in your order.",
+      "image": "/images/heropage/scarlet-heartbag.png"
+    },
+    {
+      "number": "2",
+      "title": "WhatsApp Us Details",
+      "description": "Check your email confirmation for your order details and share your design idea with us on WhatsApp.",
+      "image": "/images/heropage/scarlet-phone.png"
+    },
+    {
+      "number": "3",
+      "title": "Mockup & Approval",
+      "description": "We create a realistic digital mockup for your review. Give us your final thumbs up before we craft!",
+      "image": "/images/heropage/scarlet-laptop.png"
+    },
+    {
+      "number": "4",
+      "title": "We Craft & Ship",
+      "description": "Once approved, our team creates your unique gift with care and ships it straight to your doorstep.",
+      "image": "/images/heropage/scarlet-delivery.png"
+    }
   ]
 }', true),
 ('store-features', 'Why Choose Scarlet Thread', 'Our commitment to beautiful execution and customer delight', '{
@@ -900,13 +920,21 @@ INSERT INTO public.homepage_sections (section_key, title, subtitle, content, is_
     {"icon": "Gift", "title": "Eco-Luxury Packaging", "description": "All gifts arrive standard in signature embossed boxes wrapped in acid-free tissue paper."},
     {"icon": "Truck", "title": "Rapid Delivery Across UAE", "description": "We provide reliable, tracked delivery to your doorstep within 48 hours for standard orders."}
   ]
-}', true)
+}', true), (
+  'google-reviews',
+  'Google Business Reviews',
+  'Real stories from real customers',
+  '{
+    "place_id": "",
+    "api_key": ""
+  }',
+  true
+)
 ON CONFLICT (section_key) DO UPDATE SET title = EXCLUDED.title, subtitle = EXCLUDED.subtitle, content = EXCLUDED.content;
 
 -- Promotional banners
 INSERT INTO public.banners (title, subtitle, image_url, link_url, banner_type, is_active, display_order) VALUES
-('Cozy Mama & Family Hoodies', 'Celebrate connection with custom family collections.', 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=1200&q=80', '/products/mama-heart-hoodie', 'featured_banner', true, 0),
-('Eid & Special Occasion Collections', 'Traditional styles personalized with custom modern script.', 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=1200&q=80', '/collections/featured-gifts', 'promo', true, 1)
+('Cozy Mama & Family Hoodies', 'Celebrate connection with custom family collections.', 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=1200&q=80', '/products/mama-heart-hoodie', 'featured_banner', true, 0)
 ON CONFLICT (id) DO NOTHING;
 
 -- Testimonials

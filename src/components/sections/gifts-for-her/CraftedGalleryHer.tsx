@@ -43,7 +43,26 @@ export function CraftedGalleryHer() {
     { image: "/images/occassion/scarlet-proud.png" },
   ];
 
-  const displayImages = images.length > 0 ? images.map(img => ({ image: img.media_url })) : fallbackImages;
+  const getDisplayImages = () => {
+    const backendUrls = images
+      .filter((img) => img.media_url)
+      .map((img) => ({ image: img.media_url }));
+
+    if (backendUrls.length === 0) {
+      return fallbackImages;
+    }
+    if (backendUrls.length < 6) {
+      const merged = [...backendUrls];
+      const needed = 6 - backendUrls.length;
+      for (let i = 0; i < needed; i++) {
+        merged.push(fallbackImages[i % fallbackImages.length]);
+      }
+      return merged;
+    }
+    return backendUrls;
+  };
+
+  const displayImages = getDisplayImages();
 
   const scrollLeft = () => {
     scrollRef.current?.scrollBy({

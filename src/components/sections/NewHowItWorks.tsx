@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
+import { useHomepageSection } from "@/hooks/use-cms"
 
 const headingVariants = {
   hidden: { opacity: 0, y: -20 },
@@ -53,8 +54,36 @@ const arrowDownVariants = {
   },
 }
 
+const defaultSteps = [
+  {
+    number: "1",
+    title: "Choose Your Product",
+    description: "Find your favorite base product and complete secure payment to lock in your order.",
+    image: "/images/heropage/scarlet-heartbag.png"
+  },
+  {
+    number: "2",
+    title: "WhatsApp Us Details",
+    description: "Check your email confirmation for your order details and share your design idea with us on WhatsApp.",
+    image: "/images/heropage/scarlet-phone.png"
+  },
+  {
+    number: "3",
+    title: "Mockup & Approval",
+    description: "We create a realistic digital mockup for your review. Give us your final thumbs up before we craft!",
+    image: "/images/heropage/scarlet-laptop.png"
+  },
+  {
+    number: "4",
+    title: "We Craft & Ship",
+    description: "Once approved, our team creates your unique gift with care and ships it straight to your doorstep.",
+    image: "/images/heropage/scarlet-delivery.png"
+  }
+]
+
 export function NewHowItWorks() {
   const [isDesktop, setIsDesktop] = useState(false)
+  const { data: section } = useHomepageSection("how-it-works")
 
   useEffect(() => {
     const media = window.matchMedia("(min-width: 768px)")
@@ -63,6 +92,9 @@ export function NewHowItWorks() {
     media.addEventListener("change", listener)
     return () => media.removeEventListener("change", listener)
   }, [])
+
+  const title = section?.title || "Creating Your Perfect Custom Gift"
+  const steps = section?.content?.steps || defaultSteps
 
   return (
     <section className="py-10 md:py-16 bg-white">
@@ -77,7 +109,7 @@ export function NewHowItWorks() {
             viewport={{ once: true, amount: 0.3 }}
             variants={headingVariants}
           >
-            Creating Your Perfect Custom Gift
+            {title}
           </motion.h2>
 
           {/* ── Steps row ── */}
@@ -88,61 +120,28 @@ export function NewHowItWorks() {
             viewport={{ once: true, amount: 0.2 }}
             variants={containerVariants}
           >
-            <StepCard
-              number="1"
-              title="Choose Your Product"
-              desc="Find your favorite base product and complete secure payment to lock in your order."
-              image="/images/heropage/scarlet-heartbag.png"
-              isDesktop={isDesktop}
-            />
-
-            {/* Arrow */}
-            <motion.div className="hidden md:flex items-center flex-shrink-0 text-[#9B6BD3]" variants={arrowRightVariants}>
-              <ArrowRightIcon />
-            </motion.div>
-            <motion.div className="flex md:hidden justify-center text-[#9B6BD3] my-0" variants={arrowDownVariants}>
-              <ArrowDownIcon />
-            </motion.div>
-
-            <StepCard
-              number="2"
-              title="WhatsApp Us Details"
-              desc="Check your email confirmation for your order details and share your design idea with us on WhatsApp."
-              image="/images/heropage/scarlet-phone.png"
-              isDesktop={isDesktop}
-            />
-
-            {/* Arrow */}
-            <motion.div className="hidden md:flex items-center flex-shrink-0 text-[#9B6BD3]" variants={arrowRightVariants}>
-              <ArrowRightIcon />
-            </motion.div>
-            <motion.div className="flex md:hidden justify-center text-[#9B6BD3] my-0" variants={arrowDownVariants}>
-              <ArrowDownIcon />
-            </motion.div>
-
-            <StepCard
-              number="3"
-              title="Mockup & Approval"
-              desc="We create a realistic digital mockup for your review. Give us your final thumbs up before we craft!"
-              image="/images/heropage/scarlet-laptop.png"
-              isDesktop={isDesktop}
-            />
-
-            {/* Arrow */}
-            <motion.div className="hidden md:flex items-center flex-shrink-0 text-[#9B6BD3]" variants={arrowRightVariants}>
-              <ArrowRightIcon />
-            </motion.div>
-            <motion.div className="flex md:hidden justify-center text-[#9B6BD3] my-0" variants={arrowDownVariants}>
-              <ArrowDownIcon />
-            </motion.div>
-
-            <StepCard
-              number="4"
-              title="We Craft & Ship"
-              desc="Once approved, our team creates your unique gift with care and ships it straight to your doorstep."
-              image="/images/heropage/scarlet-delivery.png"
-              isDesktop={isDesktop}
-            />
+            {steps.map((step: any, index: number) => (
+              <React.Fragment key={step.number || index}>
+                <StepCard
+                  number={step.number || String(index + 1)}
+                  title={step.title}
+                  desc={step.description || step.desc}
+                  image={defaultSteps[index]?.image}
+                  isDesktop={isDesktop}
+                />
+                
+                {index < steps.length - 1 && (
+                  <>
+                    <motion.div className="hidden md:flex items-center flex-shrink-0 text-[#9B6BD3]" variants={arrowRightVariants}>
+                      <ArrowRightIcon />
+                    </motion.div>
+                    <motion.div className="flex md:hidden justify-center text-[#9B6BD3] my-0" variants={arrowDownVariants}>
+                      <ArrowDownIcon />
+                    </motion.div>
+                  </>
+                )}
+              </React.Fragment>
+            ))}
           </motion.div>
         </div>
       </div>
@@ -203,47 +202,6 @@ function StepCard({
         </div>
       </div>
     </motion.div>
-  )
-}
-
-function PersonalizeBox() {
-  return (
-    <div className="w-[150px] sm:w-[180px] flex-shrink-0 bg-white rounded-2xl border border-[#EFE6F7] shadow-[0_6px_25px_rgba(107,70,193,0.08)] p-3 sm:p-4">
-      <label className="text-[11px] text-[#8B8194] block mb-1">
-        Enter Name
-      </label>
-
-      <div className="h-9 rounded-md border border-[#E7DFF0] text-xs flex items-center px-3 text-[#2B2238] font-medium mb-3">
-        Ayesha
-      </div>
-
-      <p className="text-[11px] text-[#8B8194] mb-1">Choose Font</p>
-
-      <div className="flex gap-1.5 mb-3">
-        {["Abc", "Abc", "Abc"].map((font, index) => (
-          <span
-            key={index}
-            className="text-xs border border-[#E7DFF0] rounded px-2 py-1 text-[#2B2238]"
-          >
-            {font}
-          </span>
-        ))}
-      </div>
-
-      <p className="text-[11px] text-[#8B8194] mb-2">Thread Color</p>
-
-      <div className="flex gap-2">
-        {["#6F35C4", "#26A69A", "#4F8DF7", "#F6A623", "#E94B5A", "#111827"].map(
-          (color) => (
-            <span
-              key={color}
-              className="w-4 h-4 rounded-full border border-white shadow"
-              style={{ backgroundColor: color }}
-            />
-          )
-        )}
-      </div>
-    </div>
   )
 }
 

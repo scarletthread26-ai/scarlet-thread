@@ -75,52 +75,50 @@ export function OccasionsGridHer() {
           style={{ transformStyle: "preserve-3d" }}
         >
           {occasions.map((occ) => (
-            <motion.div
-              key={occ.id}
-              variants={cardPerspective}
-              className={`${occ.bgColor} rounded-3xl p-6 relative overflow-hidden group hover:shadow-md transition-shadow flex flex-col h-full min-h-[220px]`}
-            >
-              {occ.image && (
-                <div className="absolute inset-0">
-                  <Image
-                    src={occ.image}
-                    alt={occ.title}
-                    fill
-                    className="object-cover object-center"
-                  />
-                </div>
-              )}
-
-              <div className="absolute inset-0 bg-white/10 pointer-events-none" />
-
-              <div className="relative z-10 max-w-[55%] flex flex-col h-full">
-                <h3 className={`font-bold text-xl mb-2 ${occ.titleColor}`}>
-                  {occ.title}
-                </h3>
-
-                <p className="text-sm text-muted-foreground mb-6 line-clamp-2">
-                  {occ.description}
-                </p>
-
-                <Link
-                  href={`/gifts-for-her/${occ.id}`}
-                  className="inline-flex items-center text-xs font-bold uppercase tracking-wider hover:text-primary transition-colors mt-auto"
-                >
-                  Shop Now{" "}
-                  <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </div>
-
-              {!occ.image && (
-                <div className="absolute right-0 bottom-0 w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 translate-x-4 translate-y-4">
-                  <div className="w-full h-full bg-white/50 backdrop-blur rounded-full flex items-center justify-center border border-white shadow-sm p-4 text-center">
-                    <span className="text-xs font-medium text-muted-foreground">
-                      {occ.imagePlaceholder}
-                    </span>
+            <Link key={occ.id} href="/products" className="block h-full">
+              <motion.div
+                variants={cardPerspective}
+                className={`${occ.bgColor} rounded-3xl p-6 relative overflow-hidden group hover:shadow-md transition-shadow flex flex-col h-full min-h-[220px] cursor-pointer`}
+              >
+                {occ.image && (
+                  <div className="absolute inset-0">
+                    <Image
+                      src={occ.image}
+                      alt={occ.title}
+                      fill
+                      className="object-cover object-center"
+                    />
                   </div>
+                )}
+
+                <div className="absolute inset-0 bg-white/10 pointer-events-none" />
+
+                <div className="relative z-10 max-w-[55%] flex flex-col h-full">
+                  <h3 className={`font-bold text-xl mb-2 ${occ.titleColor}`}>
+                    {occ.title}
+                  </h3>
+
+                  <p className="text-sm text-muted-foreground mb-6 line-clamp-2">
+                    {occ.description}
+                  </p>
+
+                  <span className="inline-flex items-center text-xs font-bold uppercase tracking-wider hover:text-primary transition-colors mt-auto">
+                    Shop Now{" "}
+                    <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
+                  </span>
                 </div>
-              )}
-            </motion.div>
+
+                {!occ.image && (
+                  <div className="absolute right-0 bottom-0 w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 translate-x-4 translate-y-4">
+                    <div className="w-full h-full bg-white/50 backdrop-blur rounded-full flex items-center justify-center border border-white shadow-sm p-4 text-center">
+                      <span className="text-xs font-medium text-muted-foreground">
+                        {occ.imagePlaceholder}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            </Link>
           ))}
         </motion.div>
       </div>
