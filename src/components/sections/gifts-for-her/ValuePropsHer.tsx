@@ -32,6 +32,8 @@ export function ValuePropsHer() {
     }
   ]
 
+  const displayProps = props.length > 4 ? props.slice(0, 4) : props;
+
   return (
     <section className="py-8 bg-white border-y border-border/40 overflow-hidden">
       <motion.div 
@@ -42,12 +44,12 @@ export function ValuePropsHer() {
         className="container px-4 sm:px-6 md:px-12 lg:px-24"
         style={{ transformPerspective: 1000 }}
       >
-        <div className="flex flex-wrap justify-center gap-6 md:gap-10 max-w-7xl mx-auto">
-          {props.map((prop, index) => (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-7xl mx-auto">
+          {displayProps.map((prop, index) => (
             <motion.div 
               key={index} 
               variants={rotateXPerspective}
-              className="flex flex-col sm:flex-row items-center text-center sm:text-left gap-4 flex-1 min-w-[150px] group"
+              className="flex flex-col sm:flex-row items-center text-center sm:text-left gap-4 group"
             >
               <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                 {prop.icon}

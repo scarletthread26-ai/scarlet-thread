@@ -41,14 +41,7 @@ export default function CMSHubPage() {
       icon: Sparkles,
       href: "/admin/cms/kids-babies",
       color: "text-amber-600 bg-amber-50 dark:bg-amber-950/20 border-amber-100/50 dark:border-amber-900/30",
-    },
-    {
-      title: "Bespoke Policies & Legal",
-      description: "Manage static pages like About Us, Privacy Policy, Terms, and Shipping guidelines.",
-      icon: FileText,
-      href: "/admin/cms/pages",
-      color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100/50 dark:border-emerald-900/30",
-    },
+    }
   ];
 
   return (
