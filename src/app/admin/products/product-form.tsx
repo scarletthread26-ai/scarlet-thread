@@ -135,7 +135,7 @@ export function ProductForm({
 }: ProductFormProps) {
   const { data: categories = [] } = useCategories();
   const { data: subcategories = [] } = useSubcategories();
-  const [activeTab, setActiveTab] = useState<"basic" | "media" | "custom" | "options" | "seo">("basic");
+  const [activeTab, setActiveTab] = useState<"basic" | "media" | "options" | "seo">("basic");
   const [isSkuEditable, setIsSkuEditable] = useState(false);
   const [isGeneratingSku, setIsGeneratingSku] = useState(false);
 
@@ -260,7 +260,6 @@ export function ProductForm({
 
   const hasBasicErrors = !!(errors.name || errors.slug || errors.category_id || errors.sub_category_id || errors.description);
   const hasMediaErrors = !!(errors.price || errors.compare_at_price || errors.weight || errors.images);
-  const hasCustomErrors = !!(errors.is_personalized || errors.personalization_price || errors.production_time || errors.whatsapp_instructions || errors.allowed_fields || errors.allowed_fonts);
   const hasOptionsErrors = !!(errors.colors || errors.sizes || errors.specifications);
   const hasSeoErrors = !!(errors.stock_quantity || errors.low_stock_threshold || errors.is_active || errors.featured || errors.best_seller || errors.trending || errors.new_arrival || errors.meta_title || errors.meta_description);
 
@@ -402,11 +401,10 @@ export function ProductForm({
 
       {/* Navigation tabs */}
       <div className="flex border-b border-slate-200 dark:border-slate-800">
-        {(["basic", "media", "custom", "options", "seo"] as const).map((tab) => {
+        {(["basic", "media", "options", "seo"] as const).map((tab) => {
           const labels = {
             basic: "Basic Details",
             media: "Media & Pricing",
-            custom: "Embroidery/Customization",
             options: "Options & Specs",
             seo: "SEO & Status",
           };
@@ -414,7 +412,6 @@ export function ProductForm({
           const tabHasErrors =
             (tab === "basic" && hasBasicErrors) ||
             (tab === "media" && hasMediaErrors) ||
-            (tab === "custom" && hasCustomErrors) ||
             (tab === "options" && hasOptionsErrors) ||
             (tab === "seo" && hasSeoErrors);
 
@@ -680,143 +677,7 @@ export function ProductForm({
             </div>
           )}
 
-          {/* Tab 3: Customization Embroidery */}
-          {activeTab === "custom" && (
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 p-3.5 rounded-xl bg-purple-50/50 dark:bg-purple-950/10 border border-purple-100/30 dark:border-purple-900/10">
-                <Sparkles className="w-5 h-5 text-purple-650 dark:text-purple-400 shrink-0" />
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-normal">
-                  Configure customizable embroidery settings. Once enabled, customer-facing purchase screens will offer name/monogram typing, font pickers, and color selections automatically.
-                </p>
-              </div>
 
-              <div className="flex items-center gap-2 py-1">
-                <input
-                  type="checkbox"
-                  id="is_personalized"
-                  {...register("is_personalized")}
-                  className="w-4 h-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
-                />
-                <label htmlFor="is_personalized" className="text-sm font-bold text-slate-800 dark:text-slate-200 cursor-pointer select-none">
-                  Enable custom embroidery options on this product
-                </label>
-              </div>
-
-              {isPersonalized && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  className="space-y-6 pt-4 border-t border-slate-100 dark:border-slate-850/50"
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                        Embroidery Surcharge Price (AED)
-                      </label>
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        {...register("personalization_price")}
-                        {...decimalInputHandlers}
-                        placeholder="e.g., 25.00"
-                        className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
-                      />
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                        Production Time Delay (Days)
-                      </label>
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        {...register("production_time")}
-                        {...integerInputHandlers}
-                        placeholder="e.g., 2"
-                        className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                      WhatsApp Instructions Guidance
-                    </label>
-                    <textarea
-                      {...register("whatsapp_instructions")}
-                      placeholder="e.g., Please enter name to engrave. You can also send a logo photo to us via WhatsApp if choosing custom logo."
-                      rows={2}
-                      className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm resize-none"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Fields List */}
-                    <div className="space-y-2">
-                      <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 block">
-                        Allowed Customization Input Fields
-                      </label>
-                      <div className="space-y-1.5">
-                        {FIELDS_LIST.map((field) => {
-                          const isChecked = allowedFields.includes(field.id);
-                          return (
-                            <div
-                              key={field.id}
-                              onClick={() => handleFieldToggle(field.id)}
-                              className={`p-3.5 rounded-xl border flex items-center gap-2 cursor-pointer transition select-none ${
-                                isChecked
-                                  ? "border-purple-650 bg-purple-50/20 dark:bg-purple-950/10 text-purple-700 dark:text-purple-400"
-                                  : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-450 hover:bg-slate-50/50"
-                              }`}
-                            >
-                              <input
-                                type="checkbox"
-                                checked={isChecked}
-                                onChange={() => {}}
-                                className="w-4 h-4 rounded text-purple-600 border-slate-300"
-                              />
-                              <span className="text-xs font-semibold">{field.label}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Fonts List */}
-                    <div className="space-y-2">
-                      <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 block">
-                        Allowed Embroidery Calligraphy Fonts
-                      </label>
-                      <div className="space-y-1.5">
-                        {FONTS_LIST.map((font) => {
-                          const isChecked = allowedFonts.includes(font);
-                          return (
-                            <div
-                              key={font}
-                              onClick={() => handleFontToggle(font)}
-                              className={`p-3.5 rounded-xl border flex items-center gap-2 cursor-pointer transition select-none ${
-                                isChecked
-                                  ? "border-purple-650 bg-purple-50/20 dark:bg-purple-950/10 text-purple-700 dark:text-purple-400"
-                                  : "border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-450 hover:bg-slate-50/50"
-                              }`}
-                            >
-                              <input
-                                type="checkbox"
-                                checked={isChecked}
-                                onChange={() => {}}
-                                className="w-4 h-4 rounded text-purple-600 border-slate-300"
-                              />
-                              <span className="text-xs font-semibold">{font}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </div>
-          )}
 
           {/* Tab 4: Options & Specifications */}
           {activeTab === "options" && (
@@ -1006,7 +867,7 @@ export function ProductForm({
                   <div className="space-y-2.5">
                     <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">Configured Specifications</label>
                     {specs.length === 0 ? (
-                      <p className="text-xs text-slate-400 italic py-4">No custom specifications configured. Fallback system defaults will be used.</p>
+                      <p className="text-xs text-slate-400 italic py-4">No specifications configured. This section will not be displayed on the product page.</p>
                     ) : (
                       <div className="space-y-2 max-h-[250px] overflow-y-auto pr-2">
                         {specs.map((spec, index) => (

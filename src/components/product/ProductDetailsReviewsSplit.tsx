@@ -31,14 +31,7 @@ export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSpl
 
   const specs = (product?.specifications && product.specifications.length > 0)
     ? product.specifications
-    : [
-        { label: "Fabric", value: product?.material || "80% Cotton, 20% Polyester Premium Fleece" },
-        { label: "Fit", value: product?.size ? `Unisex Regular Fit (Size ${product.size})` : "Unisex Regular Fit" },
-        { label: "Embroidery Type", value: product?.is_personalized ? "Premium Personalization Handcrafted" : "Standard Embroidery" },
-        { label: "Care Instructions", value: "Machine wash cold, inside out. Do not bleach. Tumble dry low." },
-        { label: "Delivery Time", value: product?.production_time ? `${product.production_time + 3} - ${product.production_time + 5} Days Hand-delivery` : "5 - 7 Business Days" },
-        { label: "Packaging", value: "Premium Scarlet Gift Box Wrapping" },
-      ];
+    : [];
 
   useEffect(() => {
     const supabase = createClient();
@@ -90,22 +83,24 @@ export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSpl
         <div className="flex flex-col lg:flex-row gap-12">
           
           {/* Left: Specs Panel */}
-          <div className="flex-1 lg:w-1/3">
-            <h3 className="font-heading font-extrabold text-xl mb-6 text-slate-800 dark:text-slate-100">Product Specifications</h3>
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm">
-              <div className="flex flex-col gap-4">
-                {specs.map((spec: any, index: number) => (
-                  <div key={index} className="flex gap-4 items-start pb-4 border-b border-slate-100 dark:border-slate-800/80 last:border-0 last:pb-0">
-                    <div className="w-1/3 text-xs font-bold text-purple-600 shrink-0">{spec.label}</div>
-                    <div className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{spec.value}</div>
-                  </div>
-                ))}
+          {specs.length > 0 && (
+            <div className="flex-1 lg:w-1/3">
+              <h3 className="font-heading font-extrabold text-xl mb-6 text-slate-800 dark:text-slate-100">Product Specifications</h3>
+              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm">
+                <div className="flex flex-col gap-4">
+                  {specs.map((spec: any, index: number) => (
+                    <div key={index} className="flex gap-4 items-start pb-4 border-b border-slate-100 dark:border-slate-800/80 last:border-0 last:pb-0">
+                      <div className="w-1/3 text-xs font-bold text-purple-600 shrink-0">{spec.label}</div>
+                      <div className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{spec.value}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Right: Reviews Panel */}
-          <div className="flex-[1.5] lg:w-2/3 space-y-6">
+          <div className={`${specs.length > 0 ? "flex-[1.5] lg:w-2/3" : "w-full"} space-y-6`}>
             <div className="flex justify-between items-center">
               <h3 className="font-heading font-extrabold text-xl text-slate-800 dark:text-slate-100 flex items-center gap-2">
                 <MessageSquare className="w-5.5 h-5.5 text-purple-600" />

@@ -180,10 +180,6 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
           </div>
           <span className="font-bold text-slate-700 dark:text-slate-300">4.9</span>
           <span className="text-slate-400 font-medium">(256 reviews)</span>
-          <span className="text-slate-300">|</span>
-          <span className="text-purple-600 font-bold text-xs bg-purple-50 dark:bg-purple-950/20 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-            <Sparkles className="w-3 h-3" /> Custom Handcrafted
-          </span>
         </div>
       </div>
 
@@ -257,9 +253,6 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
                 <Label className="font-bold text-sm text-slate-800 dark:text-slate-200">
                   Size: <span className="text-purple-600 font-normal">{activeSize}</span>
                 </Label>
-                <button className="text-xs text-purple-600 font-bold flex items-center gap-1 hover:underline">
-                  <Ruler className="w-3 h-3" /> Size Guide
-                </button>
               </div>
               <div className="flex flex-wrap gap-2">
                 {productSizes.map((size: string) => (
