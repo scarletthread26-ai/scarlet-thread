@@ -7,9 +7,10 @@ interface CloudinaryLoaderProps {
 }
 
 export default function cloudinaryLoader({ src, width, quality }: CloudinaryLoaderProps): string {
-  // If it's not a Cloudinary image, return it as-is
+  // If it's not a Cloudinary image, append width and quality query parameters to avoid Next.js warnings
   if (!src || !src.includes("cloudinary.com")) {
-    return src;
+    const separator = src.includes("?") ? "&" : "?";
+    return `${src}${separator}w=${width}${quality ? `&q=${quality}` : ""}`;
   }
 
   // Find where the upload path starts
@@ -30,10 +31,10 @@ export default function cloudinaryLoader({ src, width, quality }: CloudinaryLoad
     }
   }
 
-  // Format transformations: automatic format, automatic quality, and dynamic resizing
+  // Format transformations: automatic format, automatic/numeric quality, and dynamic resizing
   const params = [
     "f_auto",
-    `q_auto:${quality || "auto"}`,
+    quality ? `q_${quality}` : "q_auto",
     `w_${width}`
   ].join(",");
 

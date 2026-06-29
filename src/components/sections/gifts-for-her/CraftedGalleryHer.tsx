@@ -10,19 +10,40 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import Link from "next/link"
 import { scaleUp, staggerContainer, fadeUp } from "@/lib/animations"
+
+import { useState, useEffect } from "react";
 
 export function CraftedGalleryHer() {
   const scrollRef = useRef<HTMLDivElement>(null)
+  const [images, setImages] = useState<{ id: string; media_url: string }[]>([]);
 
-  const mockImages = [
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/gallery?category=her");
+        if (res.ok) {
+          const data = await res.json();
+          setImages(data);
+        }
+      } catch (err) {
+        console.error("Error loading her lookbook images:", err);
+      }
+    }
+    load();
+  }, []);
+
+  const fallbackImages = [
     { image: "/images/occassion/scarlet-girlboss.png" },
     { image: "/images/occassion/scarlet-beyou.png" },
     { image: "/images/occassion/scarlet-happysoul.png" },
     { image: "/images/occassion/scarlet-staypositive.png" },
     { image: "/images/occassion/scarlet-box.png" },
     { image: "/images/occassion/scarlet-proud.png" },
-  ]
+  ];
+
+  const displayImages = images.length > 0 ? images.map(img => ({ image: img.media_url })) : fallbackImages;
 
   const scrollLeft = () => {
     scrollRef.current?.scrollBy({
@@ -76,7 +97,7 @@ export function CraftedGalleryHer() {
             variants={staggerContainer(0.08, 0.1)}
             className="flex overflow-x-auto gap-4 pb-8 hide-scrollbar scroll-smooth snap-x snap-mandatory"
           >
-            {mockImages.map((img, index) => (
+            {displayImages.map((img, index) => (
               <motion.div
                 key={index}
                 variants={fadeUp(0.6, 20)}
@@ -101,13 +122,15 @@ export function CraftedGalleryHer() {
         </div>
 
         <div className="text-center">
-          <Button
-            size="sm"
-            className="rounded-full bg-primary text-white hover:bg-primary/90"
-          >
-            View More Creations
-            <ArrowRight className="w-3 h-3 ml-2" />
-          </Button>
+          <Link href="/gallery?category=her">
+            <Button
+              size="sm"
+              className="rounded-full bg-primary text-white hover:bg-primary/90"
+            >
+              View More Creations
+              <ArrowRight className="w-3 h-3 ml-2" />
+            </Button>
+          </Link>
         </div>
       </motion.div>
 

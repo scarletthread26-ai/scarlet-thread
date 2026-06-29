@@ -1,172 +1,75 @@
-import { RefreshCcw } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { RefreshCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-export function MasonryGrid() {
-  const galleryItems = [
-    {
-      text: "Aditya",
-      desc: "Navy Hoodie",
-      height: "h-[320px]",
-      image: "/images/aditya.png",
-      textCol: "text-white",
-    },
-    {
-      text: "Ananya",
-      desc: "Pink Pouch",
-      height: "h-[260px]",
-      image: "/images/ananya.png",
-      textCol: "text-[#880E4F]",
-    },
-    {
-      text: "Good things take time",
-      desc: "Tote Bag",
-      height: "h-[380px]",
-      image: "/images/goodthings.png",
-      textCol: "text-[#5D4037]",
-    },
-    {
-      text: "Little Princess",
-      desc: "Onesie",
-      height: "h-[280px]",
-      image: "/images/litleprinces.png",
-      textCol: "text-[#FF69B4]",
-    },
+interface GalleryItem {
+  id: string;
+  title: string;
+  description: string | null;
+  media_url: string;
+  media_type: string;
+  display_order: number;
+}
 
-    {
-      text: "Mr. Perfect",
-      desc: "White Towel",
-      height: "h-[340px]",
-      image: "/images/mrperfect.png",
-      textCol: "text-black",
-    },
-    {
-      text: "Eid Mubarak",
-      desc: "Green Cushion",
-      height: "h-[280px]",
-      image: "/images/eid.png",
-      textCol: "text-yellow-400",
-    },
-    {
-      text: "Be You",
-      desc: "Purple Hoodie",
-      height: "h-[280px]",
-      image: "/images/beyou.png",
-      textCol: "text-[#4A148C]",
-    },
-    {
-      text: "Rohan",
-      desc: "Black Pouch",
-      height: "h-[240px]",
-      image: "/images/rohan.png",
-      textCol: "text-white",
-    },
+interface MasonryGridProps {
+  items: GalleryItem[];
+}
 
-    {
-      text: "Diya",
-      desc: "Cream Towel",
-      height: "h-[280px]",
-      image: "/images/diya.png",
-      textCol: "text-[#D84315]",
-    },
-    {
-      text: "Papa Box",
-      desc: "Black Hamper",
-      height: "h-[340px]",
-      image: "/images/papa.png",
-      textCol: "text-white",
-    },
-    {
-      text: "My World My Love",
-      desc: "Teddy Bear",
-      height: "h-[300px]",
-      image: "/images/mylovemyworld.png",
-      textCol: "text-[#4E342E]",
-    },
-    {
-      text: "Myra",
-      desc: "Purple Towel",
-      height: "h-[320px]",
-      image: "/images/myra.png",
-      textCol: "text-white",
-    },
+const HEIGHT_CLASSES = ["h-[320px]", "h-[260px]", "h-[380px]", "h-[280px]", "h-[340px]"];
 
-    {
-      text: "Sunshine",
-      desc: "Peach Hoodie",
-      height: "h-[280px]",
-      image: "/images/sunshine.png",
-      textCol: "text-[#BF360C]",
-    },
-    {
-      text: "A ♥",
-      desc: "White Pouch",
-      height: "h-[240px]",
-      image: "/images/a.png",
-      textCol: "text-black",
-    },
-    {
-      text: "King",
-      desc: "Black Cap",
-      height: "h-[260px]",
-      image: "/images/king.png",
-      textCol: "text-white",
-    },
-    {
-      text: "Best Brother Ever",
-      desc: "Mug Hamper",
-      height: "h-[300px]",
-      image: "/images/brother.png",
-      textCol: "text-white",
-    },
-  ]
+export function MasonryGrid({ items }: MasonryGridProps) {
+  // If database has no custom items, we can show a nice empty message or prompt
+  if (items.length === 0) {
+    return (
+      <section className="py-16 bg-white text-center">
+        <div className="container mx-auto px-4 max-w-md">
+          <div className="w-16 h-16 bg-slate-100 text-slate-400 flex items-center justify-center rounded-full mx-auto mb-4">
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h3 className="text-base font-bold text-slate-800">No creations uploaded yet</h3>
+          <p className="text-sm text-slate-500 mt-1.5">
+            Log in to the Admin Dashboard and add lookbook items to populate this showcase.
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-12 bg-white">
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Masonry Grid */}
         <div className="columns-1 sm:columns-2 lg:columns-4 gap-4 space-y-4">
-          {galleryItems.map((item, idx) => (
-            <div
-              key={idx}
-              className={`w-full ${item.height} rounded-2xl break-inside-avoid relative overflow-hidden group cursor-pointer border border-black/5 shadow-sm hover:shadow-md transition-shadow`}
-            >
-              {/* Background Image */}
-              <img
-                src={item.image}
-                alt={item.desc}
-                className="absolute inset-0 w-full h-full object-cover"
-              />
+          {items.map((item, idx) => {
+            const height = HEIGHT_CLASSES[idx % HEIGHT_CLASSES.length];
+            return (
+              <div
+                key={item.id}
+                className={`w-full ${height} rounded-2xl break-inside-avoid relative overflow-hidden group cursor-pointer border border-black/5 shadow-sm hover:shadow-md transition-shadow`}
+              >
+                {/* Background Image */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={item.media_url}
+                  alt={item.title}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
 
-              {/* Dark Overlay */}
-              <div className="absolute inset-0 bg-black/20" />
+                {/* Dark Overlay (Fades in on hover) */}
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-              {/* Texture Overlay */}
-              <div className="absolute inset-0 bg-[url('/placeholder-texture.png')] opacity-20 mix-blend-overlay" />
-
-              {/* Content */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
-                {/* Reveal description on hover */}
-                <div className="opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 absolute bottom-6 bg-white/90 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-sm">
-                  <span className="text-xs font-bold text-foreground uppercase tracking-widest">
-                    {item.desc}
-                  </span>
+                {/* Content (Bottom-centered, fades and slides up on hover) */}
+                <div className="absolute inset-0 flex flex-col items-center justify-end pb-8 p-5 z-10 text-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-3 group-hover:translate-y-0">
+                  <h4 className="text-white font-bold text-base leading-tight">
+                    {item.title}
+                  </h4>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-16 text-center">
-          <Button
-            variant="outline"
-            size="lg"
-            className="rounded-full px-8 font-bold border-primary/20 text-primary hover:bg-primary/5 hover:border-primary"
-          >
-            Load More Creations
-            <RefreshCcw className="w-4 h-4 ml-2" />
-          </Button>
+            );
+          })}
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -12,7 +12,7 @@ export async function GET() {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("gallery_items")
-      .select("*")
+      .select("*, category:gallery_categories(id, name, slug)")
       .order("display_order", { ascending: true });
 
     if (error) throw error;
@@ -31,16 +31,17 @@ export async function POST(request: Request) {
     const { data, error } = await supabase
       .from("gallery_items")
       .insert([body])
-      .select()
+      .select("*, category:gallery_categories(id, name, slug)")
       .single();
 
     if (error) throw error;
     return NextResponse.json(data);
   } catch (error: any) {
     console.warn("Supabase gallery item POST failed. Simulating local success:", error.message || error);
+    const body = await request.clone().json();
     const mockCreated = {
       id: Math.random().toString(36).substring(2, 15),
-      ...await request.json(),
+      ...body,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };

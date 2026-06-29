@@ -17,6 +17,7 @@ const gallerySchema = z.object({
   description: z.string().optional(),
   media_url: z.string().min(1, "Please upload an image"),
   media_type: z.enum(["image", "video"]).default("image"),
+  category_id: z.string().min(1, "Please select a category"),
   is_active: z.boolean().default(true),
   display_order: z.number().default(0),
 });
@@ -34,6 +35,15 @@ export default function GalleryPage() {
     queryFn: async () => {
       const res = await fetch("/api/admin/gallery");
       if (!res.ok) throw new Error("Failed to fetch gallery items");
+      return res.json();
+    },
+  });
+
+  const { data: categories = [] } = useQuery<any[]>({
+    queryKey: ["admin", "gallery-categories"],
+    queryFn: async () => {
+      const res = await fetch("/api/admin/gallery-categories");
+      if (!res.ok) throw new Error("Failed to fetch gallery categories");
       return res.json();
     },
   });
@@ -98,6 +108,7 @@ export default function GalleryPage() {
       description: "",
       media_url: "",
       media_type: "image",
+      category_id: "",
       is_active: true,
       display_order: 0,
     },
@@ -122,6 +133,7 @@ export default function GalleryPage() {
       description: item.description || "",
       media_url: item.media_url,
       media_type: item.media_type || "image",
+      category_id: item.category_id || "",
       is_active: item.is_active,
       display_order: item.display_order || 0,
     });
@@ -186,6 +198,26 @@ export default function GalleryPage() {
                 rows={3}
                 className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-205 text-sm shadow-sm resize-none"
               />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                Category
+              </label>
+              <select
+                {...register("category_id")}
+                className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-205 text-sm shadow-sm"
+              >
+                <option value="">Select Category</option>
+                {categories.map((cat: any) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+              {errors.category_id && (
+                <span className="text-xs text-red-505 block mt-0.5">{errors.category_id.message}</span>
+              )}
             </div>
 
             <div className="space-y-1">
@@ -300,6 +332,13 @@ export default function GalleryPage() {
                       <p className="text-[10px] text-slate-450 dark:text-slate-500 font-mono mt-0.5">
                         Order: {item.display_order}
                       </p>
+                      {item.category && (
+                        <div className="mt-1">
+                          <span className="text-[10px] font-bold tracking-wide uppercase px-2 py-0.5 rounded-full bg-purple-50 dark:bg-purple-950/20 text-purple-700 dark:text-purple-400 border border-purple-100 dark:border-purple-900/30">
+                            {item.category.name}
+                          </span>
+                        </div>
+                      )}
                       <p className="text-xs text-slate-500 dark:text-slate-450 mt-1.5 leading-normal">
                         {item.description || "No description"}
                       </p>

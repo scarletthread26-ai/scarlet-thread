@@ -10,12 +10,30 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import Link from "next/link"
 import { scaleUp, staggerContainer, fadeUp } from "@/lib/animations"
+import { useState, useEffect } from "react"
 
 export function CraftedGallery() {
   const scrollRef = useRef<HTMLDivElement>(null)
+  const [images, setImages] = useState<{ id: string; media_url: string }[]>([]);
 
-  const mockImages: { image?: string; text?: string; bg?: string }[] = [
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/gallery?category=him");
+        if (res.ok) {
+          const data = await res.json();
+          setImages(data);
+        }
+      } catch (err) {
+        console.error("Error loading him lookbook images:", err);
+      }
+    }
+    load();
+  }, []);
+
+  const fallbackImages = [
     { image: "/images/forhimpage/scarlet-papahoodie.png" },
     { image: "/images/forhimpage/scarlet-mrperfect.png" },
     { image: "/images/forhimpage/scarlet-papapouch.png" },
@@ -23,7 +41,9 @@ export function CraftedGallery() {
     { image: "/images/forhimpage/scarlet-kinghoodie.png" },
     { image: "/images/forhimpage/scarlet-mannat.png" },
     { image: "/images/forhimpage/scarlet-dadhero.png" },
-  ]
+  ];
+
+  const displayImages = images.length > 0 ? images.map(img => ({ image: img.media_url })) : fallbackImages;
 
   const scrollLeft = () => {
     scrollRef.current?.scrollBy({
@@ -77,14 +97,14 @@ export function CraftedGallery() {
             variants={staggerContainer(0.08, 0.1)}
             className="flex overflow-x-auto gap-3 pb-6 hide-scrollbar scroll-smooth snap-x snap-mandatory"
           >
-            {mockImages.map((img, index) => (
+            {displayImages.map((img, index) => (
               <motion.div
                 key={index}
                 variants={fadeUp(0.6, 20)}
                 className="relative w-[180px] md:w-[240px] shrink-0 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group bg-[#f8f4f1] snap-start"
               >
                 <div className="relative aspect-[4/3]">
-                  {img.image ? (
+                  {img.image && (
                     <Image
                       src={img.image}
                       alt="Gallery image"
@@ -92,14 +112,6 @@ export function CraftedGallery() {
                       className="object-cover"
                       sizes="(max-width: 768px) 180px, 240px"
                     />
-                  ) : (
-                    <div
-                      className={`w-full h-full ${img.bg} flex items-center justify-center`}
-                    >
-                      <span className="text-xl md:text-2xl text-white font-heading font-medium italic">
-                        {img.text}
-                      </span>
-                    </div>
                   )}
                 </div>
 
@@ -112,13 +124,15 @@ export function CraftedGallery() {
         </div>
 
         <div className="text-center">
-          <Button
-            size="sm"
-            className="rounded-full bg-primary text-white hover:bg-primary/90"
-          >
-            View More Creations
-            <ArrowRight className="w-3 h-3 ml-2" />
-          </Button>
+          <Link href="/gallery?category=him">
+            <Button
+              size="sm"
+              className="rounded-full bg-primary text-white hover:bg-primary/90"
+            >
+              View More Creations
+              <ArrowRight className="w-3 h-3 ml-2" />
+            </Button>
+          </Link>
         </div>
       </motion.div>
 
