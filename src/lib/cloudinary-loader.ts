@@ -7,9 +7,10 @@ interface CloudinaryLoaderProps {
 }
 
 export default function cloudinaryLoader({ src, width, quality }: CloudinaryLoaderProps): string {
-  // If it's not a Cloudinary image, return it as-is
+  // If it's not a Cloudinary image, append width and quality query parameters to avoid Next.js warnings
   if (!src || !src.includes("cloudinary.com")) {
-    return src;
+    const separator = src.includes("?") ? "&" : "?";
+    return `${src}${separator}w=${width}${quality ? `&q=${quality}` : ""}`;
   }
 
   // Find where the upload path starts

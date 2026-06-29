@@ -41,6 +41,7 @@ export function GalleryFilter({ categories, activeCategory }: GalleryFilterProps
             <Link
               key={tab.id}
               href={`/gallery?category=${tab.id}`}
+              scroll={false}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all whitespace-nowrap border ${
                 tab.active
                   ? "bg-primary text-white border-primary shadow-md"
