@@ -9,9 +9,7 @@ import {
   Download, 
   Search, 
   AlertCircle,
-  TrendingUp,
-  CreditCard,
-  CheckCircle2
+  TrendingUp
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -195,7 +193,7 @@ export default function AdminReportsPage() {
       </div>
 
       {/* Aggregate row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <div className="max-w-sm">
         <Card className="rounded-2xl border-slate-200/60 bg-white shadow-sm dark:bg-slate-900">
           <CardContent className="p-5 flex items-center gap-4">
             <div className="p-3 bg-purple-50 dark:bg-purple-950/20 text-purple-600 rounded-2xl">
@@ -204,30 +202,6 @@ export default function AdminReportsPage() {
             <div>
               <span className="text-xs font-bold text-slate-400 block uppercase">Net Sales Revenue</span>
               <span className="text-2xl font-extrabold text-slate-800 dark:text-slate-150">AED {totalRevenue}</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl border-slate-200/60 bg-white shadow-sm dark:bg-slate-900">
-          <CardContent className="p-5 flex items-center gap-4">
-            <div className="p-3 bg-purple-50 dark:bg-purple-950/20 text-purple-600 rounded-2xl">
-              <CreditCard className="w-6 h-6" />
-            </div>
-            <div>
-              <span className="text-xs font-bold text-slate-400 block uppercase">Promotional Discounts Issued</span>
-              <span className="text-2xl font-extrabold text-slate-800 dark:text-slate-150">AED {totalDiscounts}</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl border-slate-200/60 bg-white shadow-sm dark:bg-slate-900">
-          <CardContent className="p-5 flex items-center gap-4">
-            <div className="p-3 bg-purple-50 dark:bg-purple-950/20 text-purple-600 rounded-2xl">
-              <CheckCircle2 className="w-6 h-6" />
-            </div>
-            <div>
-              <span className="text-xs font-bold text-slate-400 block uppercase">Estimated UAE VAT (5%)</span>
-              <span className="text-2xl font-extrabold text-slate-800 dark:text-slate-150">AED {totalTax}</span>
             </div>
           </CardContent>
         </Card>

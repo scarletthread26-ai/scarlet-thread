@@ -24,6 +24,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { decimalInputHandlers } from "@/lib/numeric-input";
 
 export default function AdminReturnsPage() {
   const { data: returns = [], isLoading } = useAdminReturns();
@@ -238,9 +239,12 @@ export default function AdminReturnsPage() {
                     <Label htmlFor="refundAmt" className="font-bold text-slate-700 dark:text-slate-300">Refund Amount Override (AED)</Label>
                     <Input
                       id="refundAmt"
-                      type="number"
+                      type="text"
+                      inputMode="decimal"
                       value={refundAmount}
                       onChange={(e) => setRefundAmount(e.target.value)}
+                      onKeyDown={decimalInputHandlers.onKeyDown}
+                      onPaste={decimalInputHandlers.onPaste}
                       className="rounded-xl border-slate-200 dark:border-slate-800 bg-white"
                     />
                   </div>

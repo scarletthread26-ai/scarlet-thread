@@ -128,6 +128,15 @@ export default function CheckoutPage() {
     setPostalCode(addr.postal_code ?? "");
   };
 
+  const clearAddressFields = () => {
+    setFullName("");
+    setAddressLine1("");
+    setAddressLine2("");
+    setCity("");
+    setState("");
+    setPostalCode("");
+  };
+
   const handleShippingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !phone || !fullName || !addressLine1 || !city || !state || !postalCode) {
@@ -282,8 +291,13 @@ export default function CheckoutPage() {
                             key={addr.id}
                             type="button"
                             onClick={() => {
-                              applyAddress(addr);
-                              setSelectedAddressId(addr.id);
+                              if (selectedAddressId === addr.id) {
+                                setSelectedAddressId(null);
+                                clearAddressFields();
+                              } else {
+                                applyAddress(addr);
+                                setSelectedAddressId(addr.id);
+                              }
                             }}
                             className={`text-left p-3 border rounded-xl transition w-full ${
                               selectedAddressId === addr.id
@@ -573,9 +587,18 @@ export default function CheckoutPage() {
                     <div className="flex-1 min-w-0">
                       <h4 className="font-bold line-clamp-1 text-slate-800 dark:text-slate-200">{item.name}</h4>
                       <p className="text-muted-foreground text-xs">Qty: {item.quantity}</p>
-                      {item.personalization?.name && (
-                        <p className="text-xs text-primary font-medium italic mt-0.5">
-                          Custom: {item.personalization.name}
+                      {item.personalization && (
+                        <p className="text-[10px] text-slate-500 mt-0.5 leading-normal">
+                          {((item.personalization as any).color || (item.personalization as any).size) && (
+                            <span className="block font-semibold uppercase text-[9px] text-slate-400">
+                              {[(item.personalization as any).color, (item.personalization as any).size].filter(Boolean).join(" / ")}
+                            </span>
+                          )}
+                          {item.personalization.name && (
+                            <span className="text-primary font-medium italic block mt-0.5">
+                              Custom: {item.personalization.name}
+                            </span>
+                          )}
                         </p>
                       )}
                     </div>

@@ -50,9 +50,30 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
   const image = product?.images?.[0]?.url || product?.image_url || "/images/forhimpage/scarlet-kinghoodie.png";
   const slug = product?.slug || "personalized-hoodie";
 
-  const [activeColor, setActiveColor] = useState("Navy Blue");
-  const [activeSize, setActiveSize] = useState("M");
+  const productColors = product?.colors || [];
+  const productSizes = product?.sizes || [];
+
+  const [activeColor, setActiveColor] = useState("");
+  const [activeSize, setActiveSize] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    if (productColors && productColors.length > 0) {
+      if (!productColors.some((c: any) => c.name === activeColor)) {
+        setActiveColor(productColors[0].name);
+      }
+    } else {
+      setActiveColor("");
+    }
+    if (productSizes && productSizes.length > 0) {
+      if (!productSizes.includes(activeSize)) {
+        const hasM = productSizes.includes("M");
+        setActiveSize(hasM ? "M" : productSizes[0]);
+      }
+    } else {
+      setActiveSize("");
+    }
+  }, [product, productColors, productSizes]);
 
   // Personalization states
   const [customName, setCustomName] = useState("");
@@ -90,11 +111,15 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
   }, []);
 
   const handleAddToCart = async () => {
-    const personalizationData = isPersonalized ? {
-      name: customName || undefined,
-      customText: customText || undefined,
-      fontStyle,
-      fontColor
+    const personalizationData = (isPersonalized || activeColor || activeSize) ? {
+      ...(activeColor ? { color: activeColor } : {}),
+      ...(activeSize ? { size: activeSize } : {}),
+      ...(isPersonalized ? {
+        name: customName || undefined,
+        customText: customText || undefined,
+        fontStyle,
+        fontColor
+      } : {})
     } : null;
 
     const cartItem = {
@@ -155,10 +180,6 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
           </div>
           <span className="font-bold text-slate-700 dark:text-slate-300">4.9</span>
           <span className="text-slate-400 font-medium">(256 reviews)</span>
-          <span className="text-slate-300">|</span>
-          <span className="text-purple-600 font-bold text-xs bg-purple-50 dark:bg-purple-950/20 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-            <Sparkles className="w-3 h-3" /> Custom Handcrafted
-          </span>
         </div>
       </div>
 
@@ -188,67 +209,70 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
       <div className="w-full h-px bg-slate-100 dark:bg-slate-800" />
 
       {/* Options Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Color Selection */}
-        <div>
-          <Label className="font-bold text-sm text-slate-800 dark:text-slate-200 mb-2.5 block">
-            Color: <span className="text-purple-600 font-normal">{activeColor}</span>
-          </Label>
-          <div className="flex flex-wrap gap-2.5">
-            {COLORS.map((color) => {
-              const isActive = color.name === activeColor;
-              const isWhite = color.hex === "#FFFFFF";
-              return (
-                <button
-                  key={color.name}
-                  title={color.name}
-                  onClick={() => setActiveColor(color.name)}
-                  style={{ backgroundColor: color.hex }}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${
-                    isActive
-                      ? "border-purple-600 ring-2 ring-purple-100 scale-105"
-                      : "border-slate-200 hover:border-purple-300"
-                  }`}
-                >
-                  {isActive && (
-                    <Check
-                      className={`w-4 h-4 ${isWhite ? "text-slate-800" : "text-white"}`}
-                      strokeWidth={3}
-                    />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+      {(productColors.length > 0 || productSizes.length > 0) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Color Selection */}
+          {productColors.length > 0 && (
+            <div>
+              <Label className="font-bold text-sm text-slate-800 dark:text-slate-200 mb-2.5 block">
+                Color: <span className="text-purple-600 font-normal">{activeColor}</span>
+              </Label>
+              <div className="flex flex-wrap gap-2.5">
+                {productColors.map((color: any) => {
+                  const isActive = color.name === activeColor;
+                  const isWhite = color.hex === "#FFFFFF" || color.hex?.toLowerCase() === "#ffffff";
+                  return (
+                    <button
+                      key={color.name}
+                      title={color.name}
+                      onClick={() => setActiveColor(color.name)}
+                      style={{ backgroundColor: color.hex }}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${
+                        isActive
+                          ? "border-purple-600 ring-2 ring-purple-100 scale-105"
+                          : "border-slate-200 hover:border-purple-300"
+                      }`}
+                    >
+                      {isActive && (
+                        <Check
+                          className={`w-4 h-4 ${isWhite ? "text-slate-800" : "text-white"}`}
+                          strokeWidth={3}
+                        />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
-        {/* Size Selection */}
-        <div>
-          <div className="flex justify-between items-center mb-2.5">
-            <Label className="font-bold text-sm text-slate-800 dark:text-slate-200">
-              Size: <span className="text-purple-600 font-normal">{activeSize}</span>
-            </Label>
-            <button className="text-xs text-purple-600 font-bold flex items-center gap-1 hover:underline">
-              <Ruler className="w-3 h-3" /> Size Guide
-            </button>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {SIZES.map((size) => (
-              <button
-                key={size}
-                onClick={() => setActiveSize(size)}
-                className={`min-w-[42px] h-8 px-2 rounded-xl border text-xs font-bold transition-all ${
-                  size === activeSize
-                    ? "border-purple-600 bg-purple-50 dark:bg-purple-950/40 text-purple-600 shadow-sm"
-                    : "border-slate-200 text-slate-600 dark:text-slate-400 hover:border-purple-300 hover:bg-slate-50 dark:hover:bg-slate-800"
-                }`}
-              >
-                {size}
-              </button>
-            ))}
-          </div>
+          {/* Size Selection */}
+          {productSizes.length > 0 && (
+            <div>
+              <div className="flex justify-between items-center mb-2.5">
+                <Label className="font-bold text-sm text-slate-800 dark:text-slate-200">
+                  Size: <span className="text-purple-600 font-normal">{activeSize}</span>
+                </Label>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {productSizes.map((size: string) => (
+                  <button
+                    key={size}
+                    onClick={() => setActiveSize(size)}
+                    className={`min-w-[42px] h-8 px-2 rounded-xl border text-xs font-bold transition-all ${
+                      size === activeSize
+                        ? "border-purple-600 bg-purple-50 dark:bg-purple-950/40 text-purple-600 shadow-sm"
+                        : "border-slate-200 text-slate-650 dark:text-slate-400 hover:border-purple-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-      </div>
+      )}
 
       {/* Personalization Section */}
       {isPersonalized && (

@@ -58,6 +58,9 @@ export interface Product {
   meta_keywords: string | null;
   is_gift: boolean;
   weight: number;
+  colors?: { name: string; hex: string }[] | null;
+  sizes?: string[] | null;
+  specifications?: { label: string; value: string }[] | null;
   created_at: string;
   updated_at: string;
 }
@@ -279,6 +282,7 @@ export interface Banner {
   title: string | null;
   subtitle: string | null;
   image_url: string;
+  image_mobile_url?: string | null;
   link_url: string | null;
   banner_type: 'hero_banner' | 'featured_banner' | 'promo' | string;
   is_active: boolean;

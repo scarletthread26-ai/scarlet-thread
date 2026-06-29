@@ -24,6 +24,7 @@ export default function BannersEditorPage() {
       title: "New Promotional Banner",
       subtitle: "Bespoke handcrafted custom embroidery.",
       image_url: "",
+      image_mobile_url: "",
       link_url: "/products",
       banner_type: "promo",
       is_active: true,
@@ -99,7 +100,7 @@ export default function BannersEditorPage() {
               className="p-6 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-2xl shadow-sm relative group flex flex-col md:flex-row gap-6"
             >
               {/* Left Column: Reordering and Image uploads */}
-              <div className="w-full md:w-64 space-y-4 shrink-0">
+              <div className="w-full md:w-80 space-y-4 shrink-0">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-850 pb-2">
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                     Banner #{idx + 1}
@@ -115,17 +116,31 @@ export default function BannersEditorPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    Banner Asset Image
-                  </label>
-                  <ImageUpload
-                    bucket="cms"
-                    value={banner.image_url ? [banner.image_url] : []}
-                    onChange={(urls) => handleFieldChange(idx, "image_url", urls[0] || "")}
-                    onRemove={() => handleFieldChange(idx, "image_url", "")}
-                    maxFiles={1}
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                      Desktop Banner Image
+                    </label>
+                    <ImageUpload
+                      bucket="cms"
+                      value={banner.image_url ? [banner.image_url] : []}
+                      onChange={(urls) => handleFieldChange(idx, "image_url", urls[0] || "")}
+                      onRemove={() => handleFieldChange(idx, "image_url", "")}
+                      maxFiles={1}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                      Mobile Banner Image
+                    </label>
+                    <ImageUpload
+                      bucket="cms"
+                      value={banner.image_mobile_url ? [banner.image_mobile_url] : []}
+                      onChange={(urls) => handleFieldChange(idx, "image_mobile_url", urls[0] || "")}
+                      onRemove={() => handleFieldChange(idx, "image_mobile_url", "")}
+                      maxFiles={1}
+                    />
+                  </div>
                 </div>
               </div>
 

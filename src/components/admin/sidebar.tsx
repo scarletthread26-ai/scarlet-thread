@@ -46,7 +46,6 @@ export function Sidebar({ isCollapsed, setIsCollapsed, onMobileClose }: SidebarP
       title: "Core",
       items: [
         { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-        { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
       ],
     },
     {
@@ -74,14 +73,6 @@ export function Sidebar({ isCollapsed, setIsCollapsed, onMobileClose }: SidebarP
         { href: "/admin/cms", label: "CMS Pages", icon: FileText },
         { href: "/admin/gallery", label: "Gallery", icon: ImageIcon },
         { href: "/admin/notifications", label: "Notifications", icon: BellRing },
-      ],
-    },
-    {
-      title: "System",
-      items: [
-        { href: "/admin/settings", label: "Settings", icon: Settings },
-        { href: "/admin/admins", label: "Staff Members", icon: Users },
-        { href: "/admin/activity-logs", label: "Audit Logs", icon: FileText },
       ],
     },
   ];
