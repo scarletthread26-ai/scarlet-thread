@@ -127,14 +127,25 @@ export default function CartPage() {
                   {/* Personalization Details */}
                   {item.personalization && (
                     <div className="bg-purple-50/40 dark:bg-purple-950/10 border border-purple-100/60 dark:border-purple-900/30 rounded-xl p-3.5 mt-3 text-xs space-y-1 text-slate-600 dark:text-slate-400">
-                      <span className="font-bold text-purple-950 dark:text-purple-300 block mb-1.5 flex items-center gap-1">
-                        <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-                        Embroidery Details:
-                      </span>
-                      {item.personalization.name && <div>Name: <span className="font-semibold text-slate-800 dark:text-slate-200">{item.personalization.name}</span></div>}
-                      {item.personalization.customText && <div>Text: <span className="font-semibold text-slate-800 dark:text-slate-200">{item.personalization.customText}</span></div>}
-                      {item.personalization.fontStyle && <div>Font: <span className="font-semibold text-slate-800 dark:text-slate-200">{item.personalization.fontStyle}</span></div>}
-                      {item.personalization.fontColor && <div>Thread: <span className="font-semibold text-slate-800 dark:text-slate-200">{item.personalization.fontColor}</span></div>}
+                      {((item.personalization as any).color || (item.personalization as any).size) && (
+                        <div className="pb-1.5 border-b border-purple-100/40 dark:border-purple-900/20 mb-1.5 flex gap-4 text-[10px] font-bold text-purple-900 dark:text-purple-300 uppercase">
+                          {(item.personalization as any).color && <span>Color: <span className="text-slate-700 dark:text-slate-350">{(item.personalization as any).color}</span></span>}
+                          {(item.personalization as any).size && <span>Size: <span className="text-slate-700 dark:text-slate-350">{(item.personalization as any).size}</span></span>}
+                        </div>
+                      )}
+                      
+                      {(item.personalization.name || item.personalization.customText) && (
+                        <>
+                          <span className="font-bold text-purple-950 dark:text-purple-300 block mb-1.5 flex items-center gap-1">
+                            <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+                            Embroidery Details:
+                          </span>
+                          {item.personalization.name && <div>Name: <span className="font-semibold text-slate-800 dark:text-slate-200">{item.personalization.name}</span></div>}
+                          {item.personalization.customText && <div>Text: <span className="font-semibold text-slate-800 dark:text-slate-200">{item.personalization.customText}</span></div>}
+                          {item.personalization.fontStyle && <div>Font: <span className="font-semibold text-slate-800 dark:text-slate-200">{item.personalization.fontStyle}</span></div>}
+                          {item.personalization.fontColor && <div>Thread: <span className="font-semibold text-slate-800 dark:text-slate-200">{item.personalization.fontColor}</span></div>}
+                        </>
+                      )}
                     </div>
                   )}
                 </div>

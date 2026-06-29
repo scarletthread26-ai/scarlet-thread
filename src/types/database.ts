@@ -58,6 +58,9 @@ export interface Product {
   meta_keywords: string | null;
   is_gift: boolean;
   weight: number;
+  colors?: { name: string; hex: string }[] | null;
+  sizes?: string[] | null;
+  specifications?: { label: string; value: string }[] | null;
   created_at: string;
   updated_at: string;
 }
