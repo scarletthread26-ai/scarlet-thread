@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, SlidersHorizontal, ArrowRight, Loader2, ChevronDown, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { useProducts } from "@/hooks/use-products";
 import { useCategories } from "@/hooks/use-categories";
 import { useCartStore } from "@/store/useCartStore";
 import { toast } from "sonner";
+import { ProductCard } from "@/components/product/ProductCard";
 
 const sortOptions = [
   { label: "Featured", value: "featured" },
@@ -19,36 +21,28 @@ const sortOptions = [
 ];
 
 export function ProductCatalog() {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("All");
   const [sortBy, setSortBy] = useState("featured");
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
 
-  const { addItem } = useCartStore();
-
-  const handleAddToCart = async (product: any, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const cartItem = {
-      productId: product.id,
-      name: product.name,
-      price: product.price,
-      quantity: 1,
-      image: product.images?.[0]?.url || "/images/scarlet-lovedgift1.png",
-      personalization: null
-    };
-
-    try {
-      await addItem(cartItem, false);
-      toast.success(`${product.name} added to cart!`);
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to add product to cart");
-    }
-  };
-
   const { data: products = [], isLoading: productsLoading } = useProducts();
   const { data: categories = [], isLoading: categoriesLoading } = useCategories();
+
+  useEffect(() => {
+    if (categoryParam && categories.length > 0) {
+      const matchedCat = categories.find(
+        (c) =>
+          c.slug?.toLowerCase() === categoryParam.toLowerCase() ||
+          c.name?.toLowerCase() === categoryParam.toLowerCase()
+      );
+      if (matchedCat) {
+        setSelectedCategoryId(matchedCat.id);
+      }
+    }
+  }, [categoryParam, categories]);
 
   // Filter active products
   const activeProducts = useMemo(() => {
@@ -245,81 +239,31 @@ export function ProductCatalog() {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
               {filteredProducts.map((product, idx) => {
-                const imageUrl = product.images?.[0]?.url || "/images/scarlet-lovedgift1.png";
-                 return (
+                const formattedProduct = {
+                  id: product.id,
+                  name: product.name,
+                  price: product.price,
+                  compare_at_price: product.compare_at_price,
+                  image: product.images?.[0]?.url || "/images/scarlet-lovedgift1.png",
+                  imagePlaceholder: product.name ? product.name.split(" ")[0] : "Custom",
+                  rating: 4.9,
+                  reviews: 100,
+                  category: product.categories?.name || "Custom apparel",
+                  slug: product.slug,
+                  bestSeller: product.best_seller
+                };
+
+                return (
                   <motion.div
                     key={product.id}
                     layout
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: idx * 0.02 }}
-                    className="group bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 shadow-sm hover:shadow-md transition overflow-hidden flex flex-col cursor-pointer"
                   >
-                    <Link href={`/product/${product.slug || product.id}`} className="flex flex-col flex-1">
-                      {/* Image Area */}
-                      <div className="relative aspect-square bg-slate-50 dark:bg-slate-950 overflow-hidden">
-                        <motion.div
-                          whileHover={{ scale: 1.05 }}
-                          transition={{ duration: 0.3 }}
-                          className="relative w-full h-full"
-                        >
-                          <Image
-                            src={imageUrl}
-                            alt={product.name}
-                            fill
-                            unoptimized
-                            className="object-cover"
-                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                          />
-                        </motion.div>
-                        <div className="absolute top-2 left-2 flex flex-col gap-1">
-                          {product.best_seller && (
-                            <div className="bg-amber-100/90 dark:bg-amber-900/90 backdrop-blur-sm px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800 shadow-sm w-max">
-                              <span className="text-[9px] font-bold text-amber-700 dark:text-amber-300">Best Seller</span>
-                            </div>
-                          )}
-                          {product.new_arrival && (
-                            <div className="bg-emerald-100/90 dark:bg-emerald-900/90 backdrop-blur-sm px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800 shadow-sm w-max">
-                              <span className="text-[9px] font-bold text-emerald-700 dark:text-emerald-300">New</span>
-                            </div>
-                          )}
-                          {product.trending && (
-                            <div className="bg-rose-100/90 dark:bg-rose-900/90 backdrop-blur-sm px-2 py-0.5 rounded-full border border-rose-200 dark:border-rose-800 shadow-sm w-max">
-                              <span className="text-[9px] font-bold text-rose-700 dark:text-rose-300">Trending</span>
-                            </div>
-                          )}
-                          {product.featured && (
-                            <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm px-2 py-0.5 rounded-full border border-slate-100 dark:border-slate-800 shadow-sm w-max">
-                              <span className="text-[9px] font-bold text-purple-600">Featured</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Content Info */}
-                      <div className="p-3.5 flex flex-col flex-1">
-                        <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                          {product.sku || "Custom apparel"}
-                        </span>
-                        <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100 line-clamp-1 group-hover:text-purple-600 transition-colors mb-1.5">
-                          {product.name}
-                        </h3>
-                      </div>
-                    </Link>
-
-                    {/* Price and Cart Action */}
-                    <div className="p-3.5 pt-0 mt-auto flex items-center justify-between">
-                      <span className="font-extrabold text-sm sm:text-base text-purple-600">
-                        AED {product.price}
-                      </span>
-                      <Button
-                        size="sm"
-                        onClick={(e) => handleAddToCart(product, e)}
-                        className="rounded-lg text-[10px] sm:text-xs h-7 sm:h-8 px-2 sm:px-3 bg-purple-600 hover:bg-purple-700 text-white font-bold"
-                      >
-                        Add to Cart
-                      </Button>
-                    </div>
+                    <ProductCard 
+                      product={formattedProduct} 
+                    />
                   </motion.div>
                 );
               })}

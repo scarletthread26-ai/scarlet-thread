@@ -91,7 +91,6 @@ export const useCartStore = create<CartState>()(
           }
 
           set({ items: newItems });
-          toast.success("Added to cart");
           await dbSync(newItems, isAuthenticated);
         },
 

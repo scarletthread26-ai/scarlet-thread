@@ -279,6 +279,7 @@ export interface Banner {
   title: string | null;
   subtitle: string | null;
   image_url: string;
+  image_mobile_url?: string | null;
   link_url: string | null;
   banner_type: 'hero_banner' | 'featured_banner' | 'promo' | string;
   is_active: boolean;

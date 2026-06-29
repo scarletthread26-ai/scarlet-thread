@@ -93,17 +93,7 @@ export function Header() {
     { name: 'Kids & Babies', path: '/kids-babies', icon: Baby },
     { name: 'Gallery', path: '/gallery', icon: Image },
   ]
-
-  const bottomNavLinksLeft = [
-    { name: 'Home', path: '/', icon: Home },
-    { name: 'Gifts', path: '/gifts-for-her', icon: Gift },
-  ]
   
-  const bottomNavLinksRight = [
-    { name: 'Wishlist', path: '/wishlist', icon: Heart },
-    { name: 'Account', path: '/account', icon: User },
-  ]
-
   const getFirstName = () => {
     if (!user) return "";
     const fullName = user.user_metadata?.full_name;
@@ -352,66 +342,73 @@ export function Header() {
             transition={{ duration: 0.25, ease: "easeInOut" }}
             className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-border shadow-[0_-2px_10px_rgba(0,0,0,0.08)]"
           >
-            <div className="flex items-center justify-between h-16 px-4 relative w-full max-w-md mx-auto">
+            <div className="flex items-center justify-around h-16 relative w-full max-w-md mx-auto px-1">
               
-              {/* Left Links */}
-              <div className="flex items-center gap-8">
-                {bottomNavLinksLeft.map((link) => {
-                  const Icon = link.icon
-                  const active = isActive(link.path)
-                  return (
-                    <Link
-                      key={link.path}
-                      href={link.path}
-                      onClick={() => setMenuOpen(false)}
-                      className={`flex flex-col items-center justify-center gap-1 transition-colors relative ${
-                        active ? 'text-primary' : 'text-muted-foreground'
-                      }`}
-                    >
-                      <Icon className="h-5 w-5" />
-                      <span className="text-[10px] font-medium leading-none">{link.name}</span>
-                    </Link>
-                  )
-                })}
+              {/* Home */}
+              <Link
+                href="/"
+                onClick={() => setMenuOpen(false)}
+                className={`flex flex-col items-center justify-center gap-1 transition-colors relative w-14 ${
+                  isActive('/') ? 'text-primary' : 'text-muted-foreground'
+                }`}
+              >
+                <Home className="h-5 w-5" />
+                <span className="text-[10px] font-medium leading-none">Home</span>
+              </Link>
+
+              {/* Him */}
+              <Link
+                href="/gifts-for-him"
+                onClick={() => setMenuOpen(false)}
+                className={`flex flex-col items-center justify-center gap-1 transition-colors relative w-14 ${
+                  isActive('/gifts-for-him') ? 'text-primary' : 'text-muted-foreground'
+                }`}
+              >
+                <Gift className="h-5 w-5" />
+                <span className="text-[10px] font-medium leading-none">Him</span>
+              </Link>
+
+              {/* Central Cart Button */}
+              <div className="relative flex flex-col items-center justify-center w-14">
+                <div className="absolute -top-10">
+                  <Link 
+                    href="/cart" 
+                    onClick={() => setMenuOpen(false)}
+                    className="flex flex-col items-center justify-center w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-xl border-[3px] border-white hover:scale-105 transition-transform"
+                  >
+                    <ShoppingBag className="w-6 h-6" />
+                    {cartCount > 0 && (
+                      <span className="absolute -top-1 -right-1 h-[18px] w-[18px] rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
+                        {cartCount}
+                      </span>
+                    )}
+                  </Link>
+                </div>
               </div>
 
-              {/* Central Floating Cart Button */}
-              <div className="absolute left-1/2 -top-6 -translate-x-1/2">
-                <Link 
-                  href="/cart" 
-                  onClick={() => setMenuOpen(false)}
-                  className="flex flex-col items-center justify-center w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-xl border-[3px] border-white hover:scale-105 transition-transform relative z-50"
-                >
-                  <ShoppingBag className="w-6 h-6" />
-                  {cartCount > 0 && (
-                    <span className="absolute -top-1 -right-1 h-[18px] w-[18px] rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
-                      {cartCount}
-                    </span>
-                  )}
-                </Link>
-              </div>
+              {/* Her */}
+              <Link
+                href="/gifts-for-her"
+                onClick={() => setMenuOpen(false)}
+                className={`flex flex-col items-center justify-center gap-1 transition-colors relative w-14 ${
+                  isActive('/gifts-for-her') ? 'text-primary' : 'text-muted-foreground'
+                }`}
+              >
+                <Heart className="h-5 w-5" />
+                <span className="text-[10px] font-medium leading-none">Her</span>
+              </Link>
 
-              {/* Right Links */}
-              <div className="flex items-center gap-8">
-                {bottomNavLinksRight.map((link) => {
-                  const Icon = link.icon
-                  const active = isActive(link.path)
-                  return (
-                    <Link
-                      key={link.path}
-                      href={link.path}
-                      onClick={() => setMenuOpen(false)}
-                      className={`flex flex-col items-center justify-center gap-1 transition-colors relative ${
-                        active ? 'text-primary' : 'text-muted-foreground'
-                      }`}
-                    >
-                      <Icon className="h-5 w-5" />
-                      <span className="text-[10px] font-medium leading-none">{link.name}</span>
-                    </Link>
-                  )
-                })}
-              </div>
-
+              {/* Kids */}
+              <Link
+                href="/kids-babies"
+                onClick={() => setMenuOpen(false)}
+                className={`flex flex-col items-center justify-center gap-1 transition-colors relative w-14 ${
+                  isActive('/kids-babies') ? 'text-primary' : 'text-muted-foreground'
+                }`}
+              >
+                <Baby className="h-5 w-5" />
+                <span className="text-[10px] font-medium leading-none">Kids</span>
+              </Link>
             </div>
           </motion.nav>
         )}

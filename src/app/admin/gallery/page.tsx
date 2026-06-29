@@ -8,6 +8,7 @@ import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { integerInputHandlers } from "@/lib/numeric-input";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
@@ -224,8 +225,10 @@ export default function GalleryPage() {
                 Display order
               </label>
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 {...register("display_order", { valueAsNumber: true })}
+                {...integerInputHandlers}
                 className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-250 text-sm shadow-sm"
               />
             </div>

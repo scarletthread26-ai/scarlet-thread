@@ -15,7 +15,7 @@ export async function GET(
       .from("products")
       .select(`
         *,
-        categories(*),
+        categories:categories!products_category_id_fkey(*),
         product_images(*),
         personalization_templates(*)
       `);
@@ -48,6 +48,86 @@ export async function PATCH(
     const supabase = await createClient();
     body = await request.json();
     const { images, allowed_fields, allowed_fonts, ...productData } = body;
+
+    // Normalize empty UUID strings to null
+    if (productData.sub_category_id === "") {
+      productData.sub_category_id = null;
+    }
+
+    // 1. Validate SKU uniqueness if provided in the update
+    if ("sku" in productData) {
+      if (productData.sku && productData.sku.trim() !== "") {
+        const { data: existingSkuProduct, error: skuCheckError } = await supabase
+          .from("products")
+          .select("id")
+          .eq("sku", productData.sku.trim())
+          .neq("id", id)
+          .maybeSingle();
+
+        if (skuCheckError && skuCheckError.code !== "PGRST116") {
+          throw skuCheckError;
+        }
+
+        if (existingSkuProduct) {
+          return NextResponse.json(
+            { error: `The SKU "${productData.sku}" is already assigned to another product.` },
+            { status: 400 }
+          );
+        }
+        productData.sku = productData.sku.trim();
+      } else {
+        return NextResponse.json(
+          { error: "SKU Code is required and cannot be empty." },
+          { status: 400 }
+        );
+      }
+    }
+
+    // 2. Resolve slug collisions if slug is updated
+    if (productData.slug && productData.slug.trim() !== "") {
+      const slugify = (text: string): string => {
+        return text
+          .toString()
+          .toLowerCase()
+          .trim()
+          .replace(/\s+/g, "-")          // Replace spaces with -
+          .replace(/[^\w\-]+/g, "")       // Remove all non-word chars
+          .replace(/\-\-+/g, "-")         // Replace multiple - with single -
+          .replace(/^-+/, "")             // Trim - from start
+          .replace(/-+$/, "");            // Trim - from end
+      };
+
+      let baseSlug = slugify(productData.slug);
+      if (!baseSlug || baseSlug.trim() === "") {
+        baseSlug = "product";
+      }
+
+      let uniqueSlug = baseSlug;
+      let counter = 1;
+      let slugExists = true;
+
+      while (slugExists) {
+        const { data: existingProduct, error: slugCheckError } = await supabase
+          .from("products")
+          .select("id")
+          .eq("slug", uniqueSlug)
+          .neq("id", id)
+          .maybeSingle();
+
+        if (slugCheckError && slugCheckError.code !== "PGRST116") {
+          throw slugCheckError;
+        }
+
+        if (existingProduct) {
+          uniqueSlug = `${baseSlug}-${counter}`;
+          counter++;
+        } else {
+          slugExists = false;
+        }
+      }
+
+      productData.slug = uniqueSlug;
+    }
 
     // 1. Update product base data
     const { data: product, error: prodError } = await supabase

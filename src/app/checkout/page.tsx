@@ -128,6 +128,15 @@ export default function CheckoutPage() {
     setPostalCode(addr.postal_code ?? "");
   };
 
+  const clearAddressFields = () => {
+    setFullName("");
+    setAddressLine1("");
+    setAddressLine2("");
+    setCity("");
+    setState("");
+    setPostalCode("");
+  };
+
   const handleShippingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !phone || !fullName || !addressLine1 || !city || !state || !postalCode) {
@@ -282,8 +291,13 @@ export default function CheckoutPage() {
                             key={addr.id}
                             type="button"
                             onClick={() => {
-                              applyAddress(addr);
-                              setSelectedAddressId(addr.id);
+                              if (selectedAddressId === addr.id) {
+                                setSelectedAddressId(null);
+                                clearAddressFields();
+                              } else {
+                                applyAddress(addr);
+                                setSelectedAddressId(addr.id);
+                              }
                             }}
                             className={`text-left p-3 border rounded-xl transition w-full ${
                               selectedAddressId === addr.id

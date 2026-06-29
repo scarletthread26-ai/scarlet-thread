@@ -1,12 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Heart, Star } from "lucide-react"
-import Link from "next/link"
-import Image from "next/image"
 import { motion } from "framer-motion"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 import { useProducts } from "@/hooks/use-products"
 
 const products = [
@@ -18,7 +15,8 @@ const products = [
     rating: 4.9,
     reviews: 120,
     imagePlaceholder: "Mama",
-    image: "/images/scarlet-lovedgift1.png"
+    image: "/images/scarlet-lovedgift1.png",
+    compare_at_price: 1999,
   },
   {
     id: 2,
@@ -28,7 +26,8 @@ const products = [
     rating: 4.8,
     reviews: 86,
     imagePlaceholder: "Aryan",
-    image: "/images/scarlet-lovedgift2.png"
+    image: "/images/scarlet-lovedgift2.png",
+    compare_at_price: 1199,
   },
   {
     id: 3,
@@ -38,7 +37,8 @@ const products = [
     rating: 4.9,
     reviews: 44,
     imagePlaceholder: "Bride",
-    image: "/images/scarlet-lovedgift3.png"
+    image: "/images/scarlet-lovedgift3.png",
+    compare_at_price: 999,
   },
   {
     id: 4,
@@ -48,8 +48,9 @@ const products = [
     rating: 4.7,
     reviews: 32,
     imagePlaceholder: "Best Teacher",
-    image: "/images/scarlet-lovedgift4.png"
-  }
+    image: "/images/scarlet-lovedgift4.png",
+    compare_at_price: 599,
+  },
 ]
 
 const containerVariants = {
@@ -69,55 +70,8 @@ const itemVariants = {
   },
 }
 
-function ProductCard({ product }: { product: any }) {
-  const href = `/product/${product.slug || product.id}`;
-  return (
-    <Card className="overflow-hidden border-border/50 shadow-sm hover:shadow-md transition-all group cursor-pointer">
-      <Link href={href} className="block w-full h-full">
-        <div className="relative aspect-square bg-secondary/30 overflow-hidden">
-          <button 
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}
-            className="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur rounded-full text-muted-foreground hover:text-red-500 transition-colors z-20 opacity-0 group-hover:opacity-100"
-          >
-            <Heart className="w-4 h-4" />
-          </button>
-          {product.image ? (
-            <Image
-              src={product.image}
-              alt={product.name}
-              fill
-              unoptimized
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center p-6">
-              <div className="w-full h-full bg-white rounded-2xl shadow-sm flex items-center justify-center border border-border/30">
-                <span className="font-heading italic text-xl text-primary font-medium">{product.imagePlaceholder}</span>
-              </div>
-            </div>
-          )}
-        </div>
-        <CardContent className="p-4 pt-5">
-          <div className="text-xs text-muted-foreground mb-1 font-medium tracking-wide uppercase">{product.category}</div>
-          <h3 className="font-bold text-base mb-2 line-clamp-1 group-hover:text-primary transition-colors">
-            {product.name}
-          </h3>
-          <div className="flex items-center justify-between">
-            <div className="font-bold text-lg">AED {product.price}</div>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              <span>{product.rating}</span>
-              <span className="text-xs">({product.reviews})</span>
-            </div>
-          </div>
-        </CardContent>
-      </Link>
-    </Card>
-  )
-}
+
+import { ProductCard } from "@/components/product/ProductCard"
 
 export function ProductGrid() {
   const { data: dbProducts = [] } = useProducts()
@@ -130,9 +84,10 @@ export function ProductGrid() {
         name: p.name,
         category: p.categories?.name || "Apparel",
         price: p.price,
+        compare_at_price: p.compare_at_price,
         rating: 4.9,
         reviews: 100,
-        imagePlaceholder: p.sku || "Custom",
+        imagePlaceholder: p.name ? p.name.split(" ")[0] : "Custom",
         image: p.images?.[0]?.url || "/images/scarlet-lovedgift1.png",
         slug: p.slug
       }))

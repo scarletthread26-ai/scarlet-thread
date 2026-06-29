@@ -1,12 +1,9 @@
 "use client"
 
-import React, { useRef } from "react"
-import Image from "next/image"
-import { Card, CardContent } from "@/components/ui/card"
-import { buttonVariants } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { Heart, Star, ChevronLeft, ChevronRight } from "lucide-react"
-import Link from "next/link"
+import * as React from "react"
+import { useRef } from "react"
+import { ChevronLeft, ChevronRight, Heart } from "lucide-react"
+import { ProductCard } from "@/components/product/ProductCard"
 
 const products = [
   {
@@ -17,6 +14,7 @@ const products = [
     reviews: 125,
     badge: "Bestseller",
     image: "/images/forhimpage/scarlet-dadhero.png",
+    compare_at_price: 199,
   },
   {
     id: 102,
@@ -26,6 +24,7 @@ const products = [
     reviews: 95,
     badge: null,
     image: "/images/forhimpage/scarlet-papahoodie.png",
+    compare_at_price: 199,
   },
   {
     id: 103,
@@ -35,6 +34,7 @@ const products = [
     reviews: 74,
     badge: "New",
     image: "/images/forhimpage/scarlet-Cap.png",
+    compare_at_price: 99,
   },
   {
     id: 104,
@@ -44,6 +44,7 @@ const products = [
     reviews: 62,
     badge: null,
     image: "/images/forhimpage/scarlet-pouch.png",
+    compare_at_price: 129,
   },
   {
     id: 105,
@@ -53,6 +54,7 @@ const products = [
     reviews: 81,
     badge: "Sale",
     image: "/images/forhimpage/scarlet-mug.png",
+    compare_at_price: 79,
   },
   {
     id: 106,
@@ -62,6 +64,7 @@ const products = [
     reviews: 112,
     badge: null,
     image: "/images/forhimpage/scarlet-hoodie.png",
+    compare_at_price: 129,
   },
 ]
 
@@ -112,63 +115,33 @@ export function RelatedProductsCarousel() {
             ref={scrollRef}
             className="flex overflow-x-auto gap-6 pb-8 pt-4 px-2 snap-x hide-scrollbar scroll-smooth"
           >
-            {products.map((product) => (
+          {products.map((product) => {
+            const formattedProduct = {
+              id: product.id,
+              name: product.name,
+              price: product.price,
+              compare_at_price: product.compare_at_price,
+              image: product.image,
+              imagePlaceholder: "Product",
+              rating: product.rating,
+              reviews: product.reviews,
+              category: "You May Also Like",
+              slug: (product as any).slug,
+              bestSeller: product.badge === "Best Seller"
+            };
+
+            return (
               <div
                 key={product.id}
                 className="w-[85%] sm:w-[calc(50%-12px)] md:w-[calc(33.33%-16px)] lg:w-[calc(25%-18px)] shrink-0 snap-start flex flex-col rounded-2xl"
               >
-                <Card className="w-full h-full overflow-hidden border-border/50 shadow-sm hover:shadow-md transition-all group flex flex-col rounded-2xl bg-white">
-                  <div className="relative aspect-square bg-[#FAFAFA] overflow-hidden">
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-
-                    {product.badge && (
-                      <div className="absolute top-3 left-3 bg-white px-2 py-1 rounded border border-border shadow-sm text-[10px] font-bold uppercase tracking-wider text-primary z-10">
-                        {product.badge}
-                      </div>
-                    )}
-
-                    <button className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/80 backdrop-blur flex items-center justify-center text-primary shadow-sm hover:bg-primary hover:text-white transition-colors border border-primary/10 z-10">
-                      <Heart className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  <CardContent className="p-4 pt-5 flex-1 flex flex-col">
-                    <h3 className="font-bold text-base mb-2 line-clamp-1 group-hover:text-primary transition-colors">
-                      {product.name}
-                    </h3>
-
-                    <div className="font-bold text-sm mb-3 text-primary">
-                      AED {product.price}
-                    </div>
-
-                    <div className="flex items-center gap-1 text-[11px] text-muted-foreground mb-4">
-                      <div className="flex text-yellow-400">
-                        {[...Array(5)].map((_, index) => (
-                          <Star key={index} className="w-3 h-3 fill-current" />
-                        ))}
-                      </div>
-                      <span>{product.rating}</span>
-                      <span className="ml-1">({product.reviews})</span>
-                    </div>
-
-                    <Link
-                      href={`/product/${(product as { slug?: string; id: number | string }).slug || product.id}`}
-                      className={cn(
-                        buttonVariants({ variant: "outline", size: "default" }),
-                        "w-full mt-auto rounded-lg bg-[#8059BB] text-white border-primary hover:bg-[#4B0082] hover:text-white font-medium h-10"
-                      )}
-                    >
-                      Add to Cart
-                    </Link>
-                  </CardContent>
-                </Card>
+                <ProductCard 
+                  product={formattedProduct} 
+                  buttonClassName="bg-[#8059BB] hover:bg-[#4B0082] text-white" 
+                />
               </div>
-            ))}
+            );
+          })}
           </div>
         </div>
       </div>

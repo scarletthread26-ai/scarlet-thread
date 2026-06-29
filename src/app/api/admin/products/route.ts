@@ -81,7 +81,7 @@ export async function GET() {
       .from("products")
       .select(`
         *,
-        categories(name),
+        categories:categories!products_category_id_fkey(name),
         product_images(url, is_primary)
       `)
       .order("created_at", { ascending: false });
@@ -107,6 +107,79 @@ export async function POST(request: Request) {
     const supabase = await createClient();
     body = await request.json();
     const { images, allowed_fields, allowed_fonts, ...productData } = body;
+
+    // Normalize empty UUID strings to null
+    if (productData.sub_category_id === "") {
+      productData.sub_category_id = null;
+    }
+
+    // 1. Validate SKU uniqueness if provided, or default to sequence
+    if (productData.sku && productData.sku.trim() !== "") {
+      const { data: existingSkuProduct, error: skuCheckError } = await supabase
+        .from("products")
+        .select("id")
+        .eq("sku", productData.sku.trim())
+        .maybeSingle();
+
+      if (skuCheckError && skuCheckError.code !== "PGRST116") {
+        throw skuCheckError;
+      }
+
+      if (existingSkuProduct) {
+        return NextResponse.json(
+          { error: `The SKU "${productData.sku}" is already assigned to another product.` },
+          { status: 400 }
+        );
+      }
+      productData.sku = productData.sku.trim();
+    } else {
+      // If SKU is empty/null, remove it so that PostgreSQL uses the default sequence
+      delete productData.sku;
+    }
+
+    // 2. Resolve slug collisions
+    const slugify = (text: string): string => {
+      return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, "-")          // Replace spaces with -
+        .replace(/[^\w\-]+/g, "")       // Remove all non-word chars
+        .replace(/\-\-+/g, "-")         // Replace multiple - with single -
+        .replace(/^-+/, "")             // Trim - from start
+        .replace(/-+$/, "");            // Trim - from end
+    };
+
+    let baseSlug = productData.slug || slugify(productData.name || "product");
+    if (!baseSlug || baseSlug.trim() === "") {
+      baseSlug = "product";
+    }
+    baseSlug = slugify(baseSlug);
+
+    let uniqueSlug = baseSlug;
+    let counter = 1;
+    let slugExists = true;
+
+    while (slugExists) {
+      const { data: existingProduct, error: slugCheckError } = await supabase
+        .from("products")
+        .select("id")
+        .eq("slug", uniqueSlug)
+        .maybeSingle();
+
+      if (slugCheckError && slugCheckError.code !== "PGRST116") {
+        throw slugCheckError;
+      }
+
+      if (existingProduct) {
+        uniqueSlug = `${baseSlug}-${counter}`;
+        counter++;
+      } else {
+        slugExists = false;
+      }
+    }
+
+    productData.slug = uniqueSlug;
 
     // 1. Insert product details (only product columns)
     const { data: product, error: prodError } = await supabase

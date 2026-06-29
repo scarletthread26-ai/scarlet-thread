@@ -7,10 +7,11 @@ import * as z from "zod";
 import { useCategories } from "@/hooks/use-categories";
 import { useSubcategories } from "@/hooks/use-subcategories";
 import { ImageUpload } from "@/components/admin/image-upload";
-import { Loader2, ArrowLeft, Save, Sparkles } from "lucide-react";
+import { Loader2, ArrowLeft, Save, Sparkles, Lock, Unlock } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { decimalInputHandlers, integerInputHandlers } from "@/lib/numeric-input";
 
 const productSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -34,7 +35,13 @@ const productSchema = z.object({
     z.number().min(0).optional().nullable()
   ),
   category_id: z.string().min(1, "Please select a category"),
-  sub_category_id: z.string().optional().nullable(),
+  sub_category_id: z.preprocess(
+    (val) => {
+      if (val === "" || val === null || val === undefined) return null;
+      return val;
+    },
+    z.string().optional().nullable()
+  ),
   stock_quantity: z.preprocess(
     (val) => {
       if (val === "" || val === null || val === undefined) return 0;
@@ -88,6 +95,9 @@ const productSchema = z.object({
   images: z.array(z.string()).default([]),
   allowed_fields: z.array(z.string()).default([]),
   allowed_fonts: z.array(z.string()).default([]),
+  colors: z.array(z.object({ name: z.string(), hex: z.string() })).default([]),
+  sizes: z.array(z.string()).default([]),
+  specifications: z.array(z.object({ label: z.string(), value: z.string() })).default([]),
 });
 
 export type ProductFormValues = z.infer<typeof productSchema>;
@@ -115,6 +125,8 @@ const FIELDS_LIST = [
   { id: "placement_notes", label: "Special Placement Notes" },
 ];
 
+const ALL_SIZES = ["XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL", "5XL", "One Size"];
+
 export function ProductForm({
   initialValues,
   onSubmit,
@@ -123,7 +135,22 @@ export function ProductForm({
 }: ProductFormProps) {
   const { data: categories = [] } = useCategories();
   const { data: subcategories = [] } = useSubcategories();
-  const [activeTab, setActiveTab] = useState<"basic" | "media" | "custom" | "seo">("basic");
+  const [activeTab, setActiveTab] = useState<"basic" | "media" | "custom" | "options" | "seo">("basic");
+  const [isSkuEditable, setIsSkuEditable] = useState(false);
+  const [isGeneratingSku, setIsGeneratingSku] = useState(false);
+
+  // Dynamic Options States
+  const [colors, setColors] = useState<{ name: string; hex: string }[]>([]);
+  const [sizes, setSizes] = useState<string[]>([]);
+  const [specs, setSpecs] = useState<{ label: string; value: string }[]>([]);
+
+  // Color inputs
+  const [newColorName, setNewColorName] = useState("");
+  const [newColorHex, setNewColorHex] = useState("#8b5cf6");
+
+  // Spec inputs
+  const [newSpecLabel, setNewSpecLabel] = useState("");
+  const [newSpecValue, setNewSpecValue] = useState("");
 
   const {
     register,
@@ -160,8 +187,47 @@ export function ProductForm({
       images: [],
       allowed_fields: [],
       allowed_fonts: [],
+      colors: [],
+      sizes: [],
+      specifications: [],
     },
   });
+
+  // Sync state values to react-hook-form
+  useEffect(() => {
+    setValue("colors", colors);
+  }, [colors, setValue]);
+
+  useEffect(() => {
+    setValue("sizes", sizes);
+  }, [sizes, setValue]);
+
+  useEffect(() => {
+    setValue("specifications", specs);
+  }, [specs, setValue]);
+
+  // Load next available SKU for new products
+  useEffect(() => {
+    if (!initialValues) {
+      const fetchNextSku = async () => {
+        setIsGeneratingSku(true);
+        try {
+          const res = await fetch("/api/admin/products/next-sku");
+          if (res.ok) {
+            const data = await res.json();
+            setValue("sku", data.sku);
+          } else {
+            console.error("Failed to fetch next SKU");
+          }
+        } catch (err) {
+          console.error("Error fetching next SKU:", err);
+        } finally {
+          setIsGeneratingSku(false);
+        }
+      };
+      fetchNextSku();
+    }
+  }, [initialValues, setValue]);
 
   const isPersonalized = watch("is_personalized");
   const images = watch("images");
@@ -195,6 +261,7 @@ export function ProductForm({
   const hasBasicErrors = !!(errors.name || errors.slug || errors.category_id || errors.sub_category_id || errors.description);
   const hasMediaErrors = !!(errors.price || errors.compare_at_price || errors.weight || errors.images);
   const hasCustomErrors = !!(errors.is_personalized || errors.personalization_price || errors.production_time || errors.whatsapp_instructions || errors.allowed_fields || errors.allowed_fonts);
+  const hasOptionsErrors = !!(errors.colors || errors.sizes || errors.specifications);
   const hasSeoErrors = !!(errors.stock_quantity || errors.low_stock_threshold || errors.is_active || errors.featured || errors.best_seller || errors.trending || errors.new_arrival || errors.meta_title || errors.meta_description);
 
   // Load initial values if updating
@@ -237,6 +304,23 @@ export function ProductForm({
       }
       if (template.allowed_fonts) {
         setValue("allowed_fonts", template.allowed_fonts);
+      }
+
+      // Load custom colors, sizes, specifications if they exist
+      if (initialValues.colors && Array.isArray(initialValues.colors)) {
+        setColors(initialValues.colors);
+      } else {
+        setColors([]);
+      }
+      if (initialValues.sizes && Array.isArray(initialValues.sizes)) {
+        setSizes(initialValues.sizes);
+      } else {
+        setSizes([]);
+      }
+      if (initialValues.specifications && Array.isArray(initialValues.specifications)) {
+        setSpecs(initialValues.specifications);
+      } else {
+        setSpecs([]);
       }
     }
   }, [initialValues, setValue]);
@@ -318,11 +402,12 @@ export function ProductForm({
 
       {/* Navigation tabs */}
       <div className="flex border-b border-slate-200 dark:border-slate-800">
-        {(["basic", "media", "custom", "seo"] as const).map((tab) => {
+        {(["basic", "media", "custom", "options", "seo"] as const).map((tab) => {
           const labels = {
             basic: "Basic Details",
             media: "Media & Pricing",
             custom: "Embroidery/Customization",
+            options: "Options & Specs",
             seo: "SEO & Status",
           };
           const isActive = activeTab === tab;
@@ -330,6 +415,7 @@ export function ProductForm({
             (tab === "basic" && hasBasicErrors) ||
             (tab === "media" && hasMediaErrors) ||
             (tab === "custom" && hasCustomErrors) ||
+            (tab === "options" && hasOptionsErrors) ||
             (tab === "seo" && hasSeoErrors);
 
           return (
@@ -404,14 +490,45 @@ export function ProductForm({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    SKU Code
-                  </label>
-                  <input
-                    {...register("sku")}
-                    placeholder="e.g., TW-HD-001"
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
-                  />
+                  <div className="flex justify-between items-center">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      SKU Code
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setIsSkuEditable(!isSkuEditable)}
+                      className="text-[10px] font-semibold text-purple-650 dark:text-purple-400 hover:underline flex items-center gap-1 focus:outline-none cursor-pointer"
+                    >
+                      {isSkuEditable ? (
+                        <>
+                          <Unlock className="w-3 h-3" />
+                          Lock SKU
+                        </>
+                      ) : (
+                        <>
+                          <Lock className="w-3 h-3" />
+                          Edit SKU
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <input
+                      {...register("sku")}
+                      placeholder={isGeneratingSku ? "Generating SKU..." : "e.g., SKU-000001"}
+                      readOnly={!isSkuEditable}
+                      className={`w-full border rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm ${
+                        isSkuEditable
+                          ? "bg-slate-50 dark:bg-slate-955 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 border-slate-300 dark:border-slate-800"
+                          : "bg-slate-100/60 dark:bg-slate-900/60 border-slate-200 dark:border-slate-850 text-slate-500 dark:text-slate-400 cursor-not-allowed"
+                      }`}
+                    />
+                    {isGeneratingSku && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                        <Loader2 className="w-4 h-4 text-purple-600 animate-spin" />
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="space-y-1">
@@ -498,9 +615,10 @@ export function ProductForm({
                       Standard Unit Price
                     </label>
                     <input
-                      type="number"
-                      step="0.01"
-                      {...register("price", { valueAsNumber: true })}
+                      type="text"
+                      inputMode="decimal"
+                      {...register("price")}
+                      {...decimalInputHandlers}
                       placeholder="e.g., 99.00"
                       className={`w-full bg-slate-50 dark:bg-slate-950 border rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm ${
                         errors.price
@@ -518,9 +636,10 @@ export function ProductForm({
                       Compare at Price (MSRP)
                     </label>
                     <input
-                      type="number"
-                      step="0.01"
-                      {...register("compare_at_price", { valueAsNumber: true })}
+                      type="text"
+                      inputMode="decimal"
+                      {...register("compare_at_price")}
+                      {...decimalInputHandlers}
                       placeholder="e.g., 149.00"
                       className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
                     />
@@ -531,9 +650,10 @@ export function ProductForm({
                       Estimated Weight (kg)
                     </label>
                     <input
-                      type="number"
-                      step="0.01"
-                      {...register("weight", { valueAsNumber: true })}
+                      type="text"
+                      inputMode="decimal"
+                      {...register("weight")}
+                      {...decimalInputHandlers}
                       placeholder="e.g., 0.5"
                       className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
                     />
@@ -594,9 +714,10 @@ export function ProductForm({
                         Embroidery Surcharge Price (AED)
                       </label>
                       <input
-                        type="number"
-                        step="0.01"
-                        {...register("personalization_price", { valueAsNumber: true })}
+                        type="text"
+                        inputMode="decimal"
+                        {...register("personalization_price")}
+                        {...decimalInputHandlers}
                         placeholder="e.g., 25.00"
                         className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
                       />
@@ -607,8 +728,10 @@ export function ProductForm({
                         Production Time Delay (Days)
                       </label>
                       <input
-                        type="number"
-                        {...register("production_time", { valueAsNumber: true })}
+                        type="text"
+                        inputMode="numeric"
+                        {...register("production_time")}
+                        {...integerInputHandlers}
                         placeholder="e.g., 2"
                         className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
                       />
@@ -695,7 +818,224 @@ export function ProductForm({
             </div>
           )}
 
-          {/* Tab 4: SEO & Status */}
+          {/* Tab 4: Options & Specifications */}
+          {activeTab === "options" && (
+            <div className="space-y-8">
+              {/* Color Options */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 border-b border-slate-100 dark:border-slate-850 pb-2">
+                  Color Options
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Add Color Form */}
+                  <div className="space-y-4 bg-slate-50 dark:bg-slate-950/20 p-4 rounded-xl border border-slate-100 dark:border-slate-850">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">Add New Color</h4>
+                    <div className="space-y-3">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold uppercase text-slate-400">Color Name</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Navy Blue"
+                          value={newColorName}
+                          onChange={(e) => setNewColorName(e.target.value)}
+                          className="w-full bg-white dark:bg-slate-950 border border-slate-250 dark:border-slate-800 rounded-lg py-1.5 px-3 text-xs outline-none text-slate-800 dark:text-slate-150"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold uppercase text-slate-400">Color Value (Hex Code / Picker)</label>
+                        <div className="flex gap-2">
+                          <input
+                            type="color"
+                            value={newColorHex}
+                            onChange={(e) => setNewColorHex(e.target.value)}
+                            className="w-10 h-7 rounded border border-slate-200 cursor-pointer p-0 bg-transparent"
+                          />
+                          <input
+                            type="text"
+                            placeholder="#000000"
+                            value={newColorHex}
+                            onChange={(e) => setNewColorHex(e.target.value)}
+                            className="flex-1 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg py-1 px-3 text-xs outline-none uppercase font-mono text-slate-800 dark:text-slate-150"
+                          />
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!newColorName.trim()) {
+                            toast.error("Please enter a color name");
+                            return;
+                          }
+                          if (colors.some(c => c.name.toLowerCase() === newColorName.trim().toLowerCase())) {
+                            toast.error("Color name already exists");
+                            return;
+                          }
+                          setColors([...colors, { name: newColorName.trim(), hex: newColorHex }]);
+                          setNewColorName("");
+                        }}
+                        className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-1.5 px-3 rounded-lg text-xs transition duration-200 cursor-pointer"
+                      >
+                        Add Color
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Configured Colors List */}
+                  <div className="space-y-2.5">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">Configured Colors</label>
+                    {colors.length === 0 ? (
+                      <p className="text-xs text-slate-400 italic py-4">No custom colors configured. Fallback system defaults will be used.</p>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">
+                        {colors.map((color, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center gap-2 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-700 dark:text-slate-350 shadow-sm"
+                          >
+                            <span className="w-3.5 h-3.5 rounded-full border border-slate-300 shrink-0" style={{ backgroundColor: color.hex }}></span>
+                            <span>{color.name} ({color.hex})</span>
+                            <button
+                              type="button"
+                              onClick={() => setColors(colors.filter((_, i) => i !== index))}
+                              className="text-slate-400 hover:text-red-500 font-bold ml-1 transition"
+                            >
+                              &times;
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Size Options */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 border-b border-slate-100 dark:border-slate-850 pb-2">
+                  Size Options
+                </h3>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 block">
+                    Available Sizes for this Product
+                  </label>
+                  <p className="text-[11px] text-slate-400 mb-2">Toggle sizes below to make them selectables for the customer.</p>
+                  <div className="flex flex-wrap gap-2">
+                    {ALL_SIZES.map((size) => {
+                      const isChecked = sizes.includes(size);
+                      return (
+                        <button
+                          key={size}
+                          type="button"
+                          onClick={() => {
+                            if (isChecked) {
+                              setSizes(sizes.filter(s => s !== size));
+                            } else {
+                              setSizes([...sizes, size]);
+                            }
+                          }}
+                          className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                            isChecked
+                              ? "border-purple-650 bg-purple-50 dark:bg-purple-950/40 text-purple-600 shadow-sm animate-pulse"
+                              : "border-slate-200 text-slate-650 dark:text-slate-400 hover:border-purple-300 bg-transparent"
+                          }`}
+                        >
+                          {size}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {sizes.length === 0 && (
+                    <p className="text-[11px] text-amber-500 italic mt-2">No sizes configured. Fallback system defaults (S, M, L, XL, XXL, 3XL) will be used.</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Specifications */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 border-b border-slate-100 dark:border-slate-850 pb-2">
+                  Product Specifications
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Add Specification Form */}
+                  <div className="space-y-4 bg-slate-50 dark:bg-slate-950/20 p-4 rounded-xl border border-slate-100 dark:border-slate-850">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">Add New Specification</h4>
+                    <div className="space-y-3">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold uppercase text-slate-400">Attribute Label</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Fabric, Fit, Care Instructions"
+                          value={newSpecLabel}
+                          onChange={(e) => setNewSpecLabel(e.target.value)}
+                          className="w-full bg-white dark:bg-slate-950 border border-slate-250 dark:border-slate-800 rounded-lg py-1.5 px-3 text-xs outline-none text-slate-800 dark:text-slate-150"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold uppercase text-slate-400">Attribute Value</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. 100% Organic Cotton"
+                          value={newSpecValue}
+                          onChange={(e) => setNewSpecValue(e.target.value)}
+                          className="w-full bg-white dark:bg-slate-950 border border-slate-250 dark:border-slate-800 rounded-lg py-1.5 px-3 text-xs outline-none text-slate-800 dark:text-slate-150"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!newSpecLabel.trim() || !newSpecValue.trim()) {
+                            toast.error("Please enter both a label and a value");
+                            return;
+                          }
+                          if (specs.some(s => s.label.toLowerCase() === newSpecLabel.trim().toLowerCase())) {
+                            toast.error("Specification label already exists");
+                            return;
+                          }
+                          setSpecs([...specs, { label: newSpecLabel.trim(), value: newSpecValue.trim() }]);
+                          setNewSpecLabel("");
+                          setNewSpecValue("");
+                        }}
+                        className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-1.5 px-3 rounded-lg text-xs transition duration-200 cursor-pointer"
+                      >
+                        Add Specification
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Configured Specifications List */}
+                  <div className="space-y-2.5">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">Configured Specifications</label>
+                    {specs.length === 0 ? (
+                      <p className="text-xs text-slate-400 italic py-4">No custom specifications configured. Fallback system defaults will be used.</p>
+                    ) : (
+                      <div className="space-y-2 max-h-[250px] overflow-y-auto pr-2">
+                        {specs.map((spec, index) => (
+                          <div
+                            key={index}
+                            className="flex justify-between items-center bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-xs"
+                          >
+                            <div>
+                              <span className="font-bold text-purple-600 dark:text-purple-400 mr-2">{spec.label}:</span>
+                              <span className="text-slate-650 dark:text-slate-350">{spec.value}</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setSpecs(specs.filter((_, i) => i !== index))}
+                              className="text-slate-400 hover:text-red-500 font-bold transition px-2"
+                            >
+                              &times;
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab 5: SEO & Status */}
           {activeTab === "seo" && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -710,8 +1050,10 @@ export function ProductForm({
                       Total Available Stock
                     </label>
                     <input
-                      type="number"
-                      {...register("stock_quantity", { valueAsNumber: true })}
+                      type="text"
+                      inputMode="numeric"
+                      {...register("stock_quantity")}
+                      {...integerInputHandlers}
                       placeholder="e.g., 50"
                       className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
                     />
@@ -722,8 +1064,10 @@ export function ProductForm({
                       Low Stock Threshold
                     </label>
                     <input
-                      type="number"
-                      {...register("low_stock_threshold", { valueAsNumber: true })}
+                      type="text"
+                      inputMode="numeric"
+                      {...register("low_stock_threshold")}
+                      {...integerInputHandlers}
                       placeholder="e.g., 5"
                       className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
                     />

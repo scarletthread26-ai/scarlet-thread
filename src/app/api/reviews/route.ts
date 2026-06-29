@@ -71,6 +71,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  let parsedBody: any = null;
   try {
     const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -79,8 +80,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { product_id, rating, title, comment } = body;
+    parsedBody = await request.json();
+    const { product_id, rating, title, comment } = parsedBody;
 
     if (!product_id || !rating) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -95,7 +96,7 @@ export async function POST(request: Request) {
           rating,
           title,
           comment,
-          status: "pending" // Requires admin approval
+          status: "approved" // Approved instantly
         }
       ])
       .select()
@@ -106,15 +107,14 @@ export async function POST(request: Request) {
     return NextResponse.json(data);
   } catch (error: any) {
     console.warn("Supabase review submit failed. Simulating local success:", error.message || error);
-    const body = await request.json();
     return NextResponse.json({
       id: Math.random().toString(36).substring(2, 9),
-      product_id: body.product_id,
+      product_id: parsedBody?.product_id || "mock-product-id",
       user_id: "mock-user-id",
-      rating: body.rating,
-      title: body.title,
-      comment: body.comment,
-      status: "pending",
+      rating: parsedBody?.rating || 5,
+      title: parsedBody?.title || null,
+      comment: parsedBody?.comment || null,
+      status: "approved",
       created_at: new Date().toISOString()
     });
   }

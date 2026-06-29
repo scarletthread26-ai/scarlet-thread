@@ -9,6 +9,7 @@ export interface ReviewWithUser {
   title: string | null;
   comment: string | null;
   status: "pending" | "approved" | "rejected";
+  admin_reply?: string | null;
   created_at: string;
   products?: { name: string };
   users?: { full_name: string | null };
@@ -51,7 +52,7 @@ export function useSubmitReview() {
       return res.json();
     },
     onSuccess: (data) => {
-      toast.success("Review submitted! It will appear once approved by an administrator.");
+      toast.success("Review submitted successfully!");
       queryClient.invalidateQueries({ queryKey: ["reviews", "product", data.product_id] });
     },
   });
@@ -116,6 +117,32 @@ export function useDeleteReview() {
     },
     onSuccess: () => {
       toast.success("Review deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["admin", "reviews"] });
+      queryClient.invalidateQueries({ queryKey: ["reviews"] });
+    },
+  });
+}
+
+// Admin mutation: reply to a review
+export function useUpdateReviewReply() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, admin_reply }: { id: string; admin_reply: string }) => {
+      const res = await fetch("/api/admin/reviews", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, admin_reply }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to update review reply");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      toast.success("Review reply updated successfully");
       queryClient.invalidateQueries({ queryKey: ["admin", "reviews"] });
       queryClient.invalidateQueries({ queryKey: ["reviews"] });
     },

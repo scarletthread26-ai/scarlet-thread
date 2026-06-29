@@ -7,7 +7,6 @@ import { EmbroideryStylesHer } from "@/components/sections/gifts-for-her/Embroid
 import { CraftedGalleryHer } from "@/components/sections/gifts-for-her/CraftedGalleryHer"
 import { ValuePropsHer } from "@/components/sections/gifts-for-her/ValuePropsHer"
 import { Testimonials } from "@/components/sections/Testimonials"
-import { CustomGiftBannerHer } from "@/components/sections/gifts-for-her/CustomGiftBannerHer"
 import { RelatedCategories } from "@/components/sections/gifts-for-him/RelatedCategories"
 
 export default function GiftsForHerPage() {
@@ -22,7 +21,6 @@ export default function GiftsForHerPage() {
       <CraftedGalleryHer />
       <ValuePropsHer />
       <Testimonials />
-      <CustomGiftBannerHer />
       {/* Reusing the RelatedCategories from Him as it points to same structure */}
       <RelatedCategories /> 
     </div>

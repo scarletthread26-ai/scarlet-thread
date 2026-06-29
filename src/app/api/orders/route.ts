@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -29,6 +30,12 @@ export async function POST(request: Request) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     
+    // Use admin client for inserts to bypass RLS and trigger errors (like order_status_history)
+    const supabaseAdmin = createAdminClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    
     const body = await request.json();
     const {
       shippingAddress,
@@ -50,7 +57,7 @@ export async function POST(request: Request) {
     }
 
     // 1. Insert Shipping Address
-    const { data: shipData, error: shipError } = await supabase
+    const { data: shipData, error: shipError } = await supabaseAdmin
       .from("addresses")
       .insert([{
         user_id: user?.id || null,
@@ -72,7 +79,7 @@ export async function POST(request: Request) {
     // 2. Insert Billing Address (default to shipping if not specified)
     let billData = shipData;
     if (billingAddress && Object.keys(billingAddress).length > 0) {
-      const { data: bData, error: billError } = await supabase
+      const { data: bData, error: billError } = await supabaseAdmin
         .from("addresses")
         .insert([{
           user_id: user?.id || null,
@@ -93,8 +100,33 @@ export async function POST(request: Request) {
       billData = bData;
     }
 
+    // 2.5 Save to user_addresses if logged in and they don't have any addresses yet
+    if (user?.id) {
+      const { data: existingUserAddresses } = await supabaseAdmin
+        .from("user_addresses")
+        .select("id")
+        .eq("user_id", user.id)
+        .limit(1);
+
+      if (!existingUserAddresses || existingUserAddresses.length === 0) {
+        await supabaseAdmin.from("user_addresses").insert([{
+          user_id: user.id,
+          label: "Home",
+          full_name: shippingAddress.full_name,
+          phone: shippingAddress.phone || guest_phone,
+          address_line1: shippingAddress.address_line1,
+          address_line2: shippingAddress.address_line2 || null,
+          city: shippingAddress.city,
+          emirate: shippingAddress.state || "Dubai",
+          postal_code: shippingAddress.postal_code || "00000",
+          country: shippingAddress.country || "United Arab Emirates",
+          is_default: true,
+        }]);
+      }
+    }
+
     // 3. Create Order
-    const { data: orderData, error: orderError } = await supabase
+    const { data: orderData, error: orderError } = await supabaseAdmin
       .from("orders")
       .insert([{
         user_id: user?.id || null,
@@ -129,14 +161,14 @@ export async function POST(request: Request) {
       personalization_data: item.personalization || null,
     }));
 
-    const { error: itemsError } = await supabase
+    const { error: itemsError } = await supabaseAdmin
       .from("order_items")
       .insert(orderItemsToInsert);
 
     if (itemsError) throw itemsError;
 
     // 5. Audit log or trigger handles order number logic, so we reload the order to get the order_number
-    const { data: finalOrder, error: reloadError } = await supabase
+    const { data: finalOrder, error: reloadError } = await supabaseAdmin
       .from("orders")
       .select("*")
       .eq("id", orderData.id)

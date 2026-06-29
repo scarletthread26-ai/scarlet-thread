@@ -50,9 +50,26 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
   const image = product?.images?.[0]?.url || product?.image_url || "/images/forhimpage/scarlet-kinghoodie.png";
   const slug = product?.slug || "personalized-hoodie";
 
-  const [activeColor, setActiveColor] = useState("Navy Blue");
-  const [activeSize, setActiveSize] = useState("M");
+  const productColors = (product?.colors && product.colors.length > 0) ? product.colors : COLORS;
+  const productSizes = (product?.sizes && product.sizes.length > 0) ? product.sizes : SIZES;
+
+  const [activeColor, setActiveColor] = useState("");
+  const [activeSize, setActiveSize] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    if (productColors && productColors.length > 0) {
+      if (!productColors.some((c: any) => c.name === activeColor)) {
+        setActiveColor(productColors[0].name);
+      }
+    }
+    if (productSizes && productSizes.length > 0) {
+      if (!productSizes.includes(activeSize)) {
+        const hasM = productSizes.includes("M");
+        setActiveSize(hasM ? "M" : productSizes[0]);
+      }
+    }
+  }, [product, productColors, productSizes]);
 
   // Personalization states
   const [customName, setCustomName] = useState("");
@@ -195,9 +212,9 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
             Color: <span className="text-purple-600 font-normal">{activeColor}</span>
           </Label>
           <div className="flex flex-wrap gap-2.5">
-            {COLORS.map((color) => {
+            {productColors.map((color: any) => {
               const isActive = color.name === activeColor;
-              const isWhite = color.hex === "#FFFFFF";
+              const isWhite = color.hex === "#FFFFFF" || color.hex?.toLowerCase() === "#ffffff";
               return (
                 <button
                   key={color.name}
@@ -233,14 +250,14 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
             </button>
           </div>
           <div className="flex flex-wrap gap-2">
-            {SIZES.map((size) => (
+            {productSizes.map((size: string) => (
               <button
                 key={size}
                 onClick={() => setActiveSize(size)}
                 className={`min-w-[42px] h-8 px-2 rounded-xl border text-xs font-bold transition-all ${
                   size === activeSize
                     ? "border-purple-600 bg-purple-50 dark:bg-purple-950/40 text-purple-600 shadow-sm"
-                    : "border-slate-200 text-slate-600 dark:text-slate-400 hover:border-purple-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                    : "border-slate-200 text-slate-650 dark:text-slate-400 hover:border-purple-300 hover:bg-slate-50 dark:hover:bg-slate-800"
                 }`}
               >
                 {size}
