@@ -1,13 +1,76 @@
 "use client"
 
+import React, { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight, Sparkles, Star, Heart } from "lucide-react"
 import { staggerContainer, fadeUp } from "@/lib/animations"
 
+function formatHerTitle(titleStr: string) {
+  if (!titleStr) return "";
+  const lower = titleStr.toLowerCase();
+  if (lower === "made for her, personalized with love") {
+    return (
+      <>
+        Made for Her,
+        <br />
+        <span className="text-[#c0004e]">Personalized</span>
+        <br />
+        with Love
+      </>
+    );
+  }
+  const words = titleStr.split(" ");
+  const personalizedIdx = words.findIndex(w => w.toLowerCase().includes("personalized"));
+  if (personalizedIdx !== -1) {
+    const before = words.slice(0, personalizedIdx).join(" ");
+    const word = words[personalizedIdx];
+    const after = words.slice(personalizedIdx + 1).join(" ");
+    return (
+      <>
+        {before && <>{before} </>}
+        <span className="text-[#c0004e]">{word}</span>
+        {after && <><br />{after}</>}
+      </>
+    );
+  }
+  if (words.length > 1) {
+    const lastWord = words[words.length - 1];
+    const remaining = words.slice(0, -1).join(" ");
+    return (
+      <>
+        {remaining} <span className="text-[#c0004e]">{lastWord}</span>
+      </>
+    );
+  }
+  return titleStr;
+}
+
 export function HeroHer() {
-  const line1 = "Made for Her,"
+  const [sectionData, setSectionData] = useState<any>(null);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const res = await fetch("/api/admin/cms/homepage-sections?key=gifts-for-her");
+        if (res.ok) {
+          const json = await res.json();
+          if (json) {
+            setSectionData(json);
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to load gifts-for-her hero settings:", err);
+      }
+    }
+    loadData();
+  }, []);
+
+  const title = sectionData?.title || "Made for Her, Personalized with Love";
+  const subtitle = sectionData?.subtitle || "Thoughtful, personalized & embroidered gifts that celebrate the most special women in your life.";
+  const desktopImage = sectionData?.content?.image_desktop || "/images/forher/scarlet-forherbanner-image.png";
+  const mobileImage = sectionData?.content?.image_mobile || "/images/forher/scarlet-forhermobile.png";
 
   return (
     <section className="relative bg-[#fce8ec] py-6 md:py-6 overflow-hidden">
@@ -19,7 +82,7 @@ export function HeroHer() {
         className="absolute inset-0 hidden md:block"
       >
         <Image
-          src="/images/forher/scarlet-forherbanner-image.png"
+          src={desktopImage}
           alt="Personalized gifts for her — premium embroidered set"
           fill
           priority
@@ -36,7 +99,7 @@ export function HeroHer() {
         className="absolute inset-0 md:hidden"
       >
         <Image
-          src="/images/forher/scarlet-forhermobile.png"
+          src={mobileImage}
           alt="Personalized gifts for her — premium embroidered set"
           fill
           priority
@@ -82,19 +145,14 @@ export function HeroHer() {
               variants={fadeUp(0.8, 40)}
               className="text-3xl md:text-5xl lg:text-6xl font-sans font-extrabold text-[#111] mb-4 md:mb-5 leading-tight"
             >
-              {line1}
-              <br />
-              <span className="text-[#c0004e]">Personalized</span>
-              <br />
-              with Love
+              {formatHerTitle(title)}
             </motion.h1>
 
             <motion.p
               variants={fadeUp(0.8, 40)}
               className="text-sm md:text-base text-[#666] mb-6 max-w-md"
             >
-              Thoughtful, personalized &amp; embroidered gifts that celebrate the
-              most special women in your life.
+              {subtitle}
             </motion.p>
 
             <motion.div
@@ -106,7 +164,7 @@ export function HeroHer() {
                 whileTap={{ scale: 0.96 }}
               >
                 <Link
-                  href="/gifts-for-her"
+                  href="/products"
                   className="inline-flex h-10 md:h-11 items-center rounded-full bg-[#c0004e] px-6 text-[0.78rem] md:text-sm font-bold text-white shadow transition-all duration-200 hover:bg-[#a0003f] hover:-translate-y-px active:translate-y-0"
                 >
                   Shop Best Sellers
@@ -117,7 +175,7 @@ export function HeroHer() {
                 whileTap={{ scale: 0.96 }}
               >
                 <Link
-                  href="/gifts-for-her"
+                  href="/products?category=gifts-for-her"
                   className="inline-flex h-10 md:h-11 items-center rounded-full border border-[#c0004e]/60 bg-white/60 px-6 text-[0.78rem] md:text-sm font-semibold text-[#c0004e] backdrop-blur-sm transition-all duration-200 hover:bg-white hover:-translate-y-px active:translate-y-0"
                 >
                   Explore Collection

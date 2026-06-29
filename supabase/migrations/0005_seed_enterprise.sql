@@ -112,8 +112,7 @@ ON CONFLICT (section_key) DO UPDATE SET title = EXCLUDED.title, subtitle = EXCLU
 
 -- 9. Seed CMS: Banners
 INSERT INTO public.banners (title, subtitle, image_url, link_url, banner_type, is_active, display_order) VALUES
-('Cozy Mama & Family Hoodies', 'Celebrate connection with custom family collections.', 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=1200&q=80', '/products/mama-heart-hoodie', 'featured_banner', true, 0),
-('Eid & Special Occasion Collections', 'Traditional styles personalized with custom modern script.', 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=1200&q=80', '/collections/featured-gifts', 'promo', true, 1);
+('Cozy Mama & Family Hoodies', 'Celebrate connection with custom family collections.', 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=1200&q=80', '/products/mama-heart-hoodie', 'featured_banner', true, 0);
 
 -- 10. Seed CMS: Testimonials
 INSERT INTO public.testimonials (name, role, rating, comment, avatar_url, is_active) VALUES

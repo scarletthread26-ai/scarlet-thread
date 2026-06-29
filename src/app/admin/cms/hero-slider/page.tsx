@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useHeroSlides, useSaveHeroSlides } from "@/hooks/use-cms";
 import { ArrowLeft, Save, Plus, Trash2, ArrowUp, ArrowDown, Loader2, Image as ImageIcon } from "lucide-react";
 import { ImageUpload } from "@/components/admin/image-upload";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
-export default function HeroSliderEditorPage() {
+export default function HeroSliderEditorPage({ isTabbed = false }: { isTabbed?: boolean }) {
   const { data: initialSlides = [], isLoading } = useHeroSlides();
   const saveMutation = useSaveHeroSlides();
   const [slides, setSlides] = useState<any[]>([]);
@@ -23,6 +24,54 @@ export default function HeroSliderEditorPage() {
       setGlobalSubtitle(firstWithSub?.subtitle || "Whether you're celebrating someone special or treating yourself, make it uniquely personal.");
     }
   }, [initialSlides]);
+
+  // Compute dirtiness
+  const isDirty = useMemo(() => {
+    if (isLoading || !initialSlides.length) return false;
+    
+    // Compare global fields
+    const firstWithTitle = initialSlides.find(s => s.title);
+    const firstWithSub = initialSlides.find(s => s.subtitle);
+    const initialGlobalTitle = firstWithTitle?.title || "More Than a Gift. A Memory in the Making";
+    const initialGlobalSubtitle = firstWithSub?.subtitle || "Whether you're celebrating someone special or treating yourself, make it uniquely personal.";
+
+    if (globalTitle !== initialGlobalTitle || globalSubtitle !== initialGlobalSubtitle) {
+      return true;
+    }
+
+    // Compare slides length
+    if (slides.length !== initialSlides.length) return true;
+
+    // Compare slides content
+    for (let i = 0; i < slides.length; i++) {
+      const s = slides[i];
+      const initS = initialSlides[i];
+      if (!initS) return true;
+      if (
+        s.image_desktop !== initS.image_desktop ||
+        s.image_mobile !== initS.image_mobile ||
+        s.button_text !== initS.button_text ||
+        s.button_link !== initS.button_link ||
+        s.is_active !== initS.is_active ||
+        s.display_order !== initS.display_order
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }, [slides, globalTitle, globalSubtitle, initialSlides, isLoading]);
+
+  const handleDiscard = () => {
+    if (initialSlides.length > 0) {
+      setSlides(initialSlides);
+      const firstWithTitle = initialSlides.find(s => s.title);
+      const firstWithSub = initialSlides.find(s => s.subtitle);
+      setGlobalTitle(firstWithTitle?.title || "More Than a Gift. A Memory in the Making");
+      setGlobalSubtitle(firstWithSub?.subtitle || "Whether you're celebrating someone special or treating yourself, make it uniquely personal.");
+    }
+    toast.info("Changes discarded");
+  };
 
   const handleAddSlide = () => {
     const newSlide = {
@@ -76,37 +125,54 @@ export default function HeroSliderEditorPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-3">
-          <Link
-            href="/admin/cms"
-            className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg outline-none transition"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
-              Hero Slider Settings
-            </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-              Reorder or customize homepage promotional sliders.
-            </p>
+      {!isTabbed ? (
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <Link
+              href="/admin/cms"
+              className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg outline-none transition"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Link>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
+                Hero Slider Settings
+              </h1>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                Reorder or customize homepage promotional sliders.
+              </p>
+            </div>
           </div>
-        </div>
 
-        <button
-          onClick={handleSave}
-          disabled={saveMutation.isPending}
-          className="bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white font-semibold px-4 py-2.5 rounded-xl transition duration-200 text-sm shadow-md shadow-purple-600/10 flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-        >
-          {saveMutation.isPending ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <Save className="w-4 h-4" />
-          )}
-          <span>Save Changes</span>
-        </button>
-      </div>
+          <button
+            onClick={handleSave}
+            disabled={saveMutation.isPending || !isDirty}
+            className="bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white font-semibold px-4 py-2.5 rounded-xl transition duration-200 text-sm shadow-md shadow-purple-600/10 flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+          >
+            {saveMutation.isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Save className="w-4 h-4" />
+            )}
+            <span>Save Changes</span>
+          </button>
+        </div>
+      ) : (
+        <div className="flex justify-end">
+          <button
+            onClick={handleSave}
+            disabled={saveMutation.isPending || !isDirty}
+            className="bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white font-semibold px-4 py-2.5 rounded-xl transition duration-200 text-sm shadow-md shadow-purple-600/10 flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+          >
+            {saveMutation.isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Save className="w-4 h-4" />
+            )}
+            <span>Save Changes</span>
+          </button>
+        </div>
+      )}
 
       {isLoading ? (
         <div className="h-64 w-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 animate-pulse rounded-2xl flex items-center justify-center">
@@ -267,6 +333,43 @@ export default function HeroSliderEditorPage() {
           </button>
         </div>
       )}
+
+      {/* Shopify style unsaved changes bar */}
+      <AnimatePresence>
+        {isDirty && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 50, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 380, damping: 30 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-6 border border-slate-800/80 backdrop-blur-md"
+          >
+            <span className="text-xs sm:text-sm font-semibold tracking-wide text-slate-200">
+              You have unsaved changes
+            </span>
+            <div className="flex items-center gap-2.5">
+              <button
+                onClick={handleDiscard}
+                className="px-3.5 py-2 text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition duration-150 cursor-pointer"
+              >
+                Discard
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={saveMutation.isPending}
+                className="px-4 py-2 text-xs font-bold bg-purple-600 hover:bg-purple-700 active:scale-95 disabled:opacity-50 rounded-xl transition duration-150 flex items-center gap-1.5 cursor-pointer shadow-md shadow-purple-600/10"
+              >
+                {saveMutation.isPending ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Save className="w-3.5 h-3.5" />
+                )}
+                <span>Save Changes</span>
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

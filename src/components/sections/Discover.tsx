@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
@@ -64,7 +65,95 @@ function ImageColumn({
   )
 }
 
+function formatDiscoverTitle(titleStr: string, isDesktop: boolean) {
+  if (!titleStr) return "";
+  const lower = titleStr.toLowerCase();
+  if (lower === "discover the scarlet thread") {
+    return (
+      <>
+        Discover {isDesktop && <br className="hidden md:block" />} The Scarlet <span className="text-primary">Thread</span>
+      </>
+    );
+  }
+  // Fallback: split by space and highlight last word
+  const words = titleStr.split(" ");
+  if (words.length > 1) {
+    const lastWord = words[words.length - 1];
+    const remaining = words.slice(0, -1).join(" ");
+    return (
+      <>
+        {remaining} <span className="text-primary">{lastWord}</span>
+      </>
+    );
+  }
+  return titleStr;
+}
+
 export function Discover() {
+  const [sectionData, setSectionData] = React.useState<any>(null);
+  const [galleryImages, setGalleryImages] = React.useState<string[]>([]);
+
+  React.useEffect(() => {
+    async function loadData() {
+      try {
+        const [aboutRes, galleryRes] = await Promise.all([
+          fetch("/api/admin/cms/homepage-sections?key=about"),
+          fetch("/api/gallery")
+        ]);
+
+        if (aboutRes.ok) {
+          const aboutJson = await aboutRes.json();
+          if (aboutJson) {
+            setSectionData(aboutJson);
+          }
+        }
+
+        if (galleryRes.ok) {
+          const galleryJson = await galleryRes.json();
+          if (Array.isArray(galleryJson)) {
+            const images = galleryJson
+              .filter((item: any) => item.media_type === "image" && item.media_url)
+              .map((item: any) => item.media_url);
+            setGalleryImages(images);
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to load discover / gallery data:", err);
+      }
+    }
+    loadData();
+  }, []);
+
+  const title = sectionData?.title || "Discover The Scarlet Thread";
+  const subtitle = sectionData?.subtitle || "Bringing Your Gift Ideas To Life";
+  const description = sectionData?.content?.description || "At Scarlet, we believe the most meaningful gifts are the ones created with love, thought and personal touch. Whether it's a heartfelt gift for him, a thoughtful gift for her, a precious keepsake for a new born, a surprise gift for a toddler or unforgettable baby shower gifts, we turn emotions into meaningful gifts that hold memories forever.";
+  const buttonText = sectionData?.content?.button_text || "Read Our Story";
+  const buttonLink = sectionData?.content?.button_link || "/about";
+  const getActiveImages = () => {
+    if (galleryImages.length === 0) {
+      return columnImages;
+    }
+    if (galleryImages.length < 6) {
+      const merged = [...galleryImages];
+      const needed = 6 - galleryImages.length;
+      for (let i = 0; i < needed; i++) {
+        merged.push(columnImages[i % columnImages.length]);
+      }
+      return merged;
+    }
+    return galleryImages;
+  };
+
+  const activeImages = getActiveImages();
+
+  const col1Images = activeImages;
+  const col2Images = activeImages.length >= 3 
+    ? [...activeImages.slice(Math.floor(activeImages.length / 3)), ...activeImages.slice(0, Math.floor(activeImages.length / 3))]
+    : activeImages;
+  const col3Images = activeImages.length >= 3
+    ? [...activeImages.slice(Math.floor(activeImages.length * 2 / 3)), ...activeImages.slice(0, Math.floor(activeImages.length * 2 / 3))]
+    : activeImages;
+
   return (
     <section className="py-5 md:py-24 bg-[#F9F5FF]">
       <div className="w-full max-w-[1400px] mx-auto  px-4 sm:px-6 md:px-12 lg:px-16">
@@ -76,19 +165,19 @@ export function Discover() {
           {/* Subheading — always first */}
           <div className="text-primary font-medium tracking-wide flex items-center gap-2 order-1 lg:hidden">
             <HeartIcon className="w-4 h-4 fill-primary/20" />
-            Bringing Your Gift Ideas To Life
+            {subtitle}
           </div>
 
           {/* Heading — second on mobile/tab */}
           <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground leading-tight order-2 lg:hidden">
-            Discover The Scarlet <span className="text-primary">Thread</span>
+            {formatDiscoverTitle(title, false)}
           </h2>
 
           {/* Image columns — third on mobile/tab, right side on desktop */}
           <div className="order-3 lg:order-2 flex gap-2 sm:gap-3 overflow-hidden lg:col-start-2 lg:row-start-1 lg:row-span-1">
-            <ImageColumn images={columnImages} direction="up"   duration={28} />
-            <ImageColumn images={columnImages} direction="down" duration={22} />
-            <ImageColumn images={columnImages} direction="up"   duration={32} />
+            <ImageColumn images={col1Images} direction="up"   duration={28} />
+            <ImageColumn images={col2Images} direction="down" duration={22} />
+            <ImageColumn images={col3Images} direction="up"   duration={32} />
           </div>
 
           {/* Full content block — desktop only (left side) */}
@@ -96,27 +185,27 @@ export function Discover() {
             {/* Subheading — desktop only */}
             <div className="text-primary font-medium tracking-wide items-center gap-2 hidden lg:flex">
               <HeartIcon className="w-4 h-4 fill-primary/20" />
-              Bringing Your Gift Ideas To Life
+              {subtitle}
             </div>
 
             {/* Heading — desktop only */}
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight hidden lg:block">
-              Discover <br className="hidden md:block text-primary" /> The Scarlet <span className="text-primary">Thread</span> 
+              {formatDiscoverTitle(title, true)}
             </h2>
 
             {/* Description — fourth on mobile/tab, part of left block on desktop */}
             <p className="text-sm text-muted-foreground leading-relaxed ">
-              At Scarlet, we believe the most meaningful gifts are the ones created with love, thought and personal touch. Whether it's a heartfelt gift for him, a thoughtful gift for her, a precious keepsake for a new born, a surprise gift for a toddler or unforgettable baby shower gifts, we turn emotions into meaningful gifts that hold memories forever.
+              {description}
             </p>
 
             <div className="pt-2 lg:pt-4 flex justify-center md:justify-start">
               <Button
                 nativeButton={false}
-                render={<Link href="/about" />}
+                render={<Link href={buttonLink} />}
                 size="lg"
                 className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-[5px] px-8 h-12 shadow-sm transition-transform hover:-translate-y-0.5"
               >
-                Read Our Story
+                {buttonText}
               </Button>
             </div>
           </div>
@@ -124,7 +213,7 @@ export function Discover() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 function HeartIcon(props: React.SVGProps<SVGSVGElement>) {

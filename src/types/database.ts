@@ -375,3 +375,15 @@ export interface Setting {
   updated_at: string;
 }
 
+export interface HomepageSection {
+  id: string;
+  section_key: string;
+  title: string | null;
+  subtitle: string | null;
+  content: any; // JSONB
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+
