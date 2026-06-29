@@ -32,18 +32,22 @@ export function RelatedCategories() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 max-w-4xl mx-auto">
-          {categories.map((cat, index) => (
-            <Link
-              key={index}
-              href={cat.href}
-              className="bg-transparent md:bg-[#FFF8FB] rounded-xl px-2 md:px-5 py-4 flex flex-col md:flex-row items-center justify-center md:justify-start gap-2 md:gap-4 shadow-none md:shadow-sm hover:shadow-md transition-all group border border-transparent md:border-[#F7EAF0] min-h-[120px] md:min-h-[105px]"
-            >
-              <div
-                className="w-16 h-16 md:w-20 md:h-20 shrink-0 bg-center bg-contain bg-no-repeat transition-transform duration-500 group-hover:scale-110"
-                style={{
-                  backgroundImage: `url('${cat.icon}')`,
-                }}
-              />
+          {categories.map((cat, index) => {
+            const isCustomOrders = cat.name === "Custom Orders";
+            return (
+              <Link
+                key={index}
+                href={cat.href}
+                className={`bg-transparent md:bg-[#FFF8FB] rounded-xl px-2 md:px-5 py-4 flex-col md:flex-row items-center justify-center md:justify-start gap-2 md:gap-4 shadow-none md:shadow-sm hover:shadow-md transition-all group border border-transparent md:border-[#F7EAF0] min-h-[120px] md:min-h-[105px] ${
+                  isCustomOrders ? "hidden md:flex" : "flex"
+                }`}
+              >
+                <div
+                  className="w-16 h-16 md:w-20 md:h-20 shrink-0 bg-center bg-contain bg-no-repeat transition-transform duration-500 group-hover:scale-110"
+                  style={{
+                    backgroundImage: `url('${cat.icon}')`,
+                  }}
+                />
 
               <div className="text-center md:text-left">
                 <h4 className="font-bold text-xs sm:text-sm md:text-base text-foreground group-hover:text-primary transition-colors md:mb-2">
@@ -56,8 +60,9 @@ export function RelatedCategories() {
                 </span>
               </div>
             </Link>
-          ))}
-        </div>
+          );
+        })}
+      </div>
       </motion.div>
     </section>
   )
