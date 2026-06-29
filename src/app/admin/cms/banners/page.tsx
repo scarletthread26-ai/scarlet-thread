@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useBanners, useSaveBanners } from "@/hooks/use-cms";
 import { ArrowLeft, Save, Plus, Trash2, Loader2, Image as ImageIcon } from "lucide-react";
 import { ImageUpload } from "@/components/admin/image-upload";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
-export default function BannersEditorPage() {
+export default function BannersEditorPage({ isTabbed = false }: { isTabbed?: boolean }) {
   const { data: initialBanners = [], isLoading } = useBanners();
   const saveMutation = useSaveBanners();
   const [banners, setBanners] = useState<any[]>([]);
@@ -18,6 +19,40 @@ export default function BannersEditorPage() {
     }
   }, [initialBanners]);
 
+  // Compute dirtiness
+  const isDirty = useMemo(() => {
+    if (isLoading || !initialBanners.length) return false;
+
+    if (banners.length !== initialBanners.length) return true;
+
+    for (let i = 0; i < banners.length; i++) {
+      const b = banners[i];
+      const initB = initialBanners[i];
+      if (!initB) return true;
+      if (
+        b.title !== initB.title ||
+        b.subtitle !== initB.subtitle ||
+        b.image_url !== initB.image_url ||
+        b.image_mobile_url !== initB.image_mobile_url ||
+        b.link_url !== initB.link_url ||
+        b.banner_type !== initB.banner_type ||
+        b.is_active !== initB.is_active ||
+        b.display_order !== initB.display_order
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }, [banners, initialBanners, isLoading]);
+
+  const handleDiscard = () => {
+    if (initialBanners.length > 0) {
+      setBanners(initialBanners);
+    }
+    toast.info("Changes discarded");
+  };
+
   const handleAddBanner = () => {
     const newBanner = {
       id: `temp-${Date.now()}`,
@@ -26,7 +61,7 @@ export default function BannersEditorPage() {
       image_url: "",
       image_mobile_url: "",
       link_url: "/products",
-      banner_type: "promo",
+      banner_type: "featured_banner",
       is_active: true,
       display_order: banners.length,
     };
@@ -54,37 +89,57 @@ export default function BannersEditorPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-3">
-          <Link
-            href="/admin/cms"
-            className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg outline-none transition"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
-              Promotional Banners
-            </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-              Configure grid promo cards and collections headers.
-            </p>
+      {!isTabbed ? (
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <Link
+              href="/admin/cms"
+              className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg outline-none transition"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Link>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
+                Promotional Banners
+              </h1>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                Configure grid promo cards and collections headers.
+              </p>
+            </div>
           </div>
-        </div>
 
-        <button
-          onClick={handleSave}
-          disabled={saveMutation.isPending}
-          className="bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white font-semibold px-4 py-2.5 rounded-xl transition duration-200 text-sm shadow-md shadow-purple-600/10 flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-        >
-          {saveMutation.isPending ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <Save className="w-4 h-4" />
-          )}
-          <span>Save Changes</span>
-        </button>
-      </div>
+          <button
+            onClick={handleSave}
+            disabled={saveMutation.isPending || !isDirty}
+            className="bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white font-semibold px-4 py-2.5 rounded-xl transition duration-200 text-sm shadow-md shadow-purple-600/10 flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+          >
+            {saveMutation.isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Save className="w-4 h-4" />
+            )}
+            <span>Save Changes</span>
+          </button>
+        </div>
+      ) : (
+        <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-900/60 p-4 border border-slate-200/50 dark:border-slate-800/80 rounded-xl">
+          <div className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+            Manage grid promo banners and collections hero placements.
+          </div>
+          <button
+            onClick={handleSave}
+            disabled={saveMutation.isPending || !isDirty}
+            className="bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white font-semibold px-4 py-2.5 rounded-xl transition duration-200 text-sm shadow-md shadow-purple-600/10 flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+          >
+            {saveMutation.isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Save className="w-4 h-4" />
+            )}
+            <span>Save Changes</span>
+          </button>
+        </div>
+      )}
 
       {isLoading ? (
         <div className="h-64 w-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 animate-pulse rounded-2xl flex items-center justify-center">
@@ -171,12 +226,11 @@ export default function BannersEditorPage() {
                   <div className="space-y-1">
                     <label className="text-xs font-semibold text-slate-500">Placement Block Type</label>
                     <select
-                      value={banner.banner_type || "promo"}
+                      value={banner.banner_type || "featured_banner"}
                       onChange={(e) => handleFieldChange(idx, "banner_type", e.target.value)}
                       className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-300 outline-none transition duration-200 text-sm shadow-sm cursor-pointer"
                     >
                       <option value="featured_banner">Main Featured Section Banner</option>
-                      <option value="promo">Promo Category Banner</option>
                       <option value="bottom">Footer / Pre-footer Banner</option>
                     </select>
                   </div>
@@ -223,6 +277,43 @@ export default function BannersEditorPage() {
           </button>
         </div>
       )}
+
+      {/* Shopify style unsaved changes bar */}
+      <AnimatePresence>
+        {isDirty && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 50, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 380, damping: 30 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-6 border border-slate-800/80 backdrop-blur-md"
+          >
+            <span className="text-xs sm:text-sm font-semibold tracking-wide text-slate-200">
+              You have unsaved changes
+            </span>
+            <div className="flex items-center gap-2.5">
+              <button
+                onClick={handleDiscard}
+                className="px-3.5 py-2 text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition duration-150 cursor-pointer"
+              >
+                Discard
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={saveMutation.isPending}
+                className="px-4 py-2 text-xs font-bold bg-purple-600 hover:bg-purple-700 active:scale-95 disabled:opacity-50 rounded-xl transition duration-150 flex items-center gap-1.5 cursor-pointer shadow-md shadow-purple-600/10"
+              >
+                {saveMutation.isPending ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Save className="w-3.5 h-3.5" />
+                )}
+                <span>Save Changes</span>
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

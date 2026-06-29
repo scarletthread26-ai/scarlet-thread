@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { HeroSlide, Banner, Testimonial, CMSPage } from "@/types";
+import { HeroSlide, Banner, Testimonial, CMSPage, HomepageSection } from "@/types";
 import { toast } from "sonner";
 
 // 1. Hero Slides Hooks
@@ -180,3 +180,37 @@ export function useUpdateCMSPage() {
     },
   });
 }
+
+// 5. Homepage Sections Hooks
+export function useHomepageSection(key: string) {
+  return useQuery<HomepageSection>({
+    queryKey: ["cms", "homepage-sections", key],
+    queryFn: async () => {
+      const res = await fetch(`/api/admin/cms/homepage-sections?key=${key}`);
+      if (!res.ok) throw new Error(`Failed to fetch homepage section: ${key}`);
+      return res.json();
+    },
+    enabled: !!key,
+  });
+}
+
+export function useSaveHomepageSection() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (section: Partial<HomepageSection> & { section_key: string }) => {
+      const res = await fetch("/api/admin/cms/homepage-sections", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(section),
+      });
+      if (!res.ok) throw new Error("Failed to save homepage section");
+      return res.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["cms", "homepage-sections", data.section_key] });
+      toast.success("Homepage section saved successfully!");
+    },
+  });
+}
+

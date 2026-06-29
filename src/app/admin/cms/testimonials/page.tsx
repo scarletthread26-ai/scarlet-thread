@@ -1,14 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
-import { useTestimonials, useCreateTestimonial, useUpdateTestimonial, useDeleteTestimonial } from "@/hooks/use-cms";
-import { MessageSquare, Plus, Edit, Trash2, Star, Check, X, Loader2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { 
+  useTestimonials, 
+  useCreateTestimonial, 
+  useUpdateTestimonial, 
+  useDeleteTestimonial,
+  useHomepageSection,
+  useSaveHomepageSection
+} from "@/hooks/use-cms";
+import { MessageSquare, Plus, Edit, Trash2, Star, Check, X, Loader2, Save, Settings, Heart } from "lucide-react";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 const testimonialSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -21,7 +29,38 @@ const testimonialSchema = z.object({
 
 type TestimonialFormValues = z.infer<typeof testimonialSchema>;
 
-export default function TestimonialsPage() {
+export default function TestimonialsPage({ isTabbed = false }: { isTabbed?: boolean }) {
+  // 1. Google places integration settings
+  const { data: gSection, isLoading: isLoadingGSettings } = useHomepageSection("google-reviews");
+  const saveGSettingsMutation = useSaveHomepageSection();
+
+  const [placeId, setPlaceId] = useState("");
+  const [apiKey, setApiKey] = useState("");
+  const [isActive, setIsActive] = useState(true);
+
+  useEffect(() => {
+    if (gSection) {
+      setPlaceId(gSection.content?.place_id || "");
+      setApiKey(gSection.content?.api_key || "");
+      setIsActive(gSection.is_active !== false);
+    }
+  }, [gSection]);
+
+  const handleSaveGSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await saveGSettingsMutation.mutateAsync({
+      section_key: "google-reviews",
+      title: "Google Business Reviews",
+      subtitle: "Real stories from real customers",
+      content: {
+        place_id: placeId,
+        api_key: apiKey
+      },
+      is_active: isActive
+    });
+  };
+
+  // 2. Manual reviews management
   const { data: testimonials = [], isLoading } = useTestimonials();
   const createMutation = useCreateTestimonial();
   const updateMutation = useUpdateTestimonial();
@@ -41,7 +80,7 @@ export default function TestimonialsPage() {
     resolver: zodResolver(testimonialSchema) as any,
     defaultValues: {
       name: "",
-      role: "Verified Buyer",
+      role: "Verified Google Review",
       rating: 5,
       comment: "",
       avatar_url: "",
@@ -66,7 +105,7 @@ export default function TestimonialsPage() {
     setEditingId(testi.id);
     reset({
       name: testi.name,
-      role: testi.role || "Verified Buyer",
+      role: testi.role || "Verified Google Review",
       rating: testi.rating || 5,
       comment: testi.comment,
       avatar_url: testi.avatar_url || "",
@@ -83,229 +122,332 @@ export default function TestimonialsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
-            Customer Testimonials
-          </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Publish and manage client reviews showing on the store front pages.
-          </p>
+      {!isTabbed && (
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
+              Google Customer Reviews Settings
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              Configure Place details and local fallback reviews to display on the storefront.
+            </p>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Form Box */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="p-6 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-2xl shadow-sm h-fit space-y-6"
-        >
-          <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-855 pb-3">
-            <MessageSquare className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-            <h2 className="font-bold text-slate-800 dark:text-slate-200">
-              {editingId ? "Edit Testimonial" : "Add Testimonial"}
-            </h2>
-          </div>
-
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-1">
-              <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Customer Name
-              </label>
-              <input
-                {...register("name")}
-                placeholder="e.g., Fatima Al-Mansoori"
-                className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-205 text-sm shadow-sm"
-              />
-              {errors.name && (
-                <span className="text-xs text-red-505 block mt-0.5">{errors.name.message}</span>
-              )}
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Role / Tagline
-              </label>
-              <input
-                {...register("role")}
-                placeholder="e.g., Verified Buyer"
-                className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-205 text-sm shadow-sm"
-              />
-              {errors.role && (
-                <span className="text-xs text-red-505 block mt-0.5">{errors.role.message}</span>
-              )}
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 block">
-                Rating Stars
-              </label>
-              <div className="flex items-center gap-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => setValue("rating", star)}
-                    className="text-amber-400 hover:scale-110 transition cursor-pointer outline-none"
-                  >
-                    <Star className={`w-6 h-6 ${star <= currentRating ? "fill-amber-400 text-amber-400" : "text-slate-300"}`} />
-                  </button>
-                ))}
+        
+        {/* Left Column: API Settings & Create form */}
+        <div className="lg:col-span-1 space-y-6">
+          
+          {/* Google places config */}
+          <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/85 rounded-2xl shadow-sm">
+            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+              <Settings className="w-4 h-4 text-purple-650" />
+              API Settings
+            </h3>
+            
+            <form onSubmit={handleSaveGSettings} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                  Google Place ID
+                </label>
+                <input
+                  type="text"
+                  value={placeId}
+                  onChange={(e) => setPlaceId(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-805 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600 dark:text-slate-200 transition"
+                  placeholder="e.g., ChIJu..."
+                />
               </div>
-            </div>
 
-            <div className="space-y-1">
-              <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Customer Comment
-              </label>
-              <textarea
-                {...register("comment")}
-                placeholder="Write the comment/testimonial details..."
-                rows={4}
-                className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-205 text-sm shadow-sm resize-none"
-              />
-              {errors.comment && (
-                <span className="text-xs text-red-505 block mt-0.5">{errors.comment.message}</span>
-              )}
-            </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                  Google Maps API Key
+                </label>
+                <input
+                  type="password"
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-805 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600 dark:text-slate-200 transition"
+                  placeholder="AIzaSy..."
+                />
+              </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Customer Avatar Image
-              </label>
-              <ImageUpload
-                bucket="cms"
-                value={avatarUrl ? [avatarUrl] : []}
-                onChange={(urls) => setValue("avatar_url", urls[0] || "")}
-                onRemove={() => setValue("avatar_url", "")}
-                maxFiles={1}
-              />
-            </div>
+              <div className="flex items-center gap-2.5 py-1">
+                <input
+                  type="checkbox"
+                  id="google-reviews-active"
+                  checked={isActive}
+                  onChange={(e) => setIsActive(e.target.checked)}
+                  className="w-4 h-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
+                />
+                <label htmlFor="google-reviews-active" className="text-xs font-bold text-slate-550 dark:text-slate-350 cursor-pointer select-none">
+                  Display reviews section on home page
+                </label>
+              </div>
 
-            <div className="flex items-center gap-2 py-2">
-              <input
-                type="checkbox"
-                id="is_active"
-                {...register("is_active")}
-                className="w-4 h-4 rounded border-slate-305 text-purple-600 focus:ring-purple-500 cursor-pointer"
-              />
-              <label htmlFor="is_active" className="text-sm font-semibold text-slate-700 dark:text-slate-300 cursor-pointer select-none">
-                Visible on homepage testimonial section
-              </label>
-            </div>
-
-            <div className="flex gap-2.5 pt-2">
               <button
                 type="submit"
-                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 rounded-xl transition duration-200 text-sm shadow-md shadow-purple-600/10 cursor-pointer flex items-center justify-center gap-1.5"
-                disabled={createMutation.isPending || updateMutation.isPending}
+                disabled={saveGSettingsMutation.isPending}
+                className="w-full bg-purple-650 hover:bg-purple-700 active:scale-[0.98] text-white font-bold py-2.5 rounded-xl transition duration-155 text-xs shadow-md shadow-purple-600/10 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
               >
-                {(createMutation.isPending || updateMutation.isPending) ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                {saveGSettingsMutation.isPending ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
                 ) : (
-                  <Plus className="w-4 h-4" />
+                  <Save className="w-3.5 h-3.5" />
                 )}
-                <span>{editingId ? "Update Review" : "Add Testimonial"}</span>
+                <span>Save API settings</span>
               </button>
+            </form>
+          </div>
 
-              {editingId && (
+          {/* Add/Edit form */}
+          <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/85 rounded-2xl shadow-sm">
+            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+              <Plus className="w-4 h-4 text-purple-650" />
+              {editingId ? "Edit Google Review" : "Add Local Google Review"}
+            </h3>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                  Reviewer Name
+                </label>
+                <input
+                  type="text"
+                  {...register("name")}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-805 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600 dark:text-slate-200 transition"
+                  placeholder="e.g., Fatima Al-Mansoori"
+                />
+                {errors.name && (
+                  <p className="text-[10px] text-rose-500 mt-1 font-semibold">{errors.name.message as string}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                  Role / Tagline
+                </label>
+                <input
+                  type="text"
+                  {...register("role")}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-805 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600 dark:text-slate-200 transition"
+                  placeholder="Verified Google Review"
+                />
+                {errors.role && (
+                  <p className="text-[10px] text-rose-500 mt-1 font-semibold">{errors.role.message as string}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                  Google Star Rating
+                </label>
+                <div className="flex gap-1.5 mt-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setValue("rating", star)}
+                      className="text-slate-350 hover:scale-110 transition cursor-pointer"
+                    >
+                      <Star
+                        className={`w-6 h-6 ${
+                          star <= currentRating
+                            ? "fill-yellow-400 text-yellow-400"
+                            : "text-slate-250 dark:text-slate-800"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                  Review Details (Comment)
+                </label>
+                <textarea
+                  rows={4}
+                  {...register("comment")}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-805 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600 dark:text-slate-200 transition"
+                  placeholder="Write the comment detail here..."
+                />
+                {errors.comment && (
+                  <p className="text-[10px] text-rose-500 mt-1 font-semibold">{errors.comment.message as string}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                  Avatar / Profile Photo
+                </label>
+                <div className="mt-1">
+                  <ImageUpload
+                    bucket="avatars"
+                    value={avatarUrl ? [avatarUrl] : []}
+                    onChange={(urls) => setValue("avatar_url", urls[0] || "")}
+                    onRemove={() => setValue("avatar_url", "")}
+                    maxFiles={1}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2.5 py-1">
+                <input
+                  type="checkbox"
+                  id="testimonial-active"
+                  {...register("is_active")}
+                  className="w-4 h-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
+                />
+                <label htmlFor="testimonial-active" className="text-xs font-bold text-slate-550 dark:text-slate-350 cursor-pointer select-none">
+                  Approve and publish this review
+                </label>
+              </div>
+
+              <div className="flex items-center gap-2">
                 <button
-                  type="button"
-                  onClick={() => {
-                    setEditingId(null);
-                    reset();
-                  }}
-                  className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold px-3 py-2 rounded-xl transition text-sm cursor-pointer"
+                  type="submit"
+                  disabled={createMutation.isPending || updateMutation.isPending}
+                  className="flex-1 bg-purple-650 hover:bg-purple-700 active:scale-[0.98] text-white font-bold py-2.5 rounded-xl transition duration-155 text-xs shadow-md shadow-purple-600/10 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                 >
-                  Cancel
+                  {createMutation.isPending || updateMutation.isPending ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Check className="w-3.5 h-3.5" />
+                  )}
+                  <span>{editingId ? "Update Review" : "Publish Review"}</span>
                 </button>
-              )}
-            </div>
-          </form>
-        </motion.div>
 
-        {/* Right Categories Grid */}
-        <div className="lg:col-span-2 space-y-4">
-          {isLoading ? (
-            <div className="space-y-4">
-              {[1, 2].map((i) => (
-                <div key={i} className="h-28 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 animate-pulse" />
-              ))}
-            </div>
-          ) : testimonials.length > 0 ? (
-            <div className="space-y-4">
-              {testimonials.map((testi: any) => (
-                <motion.div
-                  key={testi.id}
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="p-5 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-2xl shadow-sm hover:shadow-md transition duration-200 relative group flex gap-4"
-                >
-                  <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-50 dark:bg-slate-950 border border-slate-200/40 dark:border-slate-800/40 shrink-0">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={testi.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"}
-                      alt={testi.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0 pr-12 space-y-2">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                      <div>
-                        <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm">
-                          {testi.name}
-                        </h3>
-                        <p className="text-[10px] text-slate-450 dark:text-slate-500 font-semibold">
-                          {testi.role || "Verified Buyer"}
-                        </p>
-                      </div>
-                      <div className="flex gap-0.5 text-amber-400">
-                        {Array.from({ length: testi.rating }).map((_, i) => (
-                          <Star key={i} className="w-3.5 h-3.5 fill-amber-405" />
-                        ))}
-                      </div>
-                    </div>
-                    <p className="text-xs text-slate-550 dark:text-slate-400 leading-relaxed italic">
-                      &ldquo;{testi.comment}&rdquo;
-                    </p>
-                  </div>
-
-                  <div className="absolute right-3 top-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    <button
-                      onClick={() => handleEdit(testi)}
-                      className="p-1.5 text-slate-500 hover:text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-950/20 rounded-lg transition cursor-pointer"
-                      title="Edit Testimonial"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => setDeleteId(testi.id)}
-                      className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-lg transition cursor-pointer"
-                      title="Delete Testimonial"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center p-8 text-center text-slate-450 dark:text-slate-500 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
-              <p className="font-semibold text-sm">No client testimonials added yet</p>
-            </div>
-          )}
+                {editingId && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingId(null);
+                      reset();
+                    }}
+                    className="p-2.5 border border-slate-200 dark:border-slate-805 hover:bg-slate-50 dark:hover:bg-slate-850 rounded-xl transition cursor-pointer"
+                    title="Cancel edit"
+                  >
+                    <X className="w-4 h-4 text-slate-500" />
+                  </button>
+                )}
+              </div>
+            </form>
+          </div>
         </div>
+
+        {/* Right Column: List of reviews */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/85 rounded-2xl shadow-sm space-y-4">
+            <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-850 pb-3">
+              <div>
+                <h2 className="text-base font-bold text-slate-800 dark:text-slate-100">
+                  Manual Fallback Google Reviews
+                </h2>
+                <p className="text-xs text-slate-550 dark:text-slate-400 mt-0.5">
+                  These reviews will display alongside live Google reviews or when live API data is not set.
+                </p>
+              </div>
+              <span className="text-xs font-bold px-2.5 py-1 bg-purple-50 dark:bg-purple-950/40 text-purple-650 dark:text-purple-400 rounded-full border border-purple-100 dark:border-purple-900/30">
+                {testimonials.length} reviews
+              </span>
+            </div>
+
+            {isLoading ? (
+              <div className="py-12 flex justify-center">
+                <Loader2 className="w-6 h-6 text-purple-650 animate-spin" />
+              </div>
+            ) : testimonials.length === 0 ? (
+              <div className="text-center py-12 border border-dashed border-slate-200 dark:border-slate-805 rounded-xl space-y-2">
+                <MessageSquare className="w-8 h-8 text-slate-350 mx-auto" />
+                <p className="text-xs text-slate-500 font-bold">No local fallback reviews created</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {testimonials.map((testi: any) => (
+                  <div
+                    key={testi.id}
+                    className="p-4 bg-slate-50 dark:bg-slate-950/40 rounded-2xl border border-slate-200/20 dark:border-slate-850/60 flex gap-4 items-start group relative"
+                  >
+                    {/* Review profile */}
+                    <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 dark:border-slate-800 bg-purple-50 flex items-center justify-center font-bold text-purple-650 shrink-0">
+                      {testi.avatar_url ? (
+                        <img src={testi.avatar_url} alt={testi.name} className="w-full h-full object-cover" />
+                      ) : (
+                        testi.name.charAt(0).toUpperCase()
+                      )}
+                    </div>
+
+                    {/* Review Details */}
+                    <div className="flex-1 space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+                            {testi.name}
+                            {!testi.is_active && (
+                              <span className="text-[9px] font-semibold text-rose-500 px-1.5 py-0.5 bg-rose-50 dark:bg-rose-955 rounded-full border border-rose-100">
+                                Inactive
+                              </span>
+                            )}
+                          </h4>
+                          <span className="text-[10px] font-bold text-slate-450">{testi.role || "Verified Google Review"}</span>
+                        </div>
+
+                        {/* Stars */}
+                        <div className="flex gap-0.5">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-3 h-3 ${
+                                i < (testi.rating || 5)
+                                  ? "fill-yellow-400 text-yellow-400"
+                                  : "text-slate-200 dark:text-slate-800"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+
+                      <p className="text-xs text-slate-650 dark:text-slate-350 leading-relaxed italic pr-12">
+                        &quot;{testi.comment}&quot;
+                      </p>
+                    </div>
+
+                    {/* Quick action buttons */}
+                    <div className="absolute right-4 bottom-4 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                      <button
+                        onClick={() => handleEdit(testi)}
+                        className="p-1.5 text-slate-500 hover:text-purple-650 hover:bg-white dark:hover:bg-slate-900 border border-transparent hover:border-slate-200 dark:hover:border-slate-805 rounded-lg transition cursor-pointer"
+                        title="Edit Review"
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => setDeleteId(testi.id)}
+                        className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-white dark:hover:bg-slate-900 border border-transparent hover:border-slate-200 dark:hover:border-slate-805 rounded-lg transition cursor-pointer"
+                        title="Delete Review"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
       </div>
 
       <ConfirmDialog
         isOpen={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        isLoading={deleteMutation.isPending}
-        isDestructive={true}
-        title="Delete Testimonial"
-        description="Are you sure you want to delete this customer review testimonial? This will remove it from the home page."
+        title="Delete Google Review"
+        description="Are you sure you want to permanently delete this Google review? This action cannot be undone."
       />
     </div>
   );

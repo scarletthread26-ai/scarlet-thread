@@ -73,10 +73,72 @@ const itemVariants = {
 
 import { ProductCard } from "@/components/product/ProductCard"
 
+function formatLovedGiftsTitle(titleStr: string) {
+  if (!titleStr) return "";
+  const lower = titleStr.toLowerCase();
+  if (lower === "our most loved gifts") {
+    return (
+      <>
+        Our Most Loved <span className="text-primary">Gifts</span>
+      </>
+    );
+  }
+  const words = titleStr.split(" ");
+  if (words.length > 1) {
+    const lastWord = words[words.length - 1];
+    const remaining = words.slice(0, -1).join(" ");
+    return (
+      <>
+        {remaining} <span className="text-primary">{lastWord}</span>
+      </>
+    );
+  }
+  return titleStr;
+}
+
 export function ProductGrid() {
   const { data: dbProducts = [] } = useProducts()
+  const [sectionData, setSectionData] = React.useState<any>(null)
+
+  React.useEffect(() => {
+    async function loadSection() {
+      try {
+        const res = await fetch("/api/admin/cms/homepage-sections?key=featured-products")
+        if (res.ok) {
+          const json = await res.json()
+          if (json) setSectionData(json)
+        }
+      } catch (err) {
+        console.warn("Failed to load featured products section config:", err)
+      }
+    }
+    loadSection()
+  }, [])
 
   const displayProducts = React.useMemo(() => {
+    const selectedIds = sectionData?.content?.product_ids || []
+    
+    if (selectedIds.length > 0 && dbProducts.length > 0) {
+      const selectedProds = selectedIds
+        .map((id: string) => dbProducts.find((p) => p.id === id))
+        .filter((p: any) => p && p.is_active)
+      
+      if (selectedProds.length > 0) {
+        return selectedProds.map((p: any) => ({
+          id: p.id,
+          name: p.name,
+          category: p.categories?.name || "Apparel",
+          price: p.price,
+          compare_at_price: p.compare_at_price,
+          rating: 4.9,
+          reviews: 100,
+          imagePlaceholder: p.name ? p.name.split(" ")[0] : "Custom",
+          image: p.images?.[0]?.url || "/images/scarlet-lovedgift1.png",
+          slug: p.slug
+        }))
+      }
+    }
+
     const activeProducts = dbProducts.filter((p) => p.is_active && p.best_seller)
     if (activeProducts.length > 0) {
       return activeProducts.map((p: any) => ({
@@ -93,7 +155,10 @@ export function ProductGrid() {
       }))
     }
     return products
-  }, [dbProducts])
+  }, [dbProducts, sectionData])
+
+  const title = sectionData?.title || "Our Most Loved Gifts"
+  const subtitle = sectionData?.subtitle || "Carefully selected and thoughtfully crafted to bring joy, create meaningful connections, and make every moment feel extra special."
 
   return (
     <section className="py-5 md:py-24 bg-[#F9F5FF]">
@@ -108,10 +173,10 @@ export function ProductGrid() {
           transition={{ duration: 0.55, ease: "easeOut" }}
         >
           <h2 className="text-3xl font-bold flex items-center justify-center gap-2">
-            Our Most Loved <span className="text-primary">Gifts</span>
+            {formatLovedGiftsTitle(title)}
           </h2>
           <p className="text-muted-foreground text-sm mt-2 max-w-xl mx-auto">
-            Carefully selected and thoughtfully crafted to bring joy, create meaningful connections, and make every moment feel extra special.
+            {subtitle}
           </p>
         </motion.div>
 
@@ -126,7 +191,7 @@ export function ProductGrid() {
             transition={{ duration: 0.5, delay: 0.15 }}
           >
             <style>{`.mobile-carousel::-webkit-scrollbar { display: none; }`}</style>
-            {displayProducts.map((product, i) => (
+            {displayProducts.map((product: any, i: number) => (
               <motion.div
                 key={product.id}
                 className="snap-start shrink-0 w-[58vw]"
@@ -151,7 +216,7 @@ export function ProductGrid() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.15 }}
         >
-          {displayProducts.map((product) => (
+          {displayProducts.map((product: any) => (
             <motion.div key={product.id} variants={itemVariants}>
               <ProductCard product={product} />
             </motion.div>
