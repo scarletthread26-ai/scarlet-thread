@@ -6,7 +6,6 @@ import { LivePreviewFeatureKids } from "@/components/sections/kids-babies/LivePr
 import { OccasionsGridKids } from "@/components/sections/kids-babies/OccasionsGridKids"
 import { CraftedGalleryKids } from "@/components/sections/kids-babies/CraftedGalleryKids"
 import { TestimonialsKids } from "@/components/sections/kids-babies/TestimonialsKids"
-import { CustomGiftBannerKids } from "@/components/sections/kids-babies/CustomGiftBannerKids"
 import { BottomValuePropsKids } from "@/components/sections/kids-babies/BottomValuePropsKids"
 
 export default function KidsBabiesPage() {
@@ -20,7 +19,6 @@ export default function KidsBabiesPage() {
       <OccasionsGridKids />
       <CraftedGalleryKids />
       <TestimonialsKids />
-      <CustomGiftBannerKids />
       <BottomValuePropsKids />
     </div>
   )

@@ -5,7 +5,7 @@ import { useProducts, useDeleteProduct } from "@/hooks/use-products";
 import { DataTable } from "@/components/admin/data-table";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import { EmptyState } from "@/components/admin/empty-state";
-import { Plus, Edit, Trash2, ShoppingBag, Eye } from "lucide-react";
+import { Plus, Edit, Trash2, ShoppingBag, Eye, Copy, Download } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -59,11 +59,34 @@ export default function ProductsPage() {
     {
       accessorKey: "sku",
       header: "SKU",
-      cell: ({ row }) => (
-        <span className="font-mono text-xs text-slate-500 dark:text-slate-450">
-          {row.original.sku || "N/A"}
-        </span>
-      ),
+      cell: ({ row }) => {
+        const sku = row.original.sku;
+        const handleCopy = (e: React.MouseEvent) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (sku) {
+            navigator.clipboard.writeText(sku);
+            toast.success(`SKU "${sku}" copied to clipboard!`);
+          }
+        };
+
+        return (
+          <div className="flex items-center gap-1.5 group min-w-[100px]">
+            <span className="font-mono text-xs text-slate-600 dark:text-slate-400">
+              {sku || "N/A"}
+            </span>
+            {sku && (
+              <button
+                onClick={handleCopy}
+                className="p-1 rounded text-slate-400 hover:text-purple-650 hover:bg-purple-50 dark:hover:bg-purple-950/30 transition opacity-0 group-hover:opacity-100 focus:opacity-100 cursor-pointer"
+                title="Copy SKU"
+              >
+                <Copy className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "categories.name",
@@ -178,6 +201,63 @@ export default function ProductsPage() {
     },
   ];
 
+  const handleExportCSV = () => {
+    try {
+      if (products.length === 0) {
+        toast.error("No products available to export.");
+        return;
+      }
+
+      // Define headers
+      const headers = [
+        "SKU",
+        "Product Name",
+        "Category",
+        "Price (AED)",
+        "Compare At Price (AED)",
+        "Stock Quantity",
+        "Inventory Tracked",
+        "Personalized",
+        "Status"
+      ];
+
+      // Format data
+      const rows = products.map((prod: any) => [
+        `"${(prod.sku || "N/A").replace(/"/g, '""')}"`,
+        `"${prod.name.replace(/"/g, '""')}"`,
+        `"${(prod.categories?.name || "Uncategorized").replace(/"/g, '""')}"`,
+        prod.price,
+        prod.compare_at_price || "",
+        prod.track_inventory ? prod.stock_quantity : "N/A",
+        prod.track_inventory ? "Yes" : "No",
+        prod.is_personalized ? "Yes" : "No",
+        prod.is_active ? "Active" : "Archived"
+      ]);
+
+      // Combine CSV content
+      const csvContent = [
+        headers.join(","),
+        ...rows.map(e => e.join(","))
+      ].join("\n");
+
+      // Download file
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `scarlet-thread-products-${new Date().toISOString().split("T")[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success("Products list exported to CSV successfully!");
+    } catch (err) {
+      console.error("Failed to export products CSV:", err);
+      toast.error("Failed to generate CSV file.");
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Products Top Header */}
@@ -190,13 +270,22 @@ export default function ProductsPage() {
             Browse and manage all product listings, stock counts, and customization templates.
           </p>
         </div>
-        <Link
-          href="/admin/products/new"
-          className="bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white text-sm font-semibold px-4 py-2 rounded-xl transition duration-200 flex items-center gap-1.5 shadow-md shadow-purple-600/10"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add Product</span>
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExportCSV}
+            className="border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-950 active:scale-[0.98] text-slate-700 dark:text-slate-300 text-sm font-semibold px-4 py-2 rounded-xl transition duration-200 flex items-center gap-1.5 shadow-sm cursor-pointer"
+          >
+            <Download className="w-4 h-4" />
+            <span>Export CSV</span>
+          </button>
+          <Link
+            href="/admin/products/new"
+            className="bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white text-sm font-semibold px-4 py-2 rounded-xl transition duration-200 flex items-center gap-1.5 shadow-md shadow-purple-600/10"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Product</span>
+          </Link>
+        </div>
       </div>
 
       {/* Main Table */}
@@ -209,8 +298,8 @@ export default function ProductsPage() {
         <DataTable
           columns={columns}
           data={products}
-          searchKey="name"
-          searchPlaceholder="Search products by name..."
+          globalSearch={true}
+          searchPlaceholder="Search by name, SKU, or category..."
         />
       ) : (
         <EmptyState

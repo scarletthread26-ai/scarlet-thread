@@ -157,12 +157,12 @@ export default function AdminCustomerDetailPage({ params }: PageProps) {
                   {customer.addresses.map((address: any) => (
                     <div key={address.id} className="text-xs sm:text-sm border-b pb-4 last:border-0 last:pb-0">
                       <span className="text-[10px] font-bold text-primary px-2 py-0.5 bg-primary/10 rounded-full uppercase tracking-wider">
-                        {address.title || "Address"}
+                        {address.label || address.title || "Address"}
                       </span>
                       <p className="font-bold text-slate-800 dark:text-slate-200 mt-2">{address.full_name}</p>
                       <p className="text-slate-600 dark:text-slate-400 mt-0.5">{address.address_line1}</p>
                       {address.address_line2 && <p className="text-slate-600 dark:text-slate-400">{address.address_line2}</p>}
-                      <p className="text-slate-600 dark:text-slate-400">{address.city}, {address.state}</p>
+                      <p className="text-slate-600 dark:text-slate-400">{address.city}, {address.emirate || address.state}</p>
                       <p className="text-slate-600 dark:text-slate-400">Postal Code: {address.postal_code}</p>
                       <p className="text-slate-800 dark:text-slate-200 font-medium pt-1.5">Phone: {address.phone}</p>
                     </div>

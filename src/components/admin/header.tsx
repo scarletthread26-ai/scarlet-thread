@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { Menu, ChevronRight, User, LogOut, Loader2 } from "lucide-react";
+import { Menu, ChevronRight, LogOut, Loader2 } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { CommandPalette } from "./command-palette";
 import { toast } from "sonner";
@@ -151,20 +151,12 @@ export function Header({ onMobileMenuOpen }: HeaderProps) {
                     {adminUser?.email}
                   </p>
                 </div>
-                <Link
-                  href="/admin/settings"
-                  onClick={() => setIsDropdownOpen(false)}
-                  className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer"
-                >
-                  <User className="w-4 h-4 text-slate-400" />
-                  <span>Account Settings</span>
-                </Link>
                 <button
                   onClick={() => {
                     setIsDropdownOpen(false);
                     handleSignOut();
                   }}
-                  className="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 text-left cursor-pointer border-t border-slate-100 dark:border-slate-800/50"
+                  className="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 text-left cursor-pointer"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Sign Out</span>

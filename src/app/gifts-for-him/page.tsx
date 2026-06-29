@@ -8,7 +8,6 @@ import { EmbroideryStyles } from "@/components/sections/gifts-for-him/Embroidery
 import { CraftedGallery } from "@/components/sections/gifts-for-him/CraftedGallery"
 import { ValueProps } from "@/components/sections/gifts-for-him/ValueProps"
 import { Testimonials } from "@/components/sections/Testimonials"
-import { CustomGiftBanner } from "@/components/sections/gifts-for-him/CustomGiftBanner"
 import { RelatedCategories } from "@/components/sections/gifts-for-him/RelatedCategories"
 
 // Force Next.js route re-compilation to resolve hydration mismatch cache desync
@@ -25,7 +24,6 @@ export default function GiftsForHimPage() {
       <CraftedGallery />
       <ValueProps />
       <Testimonials />
-      <CustomGiftBanner />
       <RelatedCategories />
     </div>
   )

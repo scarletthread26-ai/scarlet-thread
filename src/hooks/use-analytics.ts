@@ -1,11 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 
-export interface AnalyticsData {
-  revenueData: Array<{ date: string; revenue: number; orders: number }>;
-  categoryData: Array<{ name: string; value: number }>;
-  funnelData: Array<{ name: string; count: number }>;
-}
-
 export interface ReportRow {
   date: string;
   order_number: string;
@@ -19,16 +13,6 @@ export interface ReportRow {
   status: string;
 }
 
-export function useAnalytics(range: string = "7d") {
-  return useQuery<AnalyticsData>({
-    queryKey: ["admin", "analytics", range],
-    queryFn: async () => {
-      const res = await fetch(`/api/admin/analytics?range=${range}`);
-      if (!res.ok) throw new Error("Failed to fetch analytics data");
-      return res.json();
-    },
-  });
-}
 
 export function useSalesReport() {
   return useQuery<ReportRow[]>({

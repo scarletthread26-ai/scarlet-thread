@@ -18,3 +18,4 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+// Force dev server config reload after admin route changes - updated for analytics removal

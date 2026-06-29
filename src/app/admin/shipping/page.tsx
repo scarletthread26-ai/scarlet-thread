@@ -28,6 +28,7 @@ import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { decimalInputHandlers } from "@/lib/numeric-input";
 
 export default function AdminShippingPage() {
   const { data: zones = [], isLoading } = useAdminShippingZones();
@@ -292,10 +293,13 @@ export default function AdminShippingPage() {
                   <Label htmlFor="rate" className="font-bold text-slate-700 dark:text-slate-300">Default Shipping Rate (AED) *</Label>
                   <Input
                     id="rate"
-                    type="number"
+                    type="text"
+                    inputMode="decimal"
                     placeholder="e.g. 15"
                     value={rate}
                     onChange={(e) => setRate(e.target.value)}
+                    onKeyDown={decimalInputHandlers.onKeyDown}
+                    onPaste={decimalInputHandlers.onPaste}
                     className="rounded-xl border-slate-200 dark:border-slate-800 bg-white"
                   />
                 </div>
@@ -303,10 +307,13 @@ export default function AdminShippingPage() {
                   <Label htmlFor="threshold" className="font-bold text-slate-700 dark:text-slate-300">Free Shipping Threshold (AED)</Label>
                   <Input
                     id="threshold"
-                    type="number"
+                    type="text"
+                    inputMode="decimal"
                     placeholder="e.g. 150"
                     value={freeShippingThreshold}
                     onChange={(e) => setFreeShippingThreshold(e.target.value)}
+                    onKeyDown={decimalInputHandlers.onKeyDown}
+                    onPaste={decimalInputHandlers.onPaste}
                     className="rounded-xl border-slate-200 dark:border-slate-800 bg-white"
                   />
                 </div>
