@@ -8,6 +8,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { ProductCard } from "@/components/product/ProductCard";
 
 export default function WishlistPage() {
   const { items, isLoading, toggleItem, fetchWishlist } = useWishlistStore();
@@ -83,60 +84,55 @@ export default function WishlistPage() {
       </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {items.map((item) => (
-          <div 
-            key={item.productId}
-            className="border border-slate-200/60 dark:border-slate-800/80 rounded-2xl bg-white dark:bg-slate-900 p-4 shadow-sm hover:shadow-md transition flex flex-col justify-between"
-          >
-            <div>
-              {/* Product Image */}
-              <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-[#FDF8FF] border border-slate-100 dark:border-slate-850 mb-4 group">
-                <img 
-                  src={item.image} 
-                  alt={item.name} 
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-300" 
-                />
-                
-                {/* Remove button overlay */}
-                <button 
-                  onClick={() => handleRemove(item)}
-                  className="absolute top-2 right-2 p-1.5 bg-white/90 dark:bg-slate-900/90 text-slate-500 hover:text-rose-600 rounded-full shadow-sm hover:scale-105 transition"
-                  title="Remove from Wishlist"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
+        {items.map((item) => {
+          const formattedProduct = {
+            id: item.productId,
+            name: item.name,
+            price: item.price,
+            compare_at_price: item.compareAtPrice,
+            image: item.image,
+            imagePlaceholder: item.name ? item.name.split(" ")[0] : "Item",
+            rating: 4.9,
+            reviews: 100,
+            category: "Wishlist Item",
+            slug: item.productId, // Wishlist doesn't store slug, fallback to ID
+            bestSeller: false
+          };
 
-              {/* Product Info */}
-              <div className="space-y-1">
-                <h3 className="font-bold text-sm text-slate-800 dark:text-slate-200 line-clamp-1">
-                  {item.name}
-                </h3>
-                <div className="flex items-center gap-2">
-                  <span className="font-extrabold text-purple-600 text-sm">
-                    AED {item.price}
-                  </span>
-                  {item.compareAtPrice && item.compareAtPrice > item.price && (
-                    <span className="text-xs text-slate-400 line-through">
-                      AED {item.compareAtPrice}
-                    </span>
-                  )}
-                </div>
-              </div>
+          return (
+            <div key={item.productId} className="h-full">
+              <ProductCard
+                product={formattedProduct}
+                customTopRightAction={
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleRemove(item);
+                    }}
+                    className="absolute top-3 right-3 p-1.5 bg-white/90 dark:bg-slate-900/90 text-slate-500 hover:text-rose-600 rounded-full shadow-md flex items-center justify-center hover:scale-110 hover:bg-white transition-all active:scale-95 z-20"
+                    title="Remove from Wishlist"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                }
+                customActionButton={
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleMoveToCart(item);
+                    }}
+                    className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold py-2.5 h-9 shadow-sm flex items-center justify-center gap-1.5 transition duration-200 cursor-pointer relative z-20"
+                  >
+                    <ShoppingBag className="w-3.5 h-3.5" />
+                    Move to Cart
+                  </Button>
+                }
+              />
             </div>
-
-            {/* Actions */}
-            <div className="mt-4 pt-4 border-t border-slate-50 dark:border-slate-850 flex gap-2">
-              <Button
-                onClick={() => handleMoveToCart(item)}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold py-2 shadow-sm flex items-center justify-center gap-1.5 transition"
-              >
-                <ShoppingBag className="w-3.5 h-3.5" />
-                Move to Cart
-              </Button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

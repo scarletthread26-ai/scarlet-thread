@@ -19,6 +19,7 @@ import {
 // 1. Composite Product Types
 export interface ProductWithImages extends Product {
   images: ProductImage[];
+  categories?: { name: string } | null;
 }
 
 export interface ProductWithDetails extends Product {

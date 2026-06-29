@@ -26,6 +26,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   searchKey?: string;
   searchPlaceholder?: string;
+  globalSearch?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -33,9 +34,11 @@ export function DataTable<TData, TValue>({
   data,
   searchKey,
   searchPlaceholder = "Search...",
+  globalSearch = false,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState("");
 
   const table = useReactTable({
     data,
@@ -46,24 +49,34 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    onGlobalFilterChange: setGlobalFilter,
     state: {
       sorting,
       columnFilters,
+      globalFilter,
     },
   });
+
+  const showSearch = searchKey || globalSearch;
 
   return (
     <div className="space-y-4">
       {/* Filters and Actions Bar */}
-      {searchKey && (
+      {showSearch && (
         <div className="flex items-center gap-3">
           <div className="relative w-full max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
             <input
               placeholder={searchPlaceholder}
-              value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
+              value={
+                globalSearch
+                  ? globalFilter
+                  : (table.getColumn(searchKey || "")?.getFilterValue() as string) ?? ""
+              }
               onChange={(event) =>
-                table.getColumn(searchKey)?.setFilterValue(event.target.value)
+                globalSearch
+                  ? setGlobalFilter(event.target.value)
+                  : table.getColumn(searchKey || "")?.setFilterValue(event.target.value)
               }
               className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 pl-10 pr-4 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
             />

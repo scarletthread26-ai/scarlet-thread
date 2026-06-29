@@ -22,7 +22,7 @@ export async function GET(
 
     // 2. Fetch addresses
     const { data: addresses } = await supabase
-      .from("addresses")
+      .from("user_addresses")
       .select("*")
       .eq("user_id", id);
 

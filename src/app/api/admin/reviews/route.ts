@@ -77,18 +77,23 @@ export async function GET(request: Request) {
 }
 
 export async function PATCH(request: Request) {
+  let parsedBody: any = null;
   try {
     const supabase = await createClient();
-    const body = await request.json();
-    const { id, status } = body;
+    parsedBody = await request.json();
+    const { id, status, admin_reply } = parsedBody;
 
-    if (!id || !status) {
-      return NextResponse.json({ error: "Missing review ID or status" }, { status: 400 });
+    if (!id) {
+      return NextResponse.json({ error: "Missing review ID" }, { status: 400 });
     }
+
+    const updateData: any = {};
+    if (status !== undefined) updateData.status = status;
+    if (admin_reply !== undefined) updateData.admin_reply = admin_reply;
 
     const { data, error } = await supabase
       .from("reviews")
-      .update({ status })
+      .update(updateData)
       .eq("id", id)
       .select()
       .single();
@@ -98,10 +103,10 @@ export async function PATCH(request: Request) {
     return NextResponse.json(data);
   } catch (error: any) {
     console.warn("Supabase review status patch failed. Simulating local success:", error.message || error);
-    const body = await request.json();
-    const review = mockAdminReviews.find(r => r.id === body.id);
+    const review = mockAdminReviews.find(r => r.id === parsedBody?.id);
     if (review) {
-      review.status = body.status;
+      if (parsedBody.status !== undefined) review.status = parsedBody.status;
+      if (parsedBody.admin_reply !== undefined) review.admin_reply = parsedBody.admin_reply;
       return NextResponse.json(review);
     }
     return NextResponse.json({ error: "Review not found" }, { status: 404 });

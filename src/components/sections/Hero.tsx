@@ -107,8 +107,8 @@ function Dots({ total, active, onChange }: { total: number; active: number; onCh
           onClick={() => onChange(i)}
           aria-label={`Go to slide ${i + 1}`}
           className={`rounded-full transition-all duration-300 ${i === active
-              ? "bg-primary w-5 h-2"
-              : "bg-primary/30 hover:bg-primary/60 w-2 h-2"
+            ? "bg-primary w-5 h-2"
+            : "bg-primary/30 hover:bg-primary/60 w-2 h-2"
             }`}
         />
       ))}
@@ -122,7 +122,7 @@ function Dots({ total, active, onChange }: { total: number; active: number; onCh
 // Helper to format the global title, splitting it nicely and applying primary color to the last word
 function formatHeroTitle(titleStr: string, isMobile: boolean) {
   if (!titleStr) return "";
-  
+
   const lower = titleStr.toLowerCase();
   if (lower.includes("more than a gift") && lower.includes("memory in the making")) {
     return (
@@ -132,7 +132,7 @@ function formatHeroTitle(titleStr: string, isMobile: boolean) {
       </>
     );
   }
-  
+
   const parts = titleStr.split(". ");
   if (parts.length > 1) {
     const firstPart = parts[0] + ".";
@@ -171,6 +171,15 @@ export function Hero() {
   const [slides, setSlides] = useState<any[]>(STATIC_SLIDES)
   const [current, setCurrent] = useState(0)
   const [paused, setPaused] = useState(false)
+  const [delay, setDelay] = useState(5000)
+
+  // Adjust delay for mobile
+  useEffect(() => {
+    const handleResize = () => setDelay(window.innerWidth < 768 ? 2500 : 3500)
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
   useEffect(() => {
     async function loadSlides() {
@@ -204,12 +213,12 @@ export function Hero() {
 
   const next = useCallback(() => setCurrent((c) => (c + 1) % slides.length), [slides.length])
 
-  // Auto-advance every 5 s
+  // Auto-advance
   useEffect(() => {
     if (paused) return
-    const id = setInterval(next, 5000)
+    const id = setInterval(next, delay)
     return () => clearInterval(id)
-  }, [paused, next])
+  }, [paused, next, delay])
 
   const slide = slides[current] || STATIC_SLIDES[0]
 
@@ -229,9 +238,8 @@ export function Hero() {
       {slides.map((s, idx) => (
         <div
           key={`desktop-bg-${s.id}`}
-          className={`absolute inset-0 z-0 select-none pointer-events-none bg-cover bg-right transition-opacity duration-700 ease-in-out hidden lg:block ${
-            idx === current ? "opacity-100" : "opacity-0"
-          }`}
+          className={`absolute inset-0 z-0 select-none pointer-events-none bg-cover bg-right transition-opacity duration-700 ease-in-out hidden lg:block ${idx === current ? "opacity-100" : "opacity-0"
+            }`}
           style={{ backgroundImage: `url('${s.desktopBg}')` }}
         />
       ))}
@@ -246,18 +254,16 @@ export function Hero() {
           {slides.map((s, idx) => (
             <div
               key={`mobile-bg-${s.id}`}
-              className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-in-out sm:hidden ${
-                idx === current ? "opacity-100" : "opacity-0"
-              }`}
+              className={`absolute inset-0 bg-cover bg-center transition-opacity duration-300 ease-in-out sm:hidden ${idx === current ? "opacity-100" : "opacity-0"
+                }`}
               style={{ backgroundImage: `url('${s.mobileImg}')` }}
             />
           ))}
           {slides.map((s, idx) => (
             <div
               key={`tablet-bg-${s.id}`}
-              className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-in-out hidden sm:block ${
-                idx === current ? "opacity-100" : "opacity-0"
-              }`}
+              className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-in-out hidden sm:block ${idx === current ? "opacity-100" : "opacity-0"
+                }`}
               style={{ backgroundImage: `url('${s.tabletImg}')` }}
             />
           ))}

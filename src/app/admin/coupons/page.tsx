@@ -30,6 +30,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { decimalInputHandlers, integerInputHandlers } from "@/lib/numeric-input";
 
 export default function AdminCouponsPage() {
   const { data: coupons = [], isLoading } = useAdminCoupons();
@@ -338,10 +339,13 @@ export default function AdminCouponsPage() {
                     </Label>
                     <Input
                       id="discountValue"
-                      type="number"
+                      type="text"
+                      inputMode="decimal"
                       placeholder="e.g. 10"
                       value={discountValue}
                       onChange={(e) => setDiscountValue(e.target.value)}
+                      onKeyDown={decimalInputHandlers.onKeyDown}
+                      onPaste={decimalInputHandlers.onPaste}
                       className="rounded-xl border-slate-200 dark:border-slate-800"
                     />
                   </div>
@@ -350,10 +354,13 @@ export default function AdminCouponsPage() {
                   <Label htmlFor="minPurchase" className="font-bold text-slate-700 dark:text-slate-300">Min Purchase Requirement (AED)</Label>
                   <Input
                     id="minPurchase"
-                    type="number"
+                    type="text"
+                    inputMode="decimal"
                     placeholder="e.g. 100"
                     value={minPurchaseAmount}
                     onChange={(e) => setMinPurchaseAmount(e.target.value)}
+                    onKeyDown={decimalInputHandlers.onKeyDown}
+                    onPaste={decimalInputHandlers.onPaste}
                     className="rounded-xl border-slate-200 dark:border-slate-800"
                   />
                 </div>
@@ -384,10 +391,13 @@ export default function AdminCouponsPage() {
                   <Label htmlFor="usageLimit" className="font-bold text-slate-700 dark:text-slate-300">Usage Limit (Redemptions)</Label>
                   <Input
                     id="usageLimit"
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
                     placeholder="e.g. 50"
                     value={usageLimit}
                     onChange={(e) => setUsageLimit(e.target.value)}
+                    onKeyDown={integerInputHandlers.onKeyDown}
+                    onPaste={integerInputHandlers.onPaste}
                     className="rounded-xl border-slate-200 dark:border-slate-800"
                   />
                 </div>

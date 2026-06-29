@@ -147,6 +147,12 @@ export default function CustomerOrderDetailPage({ params }: PageProps) {
                     {item.personalization_data && (
                       <div className="mt-2 text-xs border bg-purple-50/10 dark:bg-purple-950/5 border-purple-100 dark:border-purple-900/20 p-2.5 rounded-lg space-y-1">
                         <span className="font-bold text-purple-900 dark:text-purple-300 block mb-0.5">My Customizations:</span>
+                        {item.personalization_data.color && (
+                          <div>Selected Color: <span className="font-semibold text-slate-700 dark:text-slate-300">{item.personalization_data.color}</span></div>
+                        )}
+                        {item.personalization_data.size && (
+                          <div>Selected Size: <span className="font-semibold text-slate-700 dark:text-slate-300">{item.personalization_data.size}</span></div>
+                        )}
                         {item.personalization_data.name && (
                           <div>Name to embroider: <span className="font-semibold text-slate-700 dark:text-slate-300">{item.personalization_data.name}</span></div>
                         )}

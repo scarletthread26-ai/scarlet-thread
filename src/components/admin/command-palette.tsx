@@ -10,7 +10,6 @@ import {
   ShoppingBag,
   Tag,
   Users,
-  Settings,
   Plus,
   Moon,
   Sun,
@@ -61,12 +60,7 @@ export function CommandPalette() {
       category: "Navigation",
       action: () => router.push("/admin/cms"),
     },
-    {
-      icon: Settings,
-      label: "Go to Settings",
-      category: "Navigation",
-      action: () => router.push("/admin/settings"),
-    },
+
     {
       icon: Plus,
       label: "Add New Product",

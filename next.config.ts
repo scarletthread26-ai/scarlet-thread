@@ -13,8 +13,13 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.supabase.co",
       },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
     ],
   },
 };
 
 export default nextConfig;
+// Force dev server config reload after admin route changes - updated for analytics removal

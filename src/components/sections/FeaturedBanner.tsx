@@ -17,6 +17,7 @@ export function FeaturedBanner() {
         title: "New Born Gift Sets",
         subtitle: "Thoughtful & adorable gifts for your little ones.",
         imageUrl: "/images/scarlet-bestseller-banner.png",
+        mobileImageUrl: null as string | null,
         linkUrl: "/products",
       }
     }
@@ -31,6 +32,7 @@ export function FeaturedBanner() {
           title: "New Born Gift Sets",
           subtitle: "Thoughtful & adorable gifts for your little ones.",
           imageUrl: "/images/scarlet-bestseller-banner.png",
+          mobileImageUrl: null,
           linkUrl: "/products",
         }
       }
@@ -39,6 +41,7 @@ export function FeaturedBanner() {
         title: activeAny.title || "Featured Banner",
         subtitle: activeAny.subtitle || "",
         imageUrl: activeAny.image_url || "/images/scarlet-bestseller-banner.png",
+        mobileImageUrl: activeAny.image_mobile_url || null,
         linkUrl: activeAny.link_url || "/products",
       }
     }
@@ -48,6 +51,7 @@ export function FeaturedBanner() {
       title: fb.title || "Featured Banner",
       subtitle: fb.subtitle || "",
       imageUrl: fb.image_url || "/images/scarlet-bestseller-banner.png",
+      mobileImageUrl: fb.image_mobile_url || null,
       linkUrl: fb.link_url || "/products",
     }
   }, [dbBanners])
@@ -72,9 +76,18 @@ export function FeaturedBanner() {
               src={featuredBanner.imageUrl}
               alt={featuredBanner.title}
               fill
-              className="object-cover"
+              className={`object-cover ${featuredBanner.mobileImageUrl ? 'hidden sm:block' : ''}`}
               priority
             />
+            {featuredBanner.mobileImageUrl && (
+              <Image
+                src={featuredBanner.mobileImageUrl}
+                alt={featuredBanner.title}
+                fill
+                className="object-cover sm:hidden"
+                priority
+              />
+            )}
           </motion.div>
 
           <div className="p-8 md:p-12 lg:p-16 md:w-1/2 flex flex-col justify-end md:justify-center items-start relative z-10 mt-auto md:mt-0">
