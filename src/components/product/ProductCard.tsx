@@ -58,7 +58,7 @@ export function ProductCard({ product, className, buttonClassName, customTopRigh
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
-      toast.error("Please sign up to add items to your wishlist.")
+      toast.error("Please sign in to add items to your wishlist.")
       return
     }
 
