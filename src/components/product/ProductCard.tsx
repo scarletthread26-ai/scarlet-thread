@@ -7,6 +7,8 @@ import { Heart, Star } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { useCartStore } from "@/store/useCartStore"
+import { useWishlistStore } from "@/store/useWishlistStore"
+import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
@@ -36,6 +38,42 @@ export interface ProductCardProps {
 export function ProductCard({ product, className, buttonClassName, customTopRightAction, customActionButton }: ProductCardProps) {
   const href = `/product/${product.slug || product.id}`
   const { addItem } = useCartStore()
+  const { toggleItem } = useWishlistStore()
+  const wishlistItems = useWishlistStore((state) => state.items)
+  const [isWishlisted, setIsWishlisted] = React.useState(false)
+
+  React.useEffect(() => {
+    if (product.id) {
+      setIsWishlisted(wishlistItems.some((item) => item.productId === String(product.id)))
+    }
+  }, [wishlistItems, product.id])
+
+  const handleWishlistToggle = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (!product.id) return
+
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+      toast.error("Please sign up to add items to your wishlist.")
+      return
+    }
+
+    const wishlistItem = {
+      productId: String(product.id),
+      name: product.name,
+      price: product.price,
+      compareAtPrice: product.compare_at_price || null,
+      image: product.image || "/images/scarlet-lovedgift1.png",
+      slug: product.slug || String(product.id),
+      stockStatus: "in_stock"
+    }
+
+    await toggleItem(wishlistItem, true)
+  }
 
   const hasDiscount = !!(product.compare_at_price && product.compare_at_price > product.price)
   const discountPercent = hasDiscount
@@ -111,14 +149,16 @@ export function ProductCard({ product, className, buttonClassName, customTopRigh
           {/* Wishlist/Custom Action */}
           {customTopRightAction ? customTopRightAction : (
             <button 
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                // TODO: add to wishlist logic
-              }}
+              onClick={handleWishlistToggle}
               className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center hover:scale-110 hover:bg-white transition-all active:scale-95 z-20"
+              title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
             >
-              <Heart className="w-4 h-4 text-primary hover:fill-primary transition-colors" />
+              <Heart 
+                className={cn(
+                  "w-4 h-4 text-primary transition-all",
+                  isWishlisted ? "fill-primary text-primary" : "hover:fill-primary"
+                )} 
+              />
             </button>
           )}
         </div>
