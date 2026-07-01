@@ -67,12 +67,18 @@ export function Header() {
   const [mounted, setMounted] = useState(false)
   const cartItems = useCartStore((state) => state.items)
   const wishlistItems = useWishlistStore((state) => state.items)
+  const fetchWishlist = useWishlistStore((state) => state.fetchWishlist)
 
   useEffect(() => {
     setMounted(true)
     const supabase = createClient()
-    supabase.auth.getUser().then(({ data }) => setUser(data.user))
-  }, [])
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user)
+      if (data.user) {
+        fetchWishlist(true)
+      }
+    })
+  }, [fetchWishlist])
 
   const cartCount = mounted ? cartItems.reduce((acc, item) => acc + item.quantity, 0) : 0
   const wishlistCount = mounted ? wishlistItems.length : 0
@@ -201,6 +207,7 @@ export function Header() {
                     onClick={async () => {
                       const supabase = createClient()
                       await supabase.auth.signOut()
+                      useWishlistStore.getState().clearWishlist()
                       setUser(null)
                       router.push('/')
                     }}
