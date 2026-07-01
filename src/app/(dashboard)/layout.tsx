@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Package, User, Heart, MapPin, LogOut, Loader2, Home, MessageSquare, ArrowRight, ChevronLeft } from "lucide-react";
+import { useWishlistStore } from "@/store/useWishlistStore";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -31,6 +32,7 @@ export default function CustomerDashboardLayout({ children }: { children: React.
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    useWishlistStore.getState().clearWishlist();
     router.push("/");
   };
 
