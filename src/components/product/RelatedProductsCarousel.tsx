@@ -4,6 +4,7 @@ import * as React from "react"
 import { useRef } from "react"
 import { ChevronLeft, ChevronRight, Heart } from "lucide-react"
 import { ProductCard } from "@/components/product/ProductCard"
+import { cn } from "@/lib/utils"
 
 const products = [
   {
