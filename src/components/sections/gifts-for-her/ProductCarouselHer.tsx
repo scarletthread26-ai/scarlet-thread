@@ -142,9 +142,9 @@ export function ProductCarouselHer() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 md:gap-6 px-2 md:px-10"
+          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-0 sm:gap-4 md:gap-6 sm:px-2 md:px-10 max-sm:border-t max-sm:border-slate-200/50 dark:max-sm:border-slate-800/80 max-sm:bg-white dark:max-sm:bg-slate-900"
         >
-          {displayProducts.slice(0, 4).map((product) => {
+          {displayProducts.slice(0, 4).map((product, idx) => {
             const formattedProduct = {
               id: product.id,
               name: product.name,
@@ -162,11 +162,16 @@ export function ProductCarouselHer() {
             return (
               <div
                 key={product.id}
-                className="h-full pt-2 pb-6 group cursor-pointer"
+                className={cn(
+                  "h-full sm:pt-2 sm:pb-6 group cursor-pointer",
+                  "max-sm:border-b max-sm:border-slate-200/50 dark:max-sm:border-slate-800/80",
+                  idx % 2 === 0 ? "max-sm:border-r" : ""
+                )}
               >
                 <ProductCard 
                   product={formattedProduct} 
                   buttonClassName="bg-[#c0004e] hover:bg-[#a0003f] text-white" 
+                  className="max-sm:rounded-none max-sm:border-0 max-sm:shadow-none"
                 />
               </div>
             );

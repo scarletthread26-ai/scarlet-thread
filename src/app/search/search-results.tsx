@@ -236,7 +236,7 @@ export default function SearchResults() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-0 sm:gap-4 md:gap-6 max-sm:border-t max-sm:border-slate-200/50 dark:max-sm:border-slate-800/80 max-sm:bg-white dark:max-sm:bg-slate-900">
               {searchFilteredProducts.map((product, idx) => {
                 const formattedProduct = {
                   id: product.id,
@@ -259,8 +259,12 @@ export default function SearchResults() {
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: idx * 0.02 }}
+                    className={`max-sm:border-b max-sm:border-slate-200/50 dark:max-sm:border-slate-800/80 ${idx % 2 === 0 ? "max-sm:border-r" : ""}`}
                   >
-                    <ProductCard product={formattedProduct} />
+                    <ProductCard 
+                      product={formattedProduct} 
+                      className="max-sm:rounded-none max-sm:border-0 max-sm:shadow-none"
+                    />
                   </motion.div>
                 );
               })}
@@ -289,7 +293,7 @@ export default function SearchResults() {
               Popular Embroidered <span className="text-primary">Gifts</span>
             </h2>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-0 sm:gap-4 md:gap-6 max-sm:border-t max-sm:border-slate-200/50 dark:max-sm:border-slate-800/80 max-sm:bg-white dark:max-sm:bg-slate-900">
             {recommendedProducts.map((product, idx) => {
               const formattedProduct = {
                 id: product.id,
@@ -311,8 +315,12 @@ export default function SearchResults() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: idx * 0.05 }}
+                  className={`max-sm:border-b max-sm:border-slate-200/50 dark:max-sm:border-slate-800/80 ${idx % 2 === 0 ? "max-sm:border-r" : ""}`}
                 >
-                  <ProductCard product={formattedProduct} />
+                  <ProductCard 
+                    product={formattedProduct} 
+                    className="max-sm:rounded-none max-sm:border-0 max-sm:shadow-none"
+                  />
                 </motion.div>
               );
             })}

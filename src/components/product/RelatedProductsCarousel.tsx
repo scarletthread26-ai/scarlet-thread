@@ -110,12 +110,12 @@ export function RelatedProductsCarousel() {
             <ChevronRight className="w-5 h-5" />
           </button>
 
-          {/* Carousel container using native scroll */}
+          {/* Carousel container using native scroll on desktop, grid on mobile */}
           <div
             ref={scrollRef}
-            className="flex overflow-x-auto gap-6 pb-8 pt-4 px-2 snap-x hide-scrollbar scroll-smooth"
+            className="flex max-sm:grid max-sm:grid-cols-2 overflow-x-auto gap-6 max-sm:gap-0 pb-8 max-sm:pb-0 pt-4 max-sm:pt-0 px-2 max-sm:px-0 max-sm:border-t max-sm:border-slate-200/50 snap-x hide-scrollbar scroll-smooth"
           >
-          {products.map((product) => {
+          {products.map((product, idx) => {
             const formattedProduct = {
               id: product.id,
               name: product.name,
@@ -133,11 +133,16 @@ export function RelatedProductsCarousel() {
             return (
               <div
                 key={product.id}
-                className="w-[85%] sm:w-[calc(50%-12px)] md:w-[calc(33.33%-16px)] lg:w-[calc(25%-18px)] shrink-0 snap-start flex flex-col rounded-2xl"
+                className={cn(
+                  "w-[85%] sm:w-[calc(50%-12px)] md:w-[calc(33.33%-16px)] lg:w-[calc(25%-18px)] shrink-0 snap-start flex flex-col rounded-2xl",
+                  "max-sm:w-full max-sm:border-b max-sm:border-slate-200/50 max-sm:rounded-none",
+                  idx % 2 === 0 ? "max-sm:border-r" : ""
+                )}
               >
                 <ProductCard 
                   product={formattedProduct} 
                   buttonClassName="bg-[#8059BB] hover:bg-[#4B0082] text-white" 
+                  className="max-sm:rounded-none max-sm:border-0 max-sm:shadow-none"
                 />
               </div>
             );

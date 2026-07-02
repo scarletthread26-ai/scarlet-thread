@@ -106,12 +106,12 @@ export function ProductCard({ product, className, buttonClassName, customTopRigh
   }
 
   return (
-    <Card className={cn("group bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col cursor-pointer h-full", className)}>
+    <Card className={cn("group bg-white dark:bg-slate-900 rounded-[10px] border border-slate-200/50 dark:border-slate-800/80 shadow-sm sm:hover:shadow-md sm:hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col cursor-pointer h-full", className)}>
       <Link href={href} className="flex flex-col h-full flex-1">
         
         {/* Image Container */}
-        <div className="relative overflow-hidden rounded-2xl aspect-square w-full shadow-sm hover:shadow-lg transition-shadow duration-500 bg-[#FAFAFA]">
-          <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105">
+        <div className="relative overflow-hidden rounded-t-[10px] max-sm:rounded-none rounded-b-none aspect-square w-full duration-500 bg-[#FAFAFA]">
+          <div className="absolute inset-0 transition-transform duration-700 sm:group-hover:scale-105">
             {product.image ? (
               <Image
                 src={product.image}
@@ -130,17 +130,17 @@ export function ProductCard({ product, className, buttonClassName, customTopRigh
             )}
           </div>
 
-          <div className="absolute inset-0 rounded-2xl border border-slate-900/5 dark:border-white/5 pointer-events-none" />
+          <div className="absolute inset-0 rounded-t-[10px] max-sm:rounded-none rounded-b-none border border-slate-900/5 dark:border-white/5 pointer-events-none" />
 
           {/* Badges */}
           <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
             {hasDiscount && (
-              <div className="bg-red-50 dark:bg-red-950/80 text-red-600 dark:text-red-400 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-red-200/50 shadow-sm">
+              <div className="bg-red-50 dark:bg-red-950/80 text-red-600 dark:text-red-400 text-[10px] max-sm:text-[9px] font-extrabold px-2 py-0.5 max-sm:px-1.5 max-sm:py-0.5 rounded-full max-sm:rounded-[4px] border border-red-200/50 shadow-sm">
                 {discountPercent}% OFF
               </div>
             )}
             {product.bestSeller && (
-              <div className="bg-amber-50 dark:bg-amber-950/80 text-amber-700 dark:text-amber-400 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-amber-200/50 shadow-sm w-max">
+              <div className="bg-amber-50 dark:bg-amber-950/80 text-amber-700 dark:text-amber-400 text-[10px] max-sm:text-[9px] font-extrabold px-2 py-0.5 max-sm:px-1.5 max-sm:py-0.5 rounded-full max-sm:rounded-[4px] border border-amber-200/50 shadow-sm w-max">
                 Best Seller
               </div>
             )}
@@ -150,13 +150,13 @@ export function ProductCard({ product, className, buttonClassName, customTopRigh
           {customTopRightAction ? customTopRightAction : (
             <button 
               onClick={handleWishlistToggle}
-              className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center hover:scale-110 hover:bg-white transition-all active:scale-95 z-20"
+              className="absolute top-3 right-3 max-sm:top-2 max-sm:right-2 w-8 h-8 rounded-full bg-white/90 max-sm:bg-transparent max-sm:shadow-none max-sm:backdrop-blur-none backdrop-blur-sm shadow-md flex items-center justify-center hover:scale-110 hover:bg-white transition-all active:scale-95 z-20"
               title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
             >
               <Heart 
                 className={cn(
-                  "w-4 h-4 text-primary transition-all",
-                  isWishlisted ? "fill-primary text-primary" : "hover:fill-primary"
+                  "w-4 h-4 transition-all",
+                  isWishlisted ? "fill-primary text-primary" : "text-slate-600 dark:text-slate-300 sm:text-primary sm:hover:fill-primary"
                 )} 
               />
             </button>
@@ -164,22 +164,22 @@ export function ProductCard({ product, className, buttonClassName, customTopRigh
         </div>
 
         {/* Content */}
-        <CardContent className="p-4 flex flex-col flex-grow justify-between">
+        <CardContent className="p-4 max-sm:p-3 flex flex-col flex-grow justify-between">
           <div>
             {product.category && (
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1 block">
+              <span className="text-[10px] max-sm:text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1 max-sm:mb-0.5 block">
                 {product.category}
               </span>
             )}
-            <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100 line-clamp-2 min-h-[2.5rem] group-hover:text-primary transition-colors">
+            <h3 className="font-bold text-sm max-sm:text-[11px] max-sm:uppercase text-slate-800 dark:text-slate-100 line-clamp-2 max-sm:line-clamp-1 min-h-[1rem] group-hover:text-primary transition-colors">
               {product.name}
             </h3>
 
             {/* Ratings */}
-            <div className="flex items-center gap-1 mt-2 text-[11px] text-slate-500 dark:text-slate-400">
+            <div className="flex items-center gap-1 mt-1 max-sm:mt-0.5 text-[11px] max-sm:text-[10px] text-slate-500 dark:text-slate-400">
               <div className="flex text-yellow-400">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3 h-3 fill-current text-yellow-400" />
+                  <Star key={i} className="w-3 h-3 max-sm:w-2.5 max-sm:h-2.5 fill-current text-yellow-400" />
                 ))}
               </div>
               <span className="font-semibold">{product.rating || 4.9}</span>
@@ -187,30 +187,30 @@ export function ProductCard({ product, className, buttonClassName, customTopRigh
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-50 dark:border-slate-800/60">
-            <div className="flex flex-wrap items-baseline gap-1.5 mb-3">
-              <span className="text-base font-extrabold text-slate-900 dark:text-slate-100">
+          <div className="sm:border-t sm:pt-2 border-slate-50 dark:border-slate-800/60 mt-auto">
+            <div className="flex flex-wrap items-baseline gap-1.5 sm:mb-2 max-sm:mt-1.5">
+              <span className="text-base max-sm:text-[13px] font-extrabold text-slate-900 dark:text-slate-100">
                 AED {product.price}
               </span>
               {hasDiscount && (
                 <>
-                  <span className="text-sm text-slate-400 dark:text-slate-500 line-through font-normal">
+                  <span className="text-sm max-sm:text-[11px] text-slate-400 dark:text-slate-500 line-through font-normal">
                     AED {product.compare_at_price}
                   </span>
-                  <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/20 px-1.5 py-0.5 rounded">
+                  <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/20 px-1.5 py-0.5 rounded max-sm:hidden">
                     Save AED {(product.compare_at_price as number) - product.price}
                   </span>
                 </>
               )}
             </div>
 
-            <div className="w-full">
+            <div className="w-full max-sm:hidden">
               {customActionButton ? customActionButton : (
                 <button
                   onClick={handleAddToCart}
                   className={cn(
                     buttonVariants({ variant: "default" }),
-                    "w-full h-9 rounded-xl text-xs font-bold transition-transform hover:-translate-y-0.5 active:translate-y-0 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer relative z-20",
+                    "w-full h-9 rounded-[10px] text-xs font-bold transition-transform hover:-translate-y-0.5 active:translate-y-0 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer relative z-20",
                     buttonClassName || "bg-primary hover:bg-primary/90 text-white"
                   )}
                 >
