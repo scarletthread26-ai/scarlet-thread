@@ -220,33 +220,30 @@ export function ProductGrid() {
           <ProductGridSkeleton />
         ) : (
           <>
-            {/* Mobile: horizontal scroll carousel */}
-            <div className="sm:hidden -mx-4 px-4">
-              <motion.div
-                className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4"
-                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.15 }}
-              >
-                <style>{`.mobile-carousel::-webkit-scrollbar { display: none; }`}</style>
-                {displayProducts.map((product: any, i: number) => (
-                  <motion.div
-                    key={product.id}
-                    className="snap-start shrink-0 w-[58vw]"
-                    initial={{ opacity: 0, x: 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.45, delay: i * 0.08, ease: "easeOut" }}
-                  >
-                    <ProductCard product={product} />
-                  </motion.div>
-                ))}
-                {/* trailing spacer so last card doesn't hug edge */}
-                <div className="shrink-0 w-4" />
-              </motion.div>
-            </div>
+            {/* Mobile: grid */}
+            <motion.div
+              className="sm:hidden grid grid-cols-2 gap-0 border-t border-slate-200/50 dark:border-slate-800/80 bg-white dark:bg-slate-900"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.15 }}
+            >
+              {displayProducts.map((product: any, i: number) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: i * 0.05, ease: "easeOut" }}
+                  className={
+                    "border-b border-slate-200/50 dark:border-slate-800/80 " +
+                    (i % 2 === 0 ? "border-r" : "")
+                  }
+                >
+                  <ProductCard product={product} className="max-sm:rounded-none max-sm:border-0 max-sm:shadow-none" />
+                </motion.div>
+              ))}
+            </motion.div>
 
             {/* Desktop: grid */}
             <motion.div
