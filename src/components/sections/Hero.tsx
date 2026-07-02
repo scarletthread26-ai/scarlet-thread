@@ -343,11 +343,10 @@ export function Hero() {
             </motion.div>
 
             <motion.h1
-              className="hero-heading text-[2.6rem] xs:text-[3rem] sm:text-[3rem] font-black text-foreground text-left leading-[1.10] tracking-tight max-w-full"
-              style={{ fontFamily: "'Blacker Pro Display', 'Blacker Pro Display Fallback', Georgia, serif" }}
+              className="text-3xl sm:text-4xl font-bold text-foreground text-left leading-tight tracking-tight max-w-full"
               variants={headingVariants}
             >
-              {formatHeroTitle(heroTitle, true)}
+              {formatHeroTitle(heroTitle, false)}
             </motion.h1>
 
             <div className="w-10 h-[2px] bg-primary/50" />
