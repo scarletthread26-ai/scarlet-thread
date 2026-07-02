@@ -128,7 +128,7 @@ export function Header({ onMobileMenuOpen }: HeaderProps) {
               </div>
             )}
             <div className="hidden md:block text-left">
-              <p className="text-xs font-bold text-slate-700 dark:text-slate-200 leading-tight">
+              <p className="text-xs font-bold text-slate-700 dark:text-slate-200 leading-tight text-nowrap">
                 {isLoading ? "Loading..." : adminUser?.fullName || "Admin User"}
               </p>
               <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500">

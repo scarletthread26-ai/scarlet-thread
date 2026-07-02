@@ -151,7 +151,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed, onMobileClose }: SidebarP
                       onClick={onMobileClose}
                       className={`flex items-center gap-3 px-3 py-2 rounded-xl transition font-semibold text-sm cursor-pointer ${isActive
                           ? "bg-purple-600 text-white shadow-md shadow-purple-600/10"
-                          : "text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-850/50"
+                          : "text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-black hover:bg-slate-200 dark:hover:purple-600"
                         }`}
                       title={isCollapsed ? item.label : undefined}
                     >

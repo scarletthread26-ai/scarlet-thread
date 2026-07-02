@@ -181,7 +181,7 @@ export default function GalleryPage() {
               <input
                 {...register("title")}
                 placeholder="e.g., Baby Towel Embroidery Showcase"
-                className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-205 text-sm shadow-sm"
+                className="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-205 text-sm shadow-sm"
               />
               {errors.title && (
                 <span className="text-xs text-red-505 block mt-0.5">{errors.title.message}</span>
@@ -196,7 +196,7 @@ export default function GalleryPage() {
                 {...register("description")}
                 placeholder="Short detail of custom embroidery work..."
                 rows={3}
-                className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-205 text-sm shadow-sm resize-none"
+                className="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-205 text-sm shadow-sm resize-none"
               />
             </div>
 
@@ -206,7 +206,7 @@ export default function GalleryPage() {
               </label>
               <select
                 {...register("category_id")}
-                className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-205 text-sm shadow-sm"
+                className="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-205 text-sm shadow-sm"
               >
                 <option value="">Select Category</option>
                 {categories.map((cat: any) => (
@@ -229,7 +229,7 @@ export default function GalleryPage() {
                 inputMode="numeric"
                 {...register("display_order", { valueAsNumber: true })}
                 {...integerInputHandlers}
-                className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-250 text-sm shadow-sm"
+                className="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-250 text-sm shadow-sm"
               />
             </div>
 
