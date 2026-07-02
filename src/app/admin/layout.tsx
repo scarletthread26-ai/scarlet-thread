@@ -21,7 +21,7 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50/50 dark:bg-slate-950 transition-colors duration-250 text-slate-800 dark:text-slate-100">
+    <div className="flex h-screen bg-slate-50/50 dark:bg-slate-950 transition-colors duration-250 text-slate-800 dark:text-slate-100">
       {/* 1. Desktop Sidebar */}
       <div className="hidden md:block">
         <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
@@ -67,7 +67,7 @@ export default function AdminLayout({
       </AnimatePresence>
 
       {/* 3. Main Dashboard Layout Area */}
-      <div className="flex-1 flex flex-col min-w-0 min-h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 h-screen">
         <Header onMobileMenuOpen={() => setIsMobileOpen(true)} />
         
         {/* Main scrollable body panel */}
