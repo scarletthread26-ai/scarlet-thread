@@ -1,5 +1,24 @@
 "use client"
 
+// ---------------------------------------------------------------------------
+// FONT NOTE: "Blacker Pro Display" is a paid font (not on Google Fonts), so it
+// won't render unless you self-host the font files. In your global CSS
+// (e.g. app/globals.css) add something like:
+//
+//   @font-face {
+//     font-family: "Blacker Pro Display";
+//     src: url("/fonts/BlackerProDisplay-Black.woff2") format("woff2");
+//     font-weight: 900;
+//     font-style: normal;
+//     font-display: swap;
+//   }
+//
+// or use next/font/local pointing at the .woff2/.woff/.ttf files you own a
+// license for, then reference that font's className/variable on the <h1>
+// below instead of the inline fontFamily. Until the font files are added,
+// the heading falls back to Georgia/serif.
+// ---------------------------------------------------------------------------
+
 import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { GiftIcon, HeartIcon, StarIcon } from "lucide-react"
@@ -10,16 +29,8 @@ import { motion, AnimatePresence } from "framer-motion"
 // Slide data
 // Each slide carries:
 //   - desktop background (replaces scarlet-homebanner.png per slide)
-//   - tablet image  (sm–md, shown in the top image block)
-//   - mobile image  (xs, shown in the top image block)
-//   - heading / description / cta link
-// ---------------------------------------------------------------------------
-// ---------------------------------------------------------------------------
-// Slide data
-// Each slide carries:
-//   - desktop background (replaces scarlet-homebanner.png per slide)
-//   - tablet image  (sm–md, shown in the top image block)
-//   - mobile image  (xs, shown in the top image block)
+//   - tablet image  (sm–md, shown as the full-bleed background)
+//   - mobile image  (xs, shown as the full-bleed background)
 //   - heading / description / cta link
 // ---------------------------------------------------------------------------
 const STATIC_SLIDES = [
@@ -31,7 +42,7 @@ const STATIC_SLIDES = [
     ctaLink: "/products",
     title: "",
     subtitle: "",
-    buttonText: "Shop Now",
+    buttonText: "Shop Collection",
   },
   {
     id: 1,
@@ -41,7 +52,7 @@ const STATIC_SLIDES = [
     ctaLink: "/products",
     title: "",
     subtitle: "",
-    buttonText: "Shop Now",
+    buttonText: "Shop Collection",
   },
   {
     id: 2,
@@ -51,7 +62,7 @@ const STATIC_SLIDES = [
     ctaLink: "/products",
     title: "",
     subtitle: "",
-    buttonText: "Shop Now",
+    buttonText: "Shop Collection",
   },
   {
     id: 3,
@@ -61,7 +72,7 @@ const STATIC_SLIDES = [
     ctaLink: "/products",
     title: "",
     subtitle: "",
-    buttonText: "Shop Now",
+    buttonText: "Shop Collection",
   },
 ]
 
@@ -89,12 +100,6 @@ const btnVariants = {
   visible: { opacity: 1, x: 0, transition: { duration: 0.55, ease: "easeOut" as const, delay: 0.5 } },
 }
 
-const imageVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.4, ease: "easeOut" as const } },
-  exit: { opacity: 0, transition: { duration: 0.25, ease: "easeIn" as const } },
-}
-
 // ---------------------------------------------------------------------------
 // Dot indicator
 // ---------------------------------------------------------------------------
@@ -117,18 +122,28 @@ function Dots({ total, active, onChange }: { total: number; active: number; onCh
 }
 
 // ---------------------------------------------------------------------------
-// Hero
+// Hero title formatter
+// Title case (NOT uppercase), with the final accent word in italic primary color,
+// matching: "More Than a Gift. A Memory in the Making."
+//
+// "More Than a Gift." is forced onto its own line with a hard <br />, then
+// "A Memory in the Making." wraps naturally beneath it based on container
+// width (so on narrow columns it can still break into two lines there).
 // ---------------------------------------------------------------------------
-// Helper to format the global title, splitting it nicely and applying primary color to the last word
 function formatHeroTitle(titleStr: string, isMobile: boolean) {
   if (!titleStr) return "";
 
   const lower = titleStr.toLowerCase();
   if (lower.includes("more than a gift") && lower.includes("memory in the making")) {
+    // Two independent block-level lines — guaranteed to break here no
+    // matter what surrounding flex/grid/white-space rules are in play
+    // (a plain <br /> can get collapsed by some flex/motion wrappers).
     return (
       <>
-        More Than a Gift.{isMobile ? <br className="block sm:hidden" /> : <br />}
-        A Memory in the <span className="text-primary">Making</span>
+        <span className="block whitespace-nowrap">More Than a Gift.</span>
+        <span className="block text-primary">
+          A Memory in the <span className="italic">Making</span>.
+        </span>
       </>
     );
   }
@@ -144,7 +159,7 @@ function formatHeroTitle(titleStr: string, isMobile: boolean) {
       return (
         <>
           {firstPart}{isMobile ? <br className="block sm:hidden" /> : <br />}
-          {remainingWords} <span className="text-primary">{lastWord}</span>
+          {remainingWords} <span className="text-primary italic">{lastWord}</span>
         </>
       );
     }
@@ -157,7 +172,7 @@ function formatHeroTitle(titleStr: string, isMobile: boolean) {
     const remainingWords = words.slice(0, -1).join(" ");
     return (
       <>
-        {remainingWords} <span className="text-primary">{lastWord}</span>
+        {remainingWords} <span className="text-primary italic">{lastWord}</span>
       </>
     );
   }
@@ -165,6 +180,29 @@ function formatHeroTitle(titleStr: string, isMobile: boolean) {
   return titleStr;
 }
 
+// ---------------------------------------------------------------------------
+// Description formatter
+// Lets you manually control where the subtitle/description text breaks
+// onto a new line, instead of relying on automatic word-wrap.
+//
+// Usage: put "\n" in the text anywhere you want a forced line break.
+//   e.g. "Whether you're celebrating\nsomeone special or\ntreating yourself,
+//         make it uniquely\npersonal."
+// This works both for the hardcoded fallback string below AND for any
+// subtitle coming from the CMS (slide.subtitle) — editors just need to type
+// \n (or you can wire up a "line break" button in the CMS textarea).
+// ---------------------------------------------------------------------------
+function formatDescription(text: string) {
+  if (!text) return null;
+  return text.split("\n").map((line, i, arr) => (
+    <span key={i}>
+      {line}
+      {i < arr.length - 1 && <br />}
+    </span>
+  ));
+}
+
+// ---------------------------------------------------------------------------
 // Hero
 // ---------------------------------------------------------------------------
 export function Hero() {
@@ -187,7 +225,6 @@ export function Hero() {
         const res = await fetch("/api/admin/cms/hero-slides");
         if (res.ok) {
           const data = await res.json();
-          // Filter to active ones
           const activeSlides = data.filter((slide: any) => slide.is_active);
           if (activeSlides.length > 0) {
             setSlides(
@@ -199,7 +236,7 @@ export function Hero() {
                 ctaLink: slide.button_link || "/products",
                 title: slide.title || "",
                 subtitle: slide.subtitle || "",
-                buttonText: slide.button_text || "Shop Now",
+                buttonText: slide.button_text || "Shop Collection",
               }))
             );
           }
@@ -222,15 +259,26 @@ export function Hero() {
 
   const slide = slides[current] || STATIC_SLIDES[0]
 
-  // Find global title/subtitle from first slide that has them, or fallback
   const firstWithTitle = slides.find(s => s.title);
   const firstWithSub = slides.find(s => s.subtitle);
   const heroTitle = firstWithTitle?.title || "More Than a Gift. A Memory in the Making";
-  const heroSubtitle = firstWithSub?.subtitle || "Whether you're celebrating someone special or treating yourself, make it uniquely personal.";
+
+  // Manual line breaks via "\n" — matches the reference image's 4-line wrap:
+  //   Whether you're celebrating
+  //   someone special or
+  //   treating yourself, make it uniquely
+  //   personal.
+  //
+  // NOTE: forced to always use this hardcoded string (ignoring any CMS
+  // subtitle) so the manual line breaks are guaranteed to show. Once this
+  // is confirmed working, you can switch back to `firstWithSub?.subtitle ||`
+  // as long as your CMS text also contains literal "\n" characters.
+  const heroSubtitle =
+    "Whether you're celebrating someone\nspecial or treating yourself, make it\nuniquely personal.";
 
   return (
     <section
-      className="relative overflow-hidden w-full lg:py-16 xl:py-0 min-h-screen flex flex-col lg:flex-row lg:items-center"
+      className="relative overflow-hidden w-full h-[90dvh] lg:min-h-[640px] lg:h-[80vh] lg:max-h-[850px] flex flex-col lg:flex-row lg:items-center"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -246,71 +294,85 @@ export function Hero() {
 
       {/* ══════════════════════════════════════════════
           Mobile / Tablet layout  (< lg)
+          Image is now the full-bleed BACKGROUND of the
+          whole section, with content overlaid on top —
+          matching the "for every moment" reference look.
       ══════════════════════════════════════════════ */}
-      <div className="lg:hidden flex flex-col w-full h-[100svh] relative z-20">
+      <div className="lg:hidden relative w-full h-[100svh] overflow-hidden">
 
-        {/* Image — cross-fades, different src for mobile vs tablet */}
-        <div className="relative w-full flex-shrink-0 overflow-hidden" style={{ height: "100svh" }}>
-          {slides.map((s, idx) => (
-            <div
-              key={`mobile-bg-${s.id}`}
-              className={`absolute inset-0 bg-cover bg-center transition-opacity duration-300 ease-in-out sm:hidden ${idx === current ? "opacity-100" : "opacity-0"
-                }`}
-              style={{ backgroundImage: `url('${s.mobileImg}')` }}
-            />
-          ))}
-          {slides.map((s, idx) => (
-            <div
-              key={`tablet-bg-${s.id}`}
-              className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-in-out hidden sm:block ${idx === current ? "opacity-100" : "opacity-0"
-                }`}
-              style={{ backgroundImage: `url('${s.tabletImg}')` }}
-            />
-          ))}
-        </div>
+        {/* Background images — cross-fade, sit behind everything */}
+        {slides.map((s, idx) => (
+          <div
+            key={`mobile-bg-${s.id}`}
+            className={`absolute inset-0 z-0 bg-cover bg-center transition-opacity duration-500 ease-in-out sm:hidden ${idx === current ? "opacity-100" : "opacity-0"
+              }`}
+            style={{ backgroundImage: `url('${s.mobileImg}')` }}
+          />
+        ))}
+        {slides.map((s, idx) => (
+          <div
+            key={`tablet-bg-${s.id}`}
+            className={`absolute inset-0 z-0 bg-cover bg-center transition-opacity duration-700 ease-in-out hidden sm:block ${idx === current ? "opacity-100" : "opacity-0"
+              }`}
+            style={{ backgroundImage: `url('${s.tabletImg}')` }}
+          />
+        ))}
 
-        {/* Content — pinned to top on mobile */}
-        <div className="absolute top-28 left-0 w-full px-4 sm:px-8 py-6 flex flex-col items-start sm:items-center space-y-3 z-30">
+        {/* Soft gradient so the copy stays legible over any photo */}
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-white/70 via-white/25 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 z-10 bg-gradient-to-r from-white/40 via-transparent to-transparent pointer-events-none" />
+
+        {/* Decorative sparkles */}
+        <div className="absolute top-16 right-10 text-primary/40 text-2xl z-10 select-none">✦</div>
+        <div className="absolute top-1/2 right-6 text-primary/30 text-lg z-10 select-none">✦</div>
+
+        {/* Content — overlaid directly on the background image, pinned near the top-left */}
+        <div className="relative z-20 w-full h-full flex flex-col px-5 pt-10 sm:px-10 sm:pt-20">
           <motion.div
-            className="flex flex-col items-start sm:items-center space-y-3"
+            className="flex flex-col items-start space-y-4 w-full max-w-md"
             variants={contentVariants}
             initial="hidden"
             animate="visible"
           >
+            <motion.div
+              className="flex items-center gap-2 text-xs font-semibold tracking-wider text-primary uppercase"
+              variants={headingVariants}
+            >
+              <span>✦</span>
+              <span>For Every Moment That Matters</span>
+            </motion.div>
+
             <motion.h1
-              className="text-3xl font-bold uppercase text-foreground text-left sm:text-center"
+              className="hero-heading text-[2.6rem] xs:text-[3rem] sm:text-[3rem] font-black text-foreground text-left leading-[1.10] tracking-tight max-w-full"
+              style={{ fontFamily: "'Blacker Pro Display', 'Blacker Pro Display Fallback', Georgia, serif" }}
               variants={headingVariants}
             >
               {formatHeroTitle(heroTitle, true)}
             </motion.h1>
 
+            <div className="w-10 h-[2px] bg-primary/50" />
+
             <motion.p
-              className="text-sm text-muted-foreground text-left sm:text-center max-w-xs"
+              className="text-[14px] text-muted-foreground text-left max-w-xs whitespace-pre-line leading-relaxed"
               variants={descVariants}
             >
-              {heroSubtitle}
+              {formatDescription(heroSubtitle)}
             </motion.p>
 
-            <motion.div className="pt-1 flex flex-wrap items-center gap-4 sm:justify-center w-full" variants={btnVariants}>
+            <motion.div className="pt-1 flex flex-col items-start gap-3 w-full" variants={btnVariants}>
               <Link href="/products">
-                <Button size="lg" className="text-base h-12 px-8 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[5px] shadow-md transition-all">
+                <Button size="lg" className="text-base h-10 px-4 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[5px] shadow-md transition-all">
                   Shop Now
+                  <span className="ml-2">→</span>
                 </Button>
               </Link>
-              {slide.buttonText && slide.ctaLink && (
-                <Link href={slide.ctaLink}>
-                  <span className="text-primary font-semibold flex items-center gap-2 text-base py-2 cursor-pointer hover:underline transition-all">
-                    {slide.buttonText} <span className="text-lg">→</span>
-                  </span>
-                </Link>
-              )}
             </motion.div>
           </motion.div>
-        </div>
 
-        {/* Dots — pinned to bottom on mobile */}
-        <div className="absolute bottom-10 left-0 w-full flex justify-start sm:justify-center px-4 sm:px-8 z-30">
-          <Dots total={slides.length} active={current} onChange={setCurrent} />
+          {/* Dots — pinned to bottom-left, on top of the background image */}
+          <div className="mt-auto pb-10 flex justify-start">
+            <Dots total={slides.length} active={current} onChange={setCurrent} />
+          </div>
         </div>
       </div>
 
@@ -329,6 +391,12 @@ export function Hero() {
               <HeartIcon />
             </div>
 
+            {/* Eyebrow tag — matches reference image */}
+            <div className="flex items-center gap-2 text-xs font-semibold tracking-wider text-primary uppercase">
+              <span>✦</span>
+              <span>For Every Moment That Matters</span>
+            </div>
+
             {/* Animated content block */}
             <motion.div
               className="space-y-5"
@@ -337,17 +405,19 @@ export function Hero() {
               animate="visible"
             >
               <motion.h1
-                className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase text-foreground"
+                className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground"
                 variants={headingVariants}
               >
                 {formatHeroTitle(heroTitle, false)}
               </motion.h1>
 
+              <div className="w-12 h-[2px] bg-primary/50" />
+
               <motion.p
-                className="text-sm text-muted-foreground max-w-md"
+                className="text-sm text-muted-foreground max-w-md whitespace-pre-line"
                 variants={descVariants}
               >
-                {heroSubtitle}
+                {formatDescription(heroSubtitle)}
               </motion.p>
 
               <motion.div
