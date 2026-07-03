@@ -534,7 +534,7 @@ export function ProductForm({
                   </label>
                   <select
                     {...register("category_id")}
-                    className={`w-full bg-slate-50 dark:bg-slate-955 border rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-300 outline-none transition duration-200 text-sm shadow-sm cursor-pointer ${
+                    className={`w-full bg-slate-50 dark:bg-black border rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-300 outline-none transition duration-200 text-sm shadow-sm cursor-pointer ${
                       errors.category_id
                         ? "border-rose-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 bg-rose-50/10 dark:bg-rose-950/5"
                         : "border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
@@ -561,7 +561,7 @@ export function ProductForm({
                   {...register("description")}
                   placeholder="Tell the product's story, dimensions, care details..."
                   rows={6}
-                  className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm resize-none"
+                  className="w-full bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm resize-none"
                 />
               </div>
 
@@ -572,7 +572,7 @@ export function ProductForm({
                   </label>
                   <select
                     {...register("sub_category_id")}
-                    className={`w-full bg-slate-50 dark:bg-slate-955 border rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-300 outline-none transition duration-200 text-sm shadow-sm cursor-pointer ${
+                    className={`w-full bg-slate-50 dark:bg-black border rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-300 outline-none transition duration-200 text-sm shadow-sm cursor-pointer ${
                       errors.sub_category_id
                         ? "border-rose-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 bg-rose-50/10 dark:bg-rose-950/5"
                         : "border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
@@ -617,7 +617,7 @@ export function ProductForm({
                       {...register("price")}
                       {...decimalInputHandlers}
                       placeholder="e.g., 99.00"
-                      className={`w-full bg-slate-50 dark:bg-slate-950 border rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm ${
+                      className={`w-full bg-slate-50 dark:bg-black border rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm ${
                         errors.price
                           ? "border-rose-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 bg-rose-50/10 dark:bg-rose-950/5"
                           : "border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
@@ -638,7 +638,7 @@ export function ProductForm({
                       {...register("compare_at_price")}
                       {...decimalInputHandlers}
                       placeholder="e.g., 149.00"
-                      className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
+                      className="w-full bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
                     />
                   </div>
 
@@ -652,7 +652,7 @@ export function ProductForm({
                       {...register("weight")}
                       {...decimalInputHandlers}
                       placeholder="e.g., 0.5"
-                      className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
+                      className="w-full bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
                     />
                   </div>
                 </div>
@@ -916,7 +916,7 @@ export function ProductForm({
                       {...register("stock_quantity")}
                       {...integerInputHandlers}
                       placeholder="e.g., 50"
-                      className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
+                      className="w-full bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
                     />
                   </div>
 
@@ -930,7 +930,7 @@ export function ProductForm({
                       {...register("low_stock_threshold")}
                       {...integerInputHandlers}
                       placeholder="e.g., 5"
-                      className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
+                      className="w-full bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
                     />
                   </div>
 
@@ -1031,7 +1031,7 @@ export function ProductForm({
                     <input
                       {...register("meta_title")}
                       placeholder="e.g., Personalized Hooded Towel - The Scarlet Thread"
-                      className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
+                      className="w-full bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
                     />
                   </div>
 
@@ -1043,7 +1043,7 @@ export function ProductForm({
                       {...register("meta_description")}
                       placeholder="Enter a brief, keyword-rich description for Google results..."
                       rows={4}
-                      className="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm resize-none"
+                      className="w-full bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm resize-none"
                     />
                   </div>
                 </div>

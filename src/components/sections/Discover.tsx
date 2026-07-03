@@ -31,7 +31,7 @@ function ImageColumn({
       : { y: ["-50%", "0%"] }
 
   return (
-    <div className="flex-1 overflow-hidden relative h-[340px] sm:h-[420px] lg:h-[480px] rounded-2xl">
+    <div className="flex-1 overflow-hidden relative h-[340px] sm:h-[420px] lg:h-[480px] rounded-[5px]">
       <div
         className="absolute top-0 left-0 right-0 h-12 z-10 pointer-events-none"
         style={{ background: "linear-gradient(to bottom, #fffafc, transparent)" }}
@@ -155,9 +155,9 @@ export function Discover() {
     : activeImages;
 
   return (
-    <section className="py-5 md:py-24 bg-[#F9F5FF]">
+    <section className="pt-20 pb-8 md:py-24 bg-[#F9F5FF]">
       <div className="w-full max-w-[1400px] mx-auto  px-4 sm:px-6 md:px-12 lg:px-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-7 md:gap-8 lg:gap-20 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-8 lg:gap-20 items-center">
 
           {/* Mobile/Tab: subheading → heading → image → description */}
           {/* Desktop: content left, image right (natural order) */}

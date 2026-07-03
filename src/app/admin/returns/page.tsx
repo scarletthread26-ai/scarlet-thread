@@ -245,7 +245,7 @@ export default function AdminReturnsPage() {
                       onChange={(e) => setRefundAmount(e.target.value)}
                       onKeyDown={decimalInputHandlers.onKeyDown}
                       onPaste={decimalInputHandlers.onPaste}
-                      className="rounded-xl border-slate-200 dark:border-slate-800 bg-white"
+                      className="rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -255,7 +255,7 @@ export default function AdminReturnsPage() {
                       placeholder="e.g. Approved: wrong size replacement shipped"
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
-                      className="rounded-xl border-slate-200 dark:border-slate-800 bg-white"
+                      className="rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950"
                     />
                   </div>
                 </div>
