@@ -144,7 +144,7 @@ export function CraftedGalleryHer() {
           <Link href="/gallery?category=her">
             <Button
               size="sm"
-              className="rounded-full bg-primary text-white hover:bg-primary/90"
+              className="rounded-full h-10 px-5 bg-primary text-white hover:bg-primary/90"
             >
               View More Creations
               <ArrowRight className="w-3 h-3 ml-2" />

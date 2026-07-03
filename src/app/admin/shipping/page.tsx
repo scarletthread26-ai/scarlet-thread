@@ -263,7 +263,7 @@ export default function AdminShippingPage() {
                     placeholder="e.g. Dubai & Abu Dhabi, GCC Express"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white"
+                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -273,7 +273,7 @@ export default function AdminShippingPage() {
                     placeholder="e.g. United Arab Emirates"
                     value={country}
                     onChange={(e) => setCountry(e.target.value)}
-                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white"
+                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -283,7 +283,7 @@ export default function AdminShippingPage() {
                     placeholder="e.g. 1-2 Business Days"
                     value={estimatedDelivery}
                     onChange={(e) => setEstimatedDelivery(e.target.value)}
-                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white"
+                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950"
                   />
                 </div>
               </div>
@@ -300,7 +300,7 @@ export default function AdminShippingPage() {
                     onChange={(e) => setRate(e.target.value)}
                     onKeyDown={decimalInputHandlers.onKeyDown}
                     onPaste={decimalInputHandlers.onPaste}
-                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white"
+                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -314,7 +314,7 @@ export default function AdminShippingPage() {
                     onChange={(e) => setFreeShippingThreshold(e.target.value)}
                     onKeyDown={decimalInputHandlers.onKeyDown}
                     onPaste={decimalInputHandlers.onPaste}
-                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white"
+                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950"
                   />
                 </div>
               </div>

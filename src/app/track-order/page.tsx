@@ -10,6 +10,8 @@ import { useTrackOrder } from "@/hooks/use-orders";
 import { Search, Loader2, Package, Check, MapPin, Truck, Calendar, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRealtime } from "@/hooks/use-realtime";
 
 function TrackOrderContent() {
   const searchParams = useSearchParams();
@@ -21,6 +23,21 @@ function TrackOrderContent() {
   const [searchTrigger, setSearchTrigger] = useState({ number: initialNumber, contact: initialContact });
 
   const { data: order, isLoading, error } = useTrackOrder(searchTrigger.number, searchTrigger.contact);
+
+  const queryClient = useQueryClient();
+
+  // Listen to realtime changes on this specific order
+  useRealtime({
+    table: "orders",
+    event: "UPDATE",
+    filter: order?.id ? `id=eq.${order.id}` : undefined,
+    enabled: !!order?.id,
+    onPayload: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["orders", "track", searchTrigger.number, searchTrigger.contact],
+      });
+    },
+  });
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

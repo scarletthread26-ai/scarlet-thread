@@ -83,8 +83,8 @@ export default function WishlistPage() {
         My Wishlist
       </h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {items.map((item) => {
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0 sm:gap-6 max-sm:border-t max-sm:border-slate-200/50 dark:max-sm:border-slate-800/80 max-sm:bg-white dark:max-sm:bg-slate-900">
+        {items.map((item, idx) => {
           const formattedProduct = {
             id: item.productId,
             name: item.name,
@@ -100,9 +100,13 @@ export default function WishlistPage() {
           };
 
           return (
-            <div key={item.productId} className="h-full">
+            <div 
+              key={item.productId} 
+              className={`h-full max-sm:border-b max-sm:border-slate-200/50 dark:max-sm:border-slate-800/80 ${idx % 2 === 0 ? "max-sm:border-r" : ""}`}
+            >
               <ProductCard
                 product={formattedProduct}
+                className="max-sm:rounded-none max-sm:border-0 max-sm:shadow-none"
                 customTopRightAction={
                   <button 
                     onClick={(e) => {
@@ -110,10 +114,10 @@ export default function WishlistPage() {
                       e.stopPropagation();
                       handleRemove(item);
                     }}
-                    className="absolute top-3 right-3 p-1.5 bg-white/90 dark:bg-slate-900/90 text-slate-500 hover:text-rose-600 rounded-full shadow-md flex items-center justify-center hover:scale-110 hover:bg-white transition-all active:scale-95 z-20"
+                    className="absolute top-3 right-3 max-sm:top-2 max-sm:right-2 p-1.5 bg-white/90 max-sm:bg-transparent max-sm:shadow-none dark:bg-slate-900/90 text-slate-500 hover:text-rose-600 rounded-full shadow-md flex items-center justify-center hover:scale-110 hover:bg-white transition-all active:scale-95 z-20"
                     title="Remove from Wishlist"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-4 h-4 max-sm:w-3.5 max-sm:h-3.5" />
                   </button>
                 }
                 customActionButton={

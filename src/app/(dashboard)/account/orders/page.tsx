@@ -7,9 +7,22 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { ShoppingBag, Eye, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRealtime } from "@/hooks/use-realtime";
 
 export default function CustomerOrdersHistoryPage() {
   const { data: orders, isLoading } = useCustomerOrders();
+
+  const queryClient = useQueryClient();
+
+  // Listen to realtime changes on orders table for this customer
+  useRealtime({
+    table: "orders",
+    event: "*",
+    onPayload: () => {
+      queryClient.invalidateQueries({ queryKey: ["orders", "customer-list"] });
+    },
+  });
 
   return (
     <div className="space-y-6">

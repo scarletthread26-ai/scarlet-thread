@@ -82,7 +82,13 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
   const [fontColor, setFontColor] = useState("Gold");
 
   const { addItem } = useCartStore();
-  const { toggleItem, isInWishlist } = useWishlistStore();
+  const { toggleItem } = useWishlistStore();
+  const wishlistItems = useWishlistStore((state) => state.items);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+
+  useEffect(() => {
+    setIsWishlisted(wishlistItems.some((item) => item.productId === String(prodId)));
+  }, [wishlistItems, prodId]);
   const { data: settings } = useSettings();
 
   const handleWhatsAppChat = () => {
@@ -140,6 +146,10 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
   };
 
   const handleWishlistToggle = async () => {
+    if (!isAuthenticated) {
+      toast.error("Please sign in to add items to your wishlist.");
+      return;
+    }
     const wishlistItem = {
       productId: prodId,
       name,
@@ -149,7 +159,7 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
       slug,
       stockStatus: product?.stock_status || "in_stock"
     };
-    await toggleItem(wishlistItem, isAuthenticated);
+    await toggleItem(wishlistItem, true);
   };
 
   const discountPercent = compareAtPrice > price 
@@ -167,7 +177,7 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
             className="text-purple-600 hover:scale-110 transition-transform p-1 bg-purple-50 dark:bg-purple-950/30 rounded-full border border-purple-100 dark:border-purple-900/50"
             title="Toggle Wishlist"
           >
-            <Heart className={`w-5.5 h-5.5 transition-all ${isInWishlist(prodId) ? "fill-purple-600" : ""}`} />
+            <Heart className={`w-5.5 h-5.5 transition-all ${isWishlisted ? "fill-purple-600" : ""}`} />
           </button>
         </div>
 

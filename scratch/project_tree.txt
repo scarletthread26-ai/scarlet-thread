@@ -1,0 +1,631 @@
+├── .env.local
+├── .gitignore
+├── AGENTS.md
+├── CLAUDE.md
+├── cloudinary-onboarding.js
+├── components.json
+├── eslint.config.mjs
+├── next-env.d.ts
+├── next.config.ts
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
+├── public
+│   ├── file.svg
+│   ├── globe.svg
+│   ├── images
+│   │   ├── a.png
+│   │   ├── aditya.png
+│   │   ├── ananya.png
+│   │   ├── banners
+│   │   │   ├── custom-gift-banner.png
+│   │   ├── beyou.png
+│   │   ├── brother.png
+│   │   ├── categoryicons
+│   │   │   ├── scarlet-bottle.png
+│   │   │   ├── scarlet-desk.png
+│   │   │   ├── scarlet-giftbox.png
+│   │   │   ├── scarlet-hoodie.png
+│   │   │   ├── scarlet-jewelery.png
+│   │   │   ├── scarlet-makeup.png
+│   │   │   ├── scarlet-necklace.png
+│   │   │   ├── scarlet-pouch.png
+│   │   │   ├── scarlet-sweatshirt.png
+│   │   │   ├── scarlet-totebag.png
+│   │   │   ├── scarlet-towel.png
+│   │   ├── custombanner
+│   │   │   ├── bannerimage.png
+│   │   ├── diya.png
+│   │   ├── eid.png
+│   │   ├── festival-images
+│   │   │   ├── christmas1.png
+│   │   │   ├── diwali1.png
+│   │   │   ├── eid1.png
+│   │   │   ├── onam1.png
+│   │   │   ├── rakhi.png
+│   │   │   ├── valentines1.png
+│   │   ├── forher
+│   │   │   ├── scarlet-forherbanner-image.png
+│   │   │   ├── scarlet-forhermobile.png
+│   │   │   ├── scarlet-heroherbanner.png
+│   │   │   ├── scarlet-heroherbanner2.png
+│   │   ├── forherproduct
+│   │   │   ├── scarlet-bag.png
+│   │   │   ├── scarlet-personalised.png
+│   │   │   ├── scarlet-personilize.png
+│   │   │   ├── scarlet-pinkhoodie.png
+│   │   │   ├── scarlet-pouch.png
+│   │   │   ├── scarlet-totebag.png
+│   │   │   ├── scarlet-trumbler.png
+│   │   ├── forhimicons
+│   │   │   ├── scarlet-anniverseryicon.png
+│   │   │   ├── scarlet-giftbox1.png
+│   │   │   ├── scarlet-gifticon2.png
+│   │   │   ├── scarlet-hoodieicon.png
+│   │   │   ├── scarlet-mug2.png
+│   │   │   ├── scarlet-mugicon.png
+│   │   │   ├── scarlet-pouch2.png
+│   │   │   ├── scarlet-pouchicon.png
+│   │   │   ├── scarlet-pouchicon2.png
+│   │   │   ├── scarlet-sweatshirt.png
+│   │   │   ├── scarlet-towelicon.png
+│   │   ├── forhimpage
+│   │   │   ├── scarlet-amazinghoodie.png
+│   │   │   ├── scarlet-blackbox.png
+│   │   │   ├── scarlet-cap.png
+│   │   │   ├── scarlet-custombanner.png
+│   │   │   ├── scarlet-customisedbanner.png
+│   │   │   ├── scarlet-customizebanner.png
+│   │   │   ├── scarlet-dadhero.png
+│   │   │   ├── scarlet-forhimbanner.png
+│   │   │   ├── scarlet-hoodie.png
+│   │   │   ├── scarlet-hubbyhoodie.png
+│   │   │   ├── scarlet-kinghoodie.png
+│   │   │   ├── scarlet-mannat.png
+│   │   │   ├── scarlet-mobilebanner.png
+│   │   │   ├── scarlet-mrperfect.png
+│   │   │   ├── scarlet-mug.png
+│   │   │   ├── scarlet-papahoodie.png
+│   │   │   ├── scarlet-papapouch.png
+│   │   │   ├── scarlet-pouch.png
+│   │   │   ├── scarlet-redbox2.png
+│   │   │   ├── scarlet-superdeal.png
+│   │   │   ├── scarlet-towel.png
+│   │   ├── gallery-hero.png
+│   │   ├── gallery.png
+│   │   ├── gift-occasion
+│   │   │   ├── anniversary-gift.png
+│   │   │   ├── baby-gift.png
+│   │   │   ├── birthday-gift.png
+│   │   │   ├── corporate-gift.png
+│   │   │   ├── eid-gift.png
+│   │   │   ├── gift-under-aed-200.png
+│   │   │   ├── ramdan-gift.png
+│   │   │   ├── wedding-gift.png
+│   │   ├── gifts_for_her.png
+│   │   ├── gifts_for_him.png
+│   │   ├── goodthings.png
+│   │   ├── heropage
+│   │   │   ├── scarlet-baby.png
+│   │   │   ├── scarlet-baby1.png
+│   │   │   ├── scarlet-couple.png
+│   │   │   ├── scarlet-couple1.png
+│   │   │   ├── scarlet-couple2.png
+│   │   │   ├── scarlet-delivery.png
+│   │   │   ├── scarlet-heartbag.png
+│   │   │   ├── scarlet-lady2.png
+│   │   │   ├── scarlet-laptop.png
+│   │   │   ├── scarlet-mobile.png
+│   │   │   ├── scarlet-mobilebaby.png
+│   │   │   ├── scarlet-mobilecouple.png
+│   │   │   ├── scarlet-mobilelady.png
+│   │   │   ├── scarlet-phone.png
+│   │   ├── home
+│   │   │   ├── hero-1.png
+│   │   │   ├── mobile-view-eid.png
+│   │   │   ├── mobile-view-enog.png
+│   │   ├── icons
+│   │   │   ├── craft.png
+│   │   │   ├── delivery.png
+│   │   │   ├── fast-delivery.png
+│   │   │   ├── gift2.png
+│   │   │   ├── made-with-love.png
+│   │   │   ├── occasion1.png
+│   │   │   ├── personalize.png
+│   │   │   ├── personalized.png
+│   │   │   ├── premium-quality.png
+│   │   ├── kids_babies.png
+│   │   ├── king.png
+│   │   ├── line.png
+│   │   ├── litleprinces.png
+│   │   ├── logo
+│   │   │   ├── logo.png
+│   │   │   ├── name.png
+│   │   ├── mrperfect.png
+│   │   ├── mylovemyworld.png
+│   │   ├── myra.png
+│   │   ├── occassion
+│   │   │   ├── scarlet-beyou.png
+│   │   │   ├── scarlet-box.png
+│   │   │   ├── scarlet-girlboss.png
+│   │   │   ├── scarlet-happysoul.png
+│   │   │   ├── scarlet-occasionbox.png
+│   │   │   ├── scarlet-occasionbox2.png
+│   │   │   ├── scarlet-occasionbox3.png
+│   │   │   ├── scarlet-occasionbox4.png
+│   │   │   ├── scarlet-proud.png
+│   │   │   ├── scarlet-staypositive.png
+│   │   ├── papa.png
+│   │   ├── personalise
+│   │   │   ├── scarlet-bride.png
+│   │   │   ├── scarlet-giftbox.png
+│   │   ├── productpage
+│   │   │   ├── scarlet-anniversary.png
+│   │   │   ├── scarlet-cake.png
+│   │   │   ├── scarlet-eid.png
+│   │   │   ├── scarlet-fathersday.png
+│   │   │   ├── scarlet-justbecause.png
+│   │   │   ├── scarlet-thankyou.png
+│   │   ├── products
+│   │   │   ├── christmas-stocking.png
+│   │   │   ├── diwali-hamper.png
+│   │   │   ├── eid-cushion.png
+│   │   │   ├── onam-towel.png
+│   │   │   ├── rakhi-box.png
+│   │   ├── relatedproduct
+│   │   │   ├── scarlet-balloon.png
+│   │   │   ├── scarlet-gift.png
+│   │   │   ├── scarlet-pencil.png
+│   │   │   ├── scarlet-teddy.png
+│   │   ├── rohan.png
+│   │   ├── scarlet-about.png
+│   │   ├── scarlet-about1.png
+│   │   ├── scarlet-about2.png
+│   │   ├── scarlet-about3.png
+│   │   ├── scarlet-about4.png
+│   │   ├── scarlet-about5.png
+│   │   ├── scarlet-babie1.png
+│   │   ├── scarlet-babie2.png
+│   │   ├── scarlet-babie3.png
+│   │   ├── scarlet-babie4.png
+│   │   ├── scarlet-babie5.png
+│   │   ├── scarlet-banner2.png
+│   │   ├── scarlet-bestseller-banner.png
+│   │   ├── scarlet-bottobanner2.png
+│   │   ├── scarlet-bottombanner1.png
+│   │   ├── scarlet-couple.png
+│   │   ├── scarlet-faith.png
+│   │   ├── scarlet-gift.png
+│   │   ├── scarlet-gift1.png
+│   │   ├── scarlet-gift2.png
+│   │   ├── scarlet-gift3.png
+│   │   ├── scarlet-gift4.png
+│   │   ├── scarlet-homebanner.png
+│   │   ├── scarlet-loved4.png
+│   │   ├── scarlet-loved5.png
+│   │   ├── scarlet-loved6.png
+│   │   ├── scarlet-lovedgift1.png
+│   │   ├── scarlet-lovedgift2.png
+│   │   ├── scarlet-lovedgift3.png
+│   │   ├── scarlet-lovedgift4.png
+│   │   ├── scarlet-occassion1.png
+│   │   ├── scarlet-occassion2.png
+│   │   ├── scarlet-occassion3 copy.png
+│   │   ├── scarlet-occassion3.png
+│   │   ├── scarlet-occassion4.png
+│   │   ├── scarlet-secondbanner.png
+│   │   ├── scrlet-babiesbanne.png
+│   │   ├── special occasions1.png
+│   │   ├── specialOccasion
+│   │   │   ├── all-occasions.png
+│   │   │   ├── christmas.png
+│   │   │   ├── diwali.png
+│   │   │   ├── eid.png
+│   │   │   ├── newyear.png
+│   │   │   ├── onam.png
+│   │   │   ├── raksha-bandhan.png
+│   │   │   ├── valentine.png
+│   │   ├── special_occasions.png
+│   │   ├── special_occasions2 copy.png
+│   │   ├── special_occasions2.png
+│   │   ├── sunshine.png
+│   │   ├── testimonials
+│   │   │   ├── anushka.png
+│   │   │   ├── farhan.png
+│   │   │   ├── ritesh.png
+│   │   ├── why-shop
+│   │   │   ├── delivery10.png
+│   │   │   ├── festival10.png
+│   │   │   ├── handmade10.png
+│   │   │   ├── packaging10.png
+│   │   │   ├── personalization10.png
+│   │   │   ├── returns10.png
+│   ├── next.svg
+│   ├── vercel.svg
+│   ├── window.svg
+├── README.md
+├── scratch
+│   ├── check_db.js
+│   ├── check_db_details.js
+│   ├── delete_promo_banner.js
+│   ├── find_filter.js
+│   ├── find_filter.py
+│   ├── fine_find_filter.js
+│   ├── insert_images.js
+│   ├── read_png.js
+│   ├── read_png_with_pngjs.js
+├── src
+│   ├── app
+│   │   ├── (auth)
+│   │   │   ├── forgot-password
+│   │   │   │   ├── page.tsx
+│   │   │   ├── layout.tsx
+│   │   │   ├── login
+│   │   │   │   ├── page.tsx
+│   │   │   ├── register
+│   │   │   │   ├── page.tsx
+│   │   │   ├── reset-password
+│   │   │   │   ├── page.tsx
+│   │   ├── (dashboard)
+│   │   │   ├── account
+│   │   │   │   ├── addresses
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   ├── orders
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   │   ├── [id]
+│   │   │   │   │   │   ├── page.tsx
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── profile
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   ├── reviews
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   ├── wishlist
+│   │   │   │   │   ├── page.tsx
+│   │   │   ├── layout.tsx
+│   │   ├── about
+│   │   │   ├── page.tsx
+│   │   ├── admin
+│   │   │   ├── categories
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── subcategory-manager.tsx
+│   │   │   ├── cms
+│   │   │   │   ├── about
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   ├── banners
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   ├── cta
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   ├── featured-products
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   ├── gifts-for-her
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   ├── gifts-for-him
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   ├── hero-slider
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   ├── home
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   ├── how-it-works
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   ├── kids-babies
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── pages
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   ├── testimonials
+│   │   │   │   │   ├── page.tsx
+│   │   │   ├── coupons
+│   │   │   │   ├── page.tsx
+│   │   │   ├── customers
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── [id]
+│   │   │   │   │   ├── page.tsx
+│   │   │   ├── dashboard
+│   │   │   │   ├── page.tsx
+│   │   │   ├── gallery
+│   │   │   │   ├── page.tsx
+│   │   │   ├── layout.tsx
+│   │   │   ├── login
+│   │   │   │   ├── page.tsx
+│   │   │   ├── notifications
+│   │   │   │   ├── page.tsx
+│   │   │   ├── orders
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── [id]
+│   │   │   │   │   ├── page.tsx
+│   │   │   ├── page.tsx
+│   │   │   ├── products
+│   │   │   │   ├── new
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── product-form.tsx
+│   │   │   │   ├── [id]
+│   │   │   │   │   ├── page.tsx
+│   │   │   ├── reports
+│   │   │   │   ├── page.tsx
+│   │   │   ├── returns
+│   │   │   │   ├── page.tsx
+│   │   │   ├── reviews
+│   │   │   │   ├── page.tsx
+│   │   │   ├── shipping
+│   │   │   │   ├── page.tsx
+│   │   ├── api
+│   │   │   ├── admin
+│   │   │   │   ├── categories
+│   │   │   │   │   ├── route.ts
+│   │   │   │   │   ├── [id]
+│   │   │   │   │   │   ├── route.ts
+│   │   │   │   ├── cms
+│   │   │   │   │   ├── banners
+│   │   │   │   │   │   ├── route.ts
+│   │   │   │   │   ├── hero-slides
+│   │   │   │   │   │   ├── route.ts
+│   │   │   │   │   ├── homepage-sections
+│   │   │   │   │   │   ├── route.ts
+│   │   │   │   │   ├── pages
+│   │   │   │   │   │   ├── route.ts
+│   │   │   │   │   │   ├── [slug]
+│   │   │   │   │   │   │   ├── route.ts
+│   │   │   │   │   ├── testimonials
+│   │   │   │   │   │   ├── route.ts
+│   │   │   │   │   │   ├── [id]
+│   │   │   │   │   │   │   ├── route.ts
+│   │   │   │   ├── coupons
+│   │   │   │   │   ├── route.ts
+│   │   │   │   ├── customers
+│   │   │   │   │   ├── route.ts
+│   │   │   │   │   ├── [id]
+│   │   │   │   │   │   ├── route.ts
+│   │   │   │   ├── dashboard-stats
+│   │   │   │   │   ├── route.ts
+│   │   │   │   ├── gallery
+│   │   │   │   │   ├── route.ts
+│   │   │   │   │   ├── [id]
+│   │   │   │   │   │   ├── route.ts
+│   │   │   │   ├── gallery-categories
+│   │   │   │   │   ├── route.ts
+│   │   │   │   ├── orders
+│   │   │   │   │   ├── route.ts
+│   │   │   │   │   ├── [id]
+│   │   │   │   │   │   ├── route.ts
+│   │   │   │   ├── products
+│   │   │   │   │   ├── next-sku
+│   │   │   │   │   │   ├── route.ts
+│   │   │   │   │   ├── route.ts
+│   │   │   │   │   ├── [id]
+│   │   │   │   │   │   ├── route.ts
+│   │   │   │   ├── reports
+│   │   │   │   │   ├── route.ts
+│   │   │   │   ├── returns
+│   │   │   │   │   ├── route.ts
+│   │   │   │   ├── reviews
+│   │   │   │   │   ├── route.ts
+│   │   │   │   ├── settings
+│   │   │   │   │   ├── route.ts
+│   │   │   │   ├── shipping
+│   │   │   │   │   ├── route.ts
+│   │   │   │   ├── subcategories
+│   │   │   │   │   ├── route.ts
+│   │   │   │   │   ├── [id]
+│   │   │   │   │   │   ├── route.ts
+│   │   │   │   ├── upload
+│   │   │   │   │   ├── route.ts
+│   │   │   ├── cart
+│   │   │   │   ├── route.ts
+│   │   │   ├── coupons
+│   │   │   │   ├── validate
+│   │   │   │   │   ├── route.ts
+│   │   │   ├── faqs
+│   │   │   │   ├── route.ts
+│   │   │   ├── gallery
+│   │   │   │   ├── route.ts
+│   │   │   ├── google-reviews
+│   │   │   │   ├── route.ts
+│   │   │   ├── orders
+│   │   │   │   ├── route.ts
+│   │   │   │   ├── track
+│   │   │   │   │   ├── route.ts
+│   │   │   ├── reviews
+│   │   │   │   ├── route.ts
+│   │   │   ├── shipping
+│   │   │   │   ├── route.ts
+│   │   │   ├── wishlist
+│   │   │   │   ├── route.ts
+│   │   ├── cart
+│   │   │   ├── page.tsx
+│   │   ├── checkout
+│   │   │   ├── page.tsx
+│   │   │   ├── success
+│   │   │   │   ├── page.tsx
+│   │   ├── faq
+│   │   │   ├── page.tsx
+│   │   ├── favicon.ico
+│   │   ├── gallery
+│   │   │   ├── page.tsx
+│   │   ├── gifts-for-her
+│   │   │   ├── page.tsx
+│   │   ├── gifts-for-him
+│   │   │   ├── page.tsx
+│   │   ├── globals.css
+│   │   ├── kids-babies
+│   │   │   ├── page.tsx
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   ├── privacy
+│   │   │   ├── page.tsx
+│   │   ├── product
+│   │   │   ├── [slug]
+│   │   │   │   ├── page.tsx
+│   │   ├── products
+│   │   │   ├── page.tsx
+│   │   ├── returns
+│   │   │   ├── page.tsx
+│   │   ├── search
+│   │   │   ├── page.tsx
+│   │   │   ├── search-results.tsx
+│   │   ├── shipping
+│   │   │   ├── page.tsx
+│   │   ├── terms
+│   │   │   ├── page.tsx
+│   │   ├── track-order
+│   │   │   ├── page.tsx
+│   │   ├── wishlist
+│   │   │   ├── page.tsx
+│   ├── components
+│   │   ├── admin
+│   │   │   ├── category-landing-editor.tsx
+│   │   │   ├── command-palette.tsx
+│   │   │   ├── confirm-dialog.tsx
+│   │   │   ├── data-table.tsx
+│   │   │   ├── empty-state.tsx
+│   │   │   ├── header.tsx
+│   │   │   ├── image-upload.tsx
+│   │   │   ├── rich-text-editor.tsx
+│   │   │   ├── sidebar.tsx
+│   │   │   ├── stat-card.tsx
+│   │   │   ├── theme-toggle.tsx
+│   │   ├── layout
+│   │   │   ├── Footer.tsx
+│   │   │   ├── Header.tsx
+│   │   │   ├── PolicyPageLayout.tsx
+│   │   │   ├── StorefrontLayout.tsx
+│   │   │   ├── WhatsAppWidget.tsx
+│   │   ├── personalization
+│   │   │   ├── ProductBuilder.tsx
+│   │   ├── product
+│   │   │   ├── ProductBreadcrumbs.tsx
+│   │   │   ├── ProductCard.tsx
+│   │   │   ├── ProductConfigurator.tsx
+│   │   │   ├── ProductDetailsReviewsSplit.tsx
+│   │   │   ├── ProductFeaturesRow.tsx
+│   │   │   ├── ProductGallery.tsx
+│   │   │   ├── ProductInfoAccordion.tsx
+│   │   │   ├── ProductLivePreview.tsx
+│   │   │   ├── ProductOccasionsGrid.tsx
+│   │   │   ├── RelatedProductsCarousel.tsx
+│   │   ├── sections
+│   │   │   ├── Categories.tsx
+│   │   │   ├── Discover.tsx
+│   │   │   ├── FeaturedBanner.tsx
+│   │   │   ├── gallery
+│   │   │   │   ├── GalleryFilter.tsx
+│   │   │   │   ├── HeroGallery.tsx
+│   │   │   │   ├── HowToSubmitFlow.tsx
+│   │   │   │   ├── MasonryGrid.tsx
+│   │   │   │   ├── SubmitPhotoBanner.tsx
+│   │   │   ├── gifts-for-her
+│   │   │   │   ├── CategoryIconsHer.tsx
+│   │   │   │   ├── CraftedGalleryHer.tsx
+│   │   │   │   ├── CustomGiftBannerHer.tsx
+│   │   │   │   ├── EmbroideryStylesHer.tsx
+│   │   │   │   ├── HeroHer.tsx
+│   │   │   │   ├── LivePreviewFeatureHer.tsx
+│   │   │   │   ├── OccasionsGridHer.tsx
+│   │   │   │   ├── ProductCarouselHer.tsx
+│   │   │   │   ├── ValuePropsHer.tsx
+│   │   │   ├── gifts-for-him
+│   │   │   │   ├── CategoryIcons.tsx
+│   │   │   │   ├── CraftedGallery.tsx
+│   │   │   │   ├── CustomGiftBanner.tsx
+│   │   │   │   ├── EmbroideryStyles.tsx
+│   │   │   │   ├── HeroHim.tsx
+│   │   │   │   ├── LivePreviewFeature.tsx
+│   │   │   │   ├── OccasionsGrid.tsx
+│   │   │   │   ├── ProductCarousel.tsx
+│   │   │   │   ├── RelatedCategories.tsx
+│   │   │   │   ├── ValueProps.tsx
+│   │   │   ├── Hero.tsx
+│   │   │   ├── HowItWorks.tsx
+│   │   │   ├── kids-babies
+│   │   │   │   ├── BottomValuePropsKids.tsx
+│   │   │   │   ├── CategoryIconsKids.tsx
+│   │   │   │   ├── CraftedGalleryKids.tsx
+│   │   │   │   ├── CustomGiftBannerKids.tsx
+│   │   │   │   ├── HeroKids.tsx
+│   │   │   │   ├── LivePreviewFeatureKids.tsx
+│   │   │   │   ├── MidValuePropsKids.tsx
+│   │   │   │   ├── OccasionsGridKids.tsx
+│   │   │   │   ├── ProductCarouselKids.tsx
+│   │   │   │   ├── TestimonialsKids.tsx
+│   │   │   ├── NewHowItWorks.tsx
+│   │   │   ├── ProductCatalog.tsx
+│   │   │   ├── ProductGrid.tsx
+│   │   │   ├── SmileCTA.tsx
+│   │   │   ├── StoreFeatures.tsx
+│   │   │   ├── Testimonials.tsx
+│   │   ├── seo
+│   │   │   ├── SchemaMarkup.tsx
+│   │   ├── ui
+│   │   │   ├── accordion.tsx
+│   │   │   ├── avatar.tsx
+│   │   │   ├── badge.tsx
+│   │   │   ├── button.tsx
+│   │   │   ├── card.tsx
+│   │   │   ├── carousel.tsx
+│   │   │   ├── dialog.tsx
+│   │   │   ├── dropdown-menu.tsx
+│   │   │   ├── input.tsx
+│   │   │   ├── label.tsx
+│   │   │   ├── navigation-menu.tsx
+│   │   │   ├── scroll-area.tsx
+│   │   │   ├── select.tsx
+│   │   │   ├── separator.tsx
+│   │   │   ├── sheet.tsx
+│   │   │   ├── sonner.tsx
+│   │   │   ├── tabs.tsx
+│   │   │   ├── textarea.tsx
+│   ├── hooks
+│   │   ├── use-analytics.ts
+│   │   ├── use-categories.ts
+│   │   ├── use-cms.ts
+│   │   ├── use-coupons.ts
+│   │   ├── use-customers.ts
+│   │   ├── use-orders.ts
+│   │   ├── use-products.ts
+│   │   ├── use-returns.ts
+│   │   ├── use-reviews.ts
+│   │   ├── use-settings.ts
+│   │   ├── use-shipping.ts
+│   │   ├── use-subcategories.ts
+│   ├── lib
+│   │   ├── animations.ts
+│   │   ├── cloudinary-loader.ts
+│   │   ├── cloudinary.ts
+│   │   ├── constants.ts
+│   │   ├── fonts.ts
+│   │   ├── numeric-input.ts
+│   │   ├── supabase
+│   │   │   ├── client.ts
+│   │   │   ├── middleware.ts
+│   │   │   ├── server.ts
+│   │   ├── utils.ts
+│   ├── providers
+│   │   ├── query-provider.tsx
+│   │   ├── theme-provider.tsx
+│   ├── proxy.ts
+│   ├── services
+│   │   ├── storage.ts
+│   ├── store
+│   │   ├── useCartStore.ts
+│   │   ├── usePersonalizationStore.ts
+│   │   ├── useWishlistStore.ts
+│   ├── types
+│   │   ├── database.ts
+│   │   ├── index.ts
+├── supabase
+│   ├── combined_schema.sql
+│   ├── migrations
+│   │   ├── 0000_initial_schema.sql
+│   │   ├── 0001_seed_data.sql
+│   │   ├── 0002_enterprise_schema.sql
+│   │   ├── 0003_functions_triggers.sql
+│   │   ├── 0004_rls_policies.sql
+│   │   ├── 0005_seed_enterprise.sql
+│   │   ├── 0006_storage_setup.sql
+│   │   ├── 20260627110729_remove_collections_inventory.sql
+│   │   ├── 20260627110751_remove_collections_inventory.sql
+│   │   ├── 20260628100000_sku_auto_generation.sql
+│   │   ├── 20260628190000_seed_gallery_categories.sql
+│   │   ├── 20260629000000_dynamic_product_fields.sql
+│   │   ├── 20260629020000_homepage_additional_sections.sql
+├── tsconfig.json

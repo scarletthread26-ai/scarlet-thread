@@ -30,7 +30,7 @@ export async function GET() {
     }
 
     const { data, error } = await supabase
-      .from("wishlist_items")
+      .from("wishlists")
       .select(`
         *,
         products(
@@ -64,6 +64,14 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  let productId: string | undefined;
+  try {
+    const body = await request.json().catch(() => ({}));
+    productId = body.productId;
+  } catch (err) {
+    // Ignore body parse error, validation will catch it
+  }
+
   try {
     const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -72,16 +80,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { productId } = body;
-
     if (!productId) {
       return NextResponse.json({ error: "Product ID is required" }, { status: 400 });
     }
 
     // Check if product is already wishlisted
     const { data: existing } = await supabase
-      .from("wishlist_items")
+      .from("wishlists")
       .select("id")
       .eq("user_id", user.id)
       .eq("product_id", productId)
@@ -90,7 +95,7 @@ export async function POST(request: Request) {
     if (existing) {
       // If it exists, remove it (toggle behavior)
       const { error: delError } = await supabase
-        .from("wishlist_items")
+        .from("wishlists")
         .delete()
         .eq("id", existing.id);
       
@@ -99,7 +104,7 @@ export async function POST(request: Request) {
     } else {
       // If not, add it
       const { data, error: insError } = await supabase
-        .from("wishlist_items")
+        .from("wishlists")
         .insert({
           user_id: user.id,
           product_id: productId
@@ -112,8 +117,6 @@ export async function POST(request: Request) {
     }
   } catch (error: any) {
     console.warn("Supabase wishlist toggle failed. Simulating local success:", error.message || error);
-    const body = await request.json().catch(() => ({}));
-    const { productId } = body;
     
     if (!productId) {
       return NextResponse.json({ error: "Product ID is required" }, { status: 400 });

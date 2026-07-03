@@ -96,9 +96,40 @@ function formatLovedGiftsTitle(titleStr: string) {
   return titleStr;
 }
 
+function ProductGridSkeleton() {
+  return (
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      {[...Array(4)].map((_, i) => (
+        <div 
+          key={i} 
+          className="rounded-3xl border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-950 overflow-hidden shadow-sm flex flex-col h-full min-h-[380px]"
+        >
+          {/* Image skeleton */}
+          <div className="aspect-square w-full bg-slate-100 dark:bg-slate-900/60 animate-pulse relative" />
+          
+          {/* Content skeleton */}
+          <div className="p-4 flex flex-col flex-grow justify-between">
+            <div className="space-y-3">
+              <div className="w-12 h-2.5 bg-slate-100 dark:bg-slate-900 animate-pulse rounded" />
+              <div className="w-5/6 h-4 bg-slate-100 dark:bg-slate-900 animate-pulse rounded" />
+              <div className="w-2/3 h-4 bg-slate-100 dark:bg-slate-900 animate-pulse rounded" />
+            </div>
+            
+            <div className="flex justify-between items-center mt-6 pt-4 border-t border-slate-50 dark:border-slate-900/60 animate-pulse">
+              <div className="w-16 h-6 bg-slate-100 dark:bg-slate-900 rounded" />
+              <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-900" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export function ProductGrid() {
-  const { data: dbProducts = [] } = useProducts()
+  const { data: dbProducts = [], isLoading } = useProducts()
   const [sectionData, setSectionData] = React.useState<any>(null)
+  const [isCmsLoading, setIsCmsLoading] = React.useState(true)
 
   React.useEffect(() => {
     async function loadSection() {
@@ -110,10 +141,14 @@ export function ProductGrid() {
         }
       } catch (err) {
         console.warn("Failed to load featured products section config:", err)
+      } finally {
+        setIsCmsLoading(false)
       }
     }
     loadSection()
   }, [])
+
+  const showSkeleton = isLoading || isCmsLoading
 
   const displayProducts = React.useMemo(() => {
     const selectedIds = sectionData?.content?.product_ids || []
@@ -139,7 +174,7 @@ export function ProductGrid() {
       }
     }
 
-    const activeProducts = dbProducts.filter((p) => p.is_active && p.best_seller)
+    const activeProducts = dbProducts.filter((p) => p.is_active && p.featured)
     if (activeProducts.length > 0) {
       return activeProducts.map((p: any) => ({
         id: p.id,
@@ -180,48 +215,52 @@ export function ProductGrid() {
           </p>
         </motion.div>
 
-        {/* Mobile: horizontal scroll carousel */}
-        <div className="sm:hidden -mx-4 px-4">
-          <motion.div
-            className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-          >
-            <style>{`.mobile-carousel::-webkit-scrollbar { display: none; }`}</style>
-            {displayProducts.map((product: any, i: number) => (
-              <motion.div
-                key={product.id}
-                className="snap-start shrink-0 w-[58vw]"
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: i * 0.08, ease: "easeOut" }}
-              >
-                <ProductCard product={product} />
-              </motion.div>
-            ))}
-            {/* trailing spacer so last card doesn't hug edge */}
-            <div className="shrink-0 w-4" />
-          </motion.div>
-        </div>
-
-        {/* Desktop: grid */}
-        <motion.div
-          className="hidden sm:grid grid-cols-2 lg:grid-cols-4 gap-6"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.15 }}
-        >
-          {displayProducts.map((product: any) => (
-            <motion.div key={product.id} variants={itemVariants}>
-              <ProductCard product={product} />
+        {/* Loading state: skeleton loader */}
+        {showSkeleton ? (
+          <ProductGridSkeleton />
+        ) : (
+          <>
+            {/* Mobile: grid */}
+            <motion.div
+              className="sm:hidden grid grid-cols-2 gap-0 border-t border-slate-200/50 dark:border-slate-800/80 bg-white dark:bg-slate-900"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.15 }}
+            >
+              {displayProducts.map((product: any, i: number) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: i * 0.05, ease: "easeOut" }}
+                  className={
+                    "border-b border-slate-200/50 dark:border-slate-800/80 " +
+                    (i % 2 === 0 ? "border-r" : "")
+                  }
+                >
+                  <ProductCard product={product} className="max-sm:rounded-none max-sm:border-0 max-sm:shadow-none" />
+                </motion.div>
+              ))}
             </motion.div>
-          ))}
-        </motion.div>
+
+            {/* Desktop: grid */}
+            <motion.div
+              className="hidden sm:grid grid-cols-2 lg:grid-cols-4 gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.15 }}
+            >
+              {displayProducts.map((product: any) => (
+                <motion.div key={product.id} variants={itemVariants}>
+                  <ProductCard product={product} />
+                </motion.div>
+              ))}
+            </motion.div>
+          </>
+        )}
 
         {/* CTA */}
         <motion.div

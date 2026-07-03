@@ -12,6 +12,8 @@ import { useCategories } from "@/hooks/use-categories";
 import { useCartStore } from "@/store/useCartStore";
 import { toast } from "sonner";
 import { ProductCard } from "@/components/product/ProductCard";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRealtime } from "@/hooks/use-realtime";
 
 const sortOptions = [
   { label: "Featured", value: "featured" },
@@ -27,6 +29,24 @@ export function ProductCatalog() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("All");
   const [sortBy, setSortBy] = useState("featured");
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
+
+  const queryClient = useQueryClient();
+
+  // Listen to realtime changes on products table
+  useRealtime({
+    table: "products",
+    onPayload: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+
+  // Listen to realtime changes on product_variants table
+  useRealtime({
+    table: "product_variants",
+    onPayload: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
 
   const { data: products = [], isLoading: productsLoading } = useProducts();
   const { data: categories = [], isLoading: categoriesLoading } = useCategories();
@@ -237,7 +257,7 @@ export function ProductCatalog() {
               <span className="text-slate-400 font-bold text-sm">No products found in this category.</span>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-0 sm:gap-4 md:gap-6 max-sm:border-t max-sm:border-slate-200/50 dark:max-sm:border-slate-800/80 max-sm:bg-white dark:max-sm:bg-slate-900">
               {filteredProducts.map((product, idx) => {
                 const formattedProduct = {
                   id: product.id,
@@ -260,9 +280,11 @@ export function ProductCatalog() {
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: idx * 0.02 }}
+                    className={`max-sm:border-b max-sm:border-slate-200/50 dark:max-sm:border-slate-800/80 ${idx % 2 === 0 ? "max-sm:border-r" : ""}`}
                   >
                     <ProductCard 
                       product={formattedProduct} 
+                      className="max-sm:rounded-none max-sm:border-0 max-sm:shadow-none"
                     />
                   </motion.div>
                 );

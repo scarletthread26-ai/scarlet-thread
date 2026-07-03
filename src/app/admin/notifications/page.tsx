@@ -100,7 +100,7 @@ export default function AdminNotificationsPage() {
                     placeholder="e.g. +971501234567"
                     value={waNumber}
                     onChange={(e) => setWaNumber(e.target.value)}
-                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white"
+                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950"
                   />
                 </div>
               </div>
@@ -121,7 +121,7 @@ export default function AdminNotificationsPage() {
                     id="confirmWa"
                     value={waConfirmation}
                     onChange={(e) => setWaConfirmation(e.target.value)}
-                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white min-h-[72px]"
+                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 min-h-[72px]"
                   />
                   <p className="text-[10px] text-slate-400">Available tokens: <code className="font-mono bg-slate-50 dark:bg-slate-950 px-1 py-0.5 rounded">{`{customer_name}`}</code>, <code className="font-mono bg-slate-50 dark:bg-slate-950 px-1 py-0.5 rounded">{`{order_number}`}</code></p>
                 </div>
@@ -132,7 +132,7 @@ export default function AdminNotificationsPage() {
                     id="shipWa"
                     value={waShipping}
                     onChange={(e) => setWaShipping(e.target.value)}
-                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white min-h-[72px]"
+                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 min-h-[72px]"
                   />
                   <p className="text-[10px] text-slate-400">Available tokens: <code className="font-mono bg-slate-50 dark:bg-slate-950 px-1 py-0.5 rounded">{`{customer_name}`}</code>, <code className="font-mono bg-slate-50 dark:bg-slate-950 px-1 py-0.5 rounded">{`{order_number}`}</code>, <code className="font-mono bg-slate-50 dark:bg-slate-950 px-1 py-0.5 rounded">{`{carrier}`}</code>, <code className="font-mono bg-slate-50 dark:bg-slate-950 px-1 py-0.5 rounded">{`{tracking_link}`}</code></p>
                 </div>
@@ -154,7 +154,7 @@ export default function AdminNotificationsPage() {
                     id="emailSub"
                     value={emailSubject}
                     onChange={(e) => setEmailSubject(e.target.value)}
-                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white"
+                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950"
                   />
                   <p className="text-[10px] text-slate-400">Available tokens: <code className="font-mono bg-slate-50 dark:bg-slate-950 px-1 py-0.5 rounded">{`{order_number}`}</code></p>
                 </div>
@@ -165,7 +165,7 @@ export default function AdminNotificationsPage() {
                     id="emailBodyText"
                     value={emailBody}
                     onChange={(e) => setEmailBody(e.target.value)}
-                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white min-h-[150px]"
+                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 min-h-[150px]"
                   />
                   <p className="text-[10px] text-slate-400">Available tokens: <code className="font-mono bg-slate-50 dark:bg-slate-950 px-1 py-0.5 rounded">{`{customer_name}`}</code>, <code className="font-mono bg-slate-50 dark:bg-slate-950 px-1 py-0.5 rounded">{`{order_number}`}</code>, <code className="font-mono bg-slate-50 dark:bg-slate-950 px-1 py-0.5 rounded">{`{total_amount}`}</code></p>
                 </div>
