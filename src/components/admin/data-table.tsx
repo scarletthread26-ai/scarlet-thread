@@ -27,6 +27,7 @@ interface DataTableProps<TData, TValue> {
   searchKey?: string;
   searchPlaceholder?: string;
   globalSearch?: boolean;
+  filterContent?: React.ReactNode;
 }
 
 export function DataTable<TData, TValue>({
@@ -35,6 +36,7 @@ export function DataTable<TData, TValue>({
   searchKey,
   searchPlaceholder = "Search...",
   globalSearch = false,
+  filterContent,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -62,25 +64,28 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       {/* Filters and Actions Bar */}
-      {showSearch && (
-        <div className="flex items-center gap-3">
-          <div className="relative w-full max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
-            <input
-              placeholder={searchPlaceholder}
-              value={
-                globalSearch
-                  ? globalFilter
-                  : (table.getColumn(searchKey || "")?.getFilterValue() as string) ?? ""
-              }
-              onChange={(event) =>
-                globalSearch
-                  ? setGlobalFilter(event.target.value)
-                  : table.getColumn(searchKey || "")?.setFilterValue(event.target.value)
-              }
-              className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 pl-10 pr-4 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
-            />
-          </div>
+      {(showSearch || filterContent) && (
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          {showSearch && (
+            <div className="relative w-full max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
+              <input
+                placeholder={searchPlaceholder}
+                value={
+                  globalSearch
+                    ? globalFilter
+                    : (table.getColumn(searchKey || "")?.getFilterValue() as string) ?? ""
+                }
+                onChange={(event) =>
+                  globalSearch
+                    ? setGlobalFilter(event.target.value)
+                    : table.getColumn(searchKey || "")?.setFilterValue(event.target.value)
+                }
+                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 pl-10 pr-4 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm"
+              />
+            </div>
+          )}
+          {filterContent}
         </div>
       )}
 

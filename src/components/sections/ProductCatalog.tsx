@@ -12,6 +12,8 @@ import { useCategories } from "@/hooks/use-categories";
 import { useCartStore } from "@/store/useCartStore";
 import { toast } from "sonner";
 import { ProductCard } from "@/components/product/ProductCard";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRealtime } from "@/hooks/use-realtime";
 
 const sortOptions = [
   { label: "Featured", value: "featured" },
@@ -27,6 +29,24 @@ export function ProductCatalog() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("All");
   const [sortBy, setSortBy] = useState("featured");
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
+
+  const queryClient = useQueryClient();
+
+  // Listen to realtime changes on products table
+  useRealtime({
+    table: "products",
+    onPayload: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+
+  // Listen to realtime changes on product_variants table
+  useRealtime({
+    table: "product_variants",
+    onPayload: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
 
   const { data: products = [], isLoading: productsLoading } = useProducts();
   const { data: categories = [], isLoading: categoriesLoading } = useCategories();
