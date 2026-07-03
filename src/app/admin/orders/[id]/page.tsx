@@ -22,6 +22,7 @@ import {
   User
 } from "lucide-react";
 import Link from "next/link";
+import { useRealtime } from "@/hooks/use-realtime";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -33,6 +34,16 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
   const { data: orderData, isLoading, refetch } = useOrderDetails(id);
   const order = orderData as any;
   const updateStatusMutation = useUpdateOrderStatus();
+
+  // Listen to realtime updates for this order specifically
+  useRealtime({
+    table: "orders",
+    event: "UPDATE",
+    filter: `id=eq.${id}`,
+    onPayload: () => {
+      refetch();
+    },
+  });
 
   // Status & Tracking update states
   const [status, setStatus] = useState("pending");
@@ -116,6 +127,12 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
               <h1 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100 font-mono">
                 {order.order_number}
               </h1>
+              {order.status === "pending" && (
+                <span 
+                  className="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0 shadow-sm animate-pulse"
+                  title="Active Order (Action Required)"
+                />
+              )}
               <Badge className="capitalize font-semibold">{order.status}</Badge>
             </div>
             <p className="text-xs text-muted-foreground mt-0.5">Placed on {format(new Date(order.created_at), "PPP p")}</p>

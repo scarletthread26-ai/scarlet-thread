@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useAdminCustomers } from "@/hooks/use-customers";
 import { DataTable } from "@/components/admin/data-table";
 import { ColumnDef } from "@tanstack/react-table";
@@ -11,6 +11,12 @@ import { Eye, Loader2, User, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function AdminCustomersPage() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const { data: customers, isLoading, refetch, isFetching } = useAdminCustomers();
 
   const columns: ColumnDef<CustomerStats>[] = [
@@ -91,7 +97,7 @@ export default function AdminCustomersPage() {
             variant="outline" 
             size="sm" 
             onClick={() => refetch()} 
-            disabled={isLoading || isFetching}
+            disabled={mounted ? (isLoading || isFetching) : false}
             className="rounded-lg h-9"
           >
             <RefreshCw className={`w-4 h-4 mr-1.5 ${isFetching ? 'animate-spin' : ''}`} />

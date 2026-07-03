@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRealtime } from "@/hooks/use-realtime";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -40,6 +41,65 @@ export function Sidebar({ isCollapsed, setIsCollapsed, onMobileClose }: SidebarP
   const supabase = createClient();
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [newOrdersCount, setNewOrdersCount] = useState(0);
+
+  // Fetch the count of pending orders
+  const fetchPendingCount = async () => {
+    try {
+      if (pathname === "/admin/orders") {
+        setNewOrdersCount(0);
+        return;
+      }
+
+      let lastSeen = null;
+      if (typeof window !== "undefined") {
+        lastSeen = localStorage.getItem("admin_last_seen_orders_time");
+      }
+
+      let query = supabase
+        .from("orders")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "pending");
+
+      if (lastSeen) {
+        query = query.gt("created_at", lastSeen);
+      }
+
+      const { count, error } = await query;
+      if (!error && count !== null) {
+        setNewOrdersCount(count);
+      }
+    } catch (err) {
+      console.warn("Failed to fetch pending orders count:", err);
+    }
+  };
+
+  // Update last seen orders time when viewing the orders list page
+  useEffect(() => {
+    if (pathname === "/admin/orders") {
+      const nowStr = new Date().toISOString();
+      localStorage.setItem("admin_last_seen_orders_time", nowStr);
+      setNewOrdersCount(0);
+
+      return () => {
+        const leaveStr = new Date().toISOString();
+        localStorage.setItem("admin_last_seen_orders_time", leaveStr);
+      };
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    fetchPendingCount();
+  }, [pathname]);
+
+  // Listen to all database events on the orders table to keep the count perfectly synced in real-time
+  useRealtime({
+    table: "orders",
+    event: "*",
+    onPayload: () => {
+      fetchPendingCount();
+    },
+  });
 
   const menuGroups = [
     {
@@ -149,14 +209,27 @@ export function Sidebar({ isCollapsed, setIsCollapsed, onMobileClose }: SidebarP
                       key={item.href}
                       href={item.href}
                       onClick={onMobileClose}
-                      className={`flex items-center gap-3 px-3 py-2 rounded-xl transition font-semibold text-sm cursor-pointer ${isActive
-                          ? "bg-purple-600 text-white shadow-md shadow-purple-600/10"
-                          : "text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-black hover:bg-slate-200 dark:hover:purple-600"
+                      className={`relative flex items-center gap-3 px-3 py-2 rounded-xl transition font-semibold text-sm cursor-pointer ${isActive
+                        ? "bg-purple-600 text-white shadow-md shadow-purple-600/10"
+                        : "text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-black hover:bg-slate-200 dark:hover:purple-600"
                         }`}
                       title={isCollapsed ? item.label : undefined}
                     >
                       <Icon className="w-5 h-5 shrink-0" />
                       {!isCollapsed && <span>{item.label}</span>}
+
+                      {/* Live Counter Badge for New Orders */}
+                      {item.label === "Orders" && newOrdersCount > 0 && (
+                        <>
+                          {!isCollapsed ? (
+                            <span className="ml-auto bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm animate-pulse">
+                              {newOrdersCount}
+                            </span>
+                          ) : (
+                            <span className="absolute top-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-rose-500 border-2 border-white dark:border-slate-900" />
+                          )}
+                        </>
+                      )}
                     </Link>
                   );
                 })}
