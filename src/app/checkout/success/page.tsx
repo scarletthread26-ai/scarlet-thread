@@ -32,7 +32,7 @@ function SuccessContent() {
 
   useEffect(() => {
     if (!orderId && !orderNum) return;
-    
+
     async function fetchOrder() {
       setLoading(true);
       try {
@@ -41,7 +41,7 @@ function SuccessContent() {
         if (orderNum) params.append("number", orderNum);
         if (contact) params.append("contact", contact);
         else if (orderId) params.append("number", orderId); // fallback
-        
+
         const res = await fetch(`/api/orders/track?${params.toString()}`);
         if (res.ok) {
           const data = await res.json();
@@ -85,7 +85,7 @@ function SuccessContent() {
         <div className="w-20 h-20 bg-green-50 dark:bg-green-950/30 rounded-full flex items-center justify-center mx-auto mb-6 text-green-500">
           <CheckCircle2 className="w-10 h-10" />
         </div>
-        
+
         <h1 className="text-3xl font-heading font-bold mb-2">Order Confirmed!</h1>
         <p className="text-muted-foreground mb-6">
           Thank you for shopping with us. Your order has been registered and we've started preparing your custom gift.
@@ -100,7 +100,7 @@ function SuccessContent() {
           <div>
             <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Payment Status</div>
             <div className="text-sm font-semibold capitalize text-green-600">
-              {order?.payment_status === "paid" ? "Paid (Stripe Sandbox)" : "Pending"}
+              {order?.payment_status === "paid" ? "Paid" : "Pending"}
             </div>
           </div>
           <Link
@@ -153,7 +153,7 @@ function SuccessContent() {
                 </div>
               ))}
             </div>
-            
+
             <div className="border-t border-slate-100 dark:border-slate-800 mt-6 pt-4 space-y-2 text-sm text-slate-600 dark:text-slate-400">
               <div className="flex justify-between">
                 <span>Subtotal</span>

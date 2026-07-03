@@ -21,7 +21,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
-import { GiftIcon, HeartIcon, StarIcon } from "lucide-react"
+import { GiftIcon, HeartIcon, StarIcon, ShieldCheck } from "lucide-react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -278,19 +278,21 @@ export function Hero() {
 
   return (
     <section
-      className="relative overflow-hidden w-full h-[90dvh] lg:min-h-[640px] lg:h-[80vh] lg:max-h-[850px] flex flex-col lg:flex-row lg:items-center"
+      className="relative w-full h-[90dvh] lg:min-h-[640px] lg:h-[80vh] lg:max-h-[850px] flex flex-col lg:flex-row lg:items-center"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
       {/* ── Desktop background — cross-fades per slide ── */}
-      {slides.map((s, idx) => (
-        <div
-          key={`desktop-bg-${s.id}`}
-          className={`absolute inset-0 z-0 select-none pointer-events-none bg-cover bg-right transition-opacity duration-700 ease-in-out hidden lg:block ${idx === current ? "opacity-100" : "opacity-0"
-            }`}
-          style={{ backgroundImage: `url('${s.desktopBg}')` }}
-        />
-      ))}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none hidden lg:block">
+        {slides.map((s, idx) => (
+          <div
+            key={`desktop-bg-${s.id}`}
+            className={`absolute inset-0 bg-cover bg-right transition-opacity duration-700 ease-in-out ${idx === current ? "opacity-100" : "opacity-0"
+              }`}
+            style={{ backgroundImage: `url('${s.desktopBg}')` }}
+          />
+        ))}
+      </div>
 
       {/* ══════════════════════════════════════════════
           Mobile / Tablet layout  (< lg)
@@ -438,21 +440,7 @@ export function Hero() {
               </motion.div>
             </motion.div>
 
-            {/* Badge strip — static, unchanged */}
-            <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 pt-6 mt-6 border-t border-primary/30">
-              <div className="flex items-center gap-2 text-xs md:text-sm font-medium text-muted-foreground bg-white/70 backdrop-blur-sm px-4 py-2 rounded-full border border-primary/10 shadow-sm whitespace-nowrap">
-                <GiftIcon className="h-4 w-4 text-primary shrink-0" />
-                <span>Personalized Just for You</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs md:text-sm font-medium text-muted-foreground bg-white/70 backdrop-blur-sm px-4 py-2 rounded-full border border-primary/10 shadow-sm whitespace-nowrap">
-                <StarIcon className="h-4 w-4 text-primary shrink-0" />
-                <span>Premium Quality</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs md:text-sm font-medium text-muted-foreground bg-white/70 backdrop-blur-sm px-4 py-2 rounded-full border border-primary/10 shadow-sm whitespace-nowrap">
-                <HeartIcon className="h-4 w-4 text-primary shrink-0" />
-                <span>Made with Love</span>
-              </div>
-            </div>
+            {/* Badge strip — static, removed to replace with floating bar */}
 
             {/* Dots */}
             <div className="pt-1">
@@ -461,6 +449,51 @@ export function Hero() {
           </div>
 
           <div className="hidden lg:block" />
+        </div>
+      </div>
+      
+      {/* ══════════════════════════════════════════════
+          Floating Feature Bar
+      ══════════════════════════════════════════════ */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-30 w-[95%] max-w-5xl mx-auto">
+        <div className="bg-white rounded-[24px] md:rounded-[40px] shadow-[0_8px_30px_rgb(0,0,0,0.08)] py-5 md:py-5 px-2 sm:px-6 md:px-12 grid grid-cols-2 md:flex justify-between items-center border border-border/40 gap-y-5 md:gap-y-0 gap-x-2 md:gap-x-0">
+           {/* Item 1 */}
+           <div className="flex items-center justify-center md:justify-start gap-3 md:gap-4 w-full md:w-auto">
+             <GiftIcon className="h-6 w-6 md:h-7 md:w-7 text-[#4a148c]" strokeWidth={1.5} />
+             <div className="text-[#4a148c] text-[11px] md:text-[13px] font-semibold leading-tight text-left">
+                Personalized<br/>Just for You
+             </div>
+           </div>
+           
+           <div className="hidden md:block w-px h-10 bg-border/60"></div>
+           
+           {/* Item 2 */}
+           <div className="flex items-center justify-center md:justify-start gap-3 md:gap-4 w-full md:w-auto">
+             <StarIcon className="h-6 w-6 md:h-7 md:w-7 text-[#4a148c]" strokeWidth={1.5} />
+             <div className="text-[#4a148c] text-[11px] md:text-[13px] font-semibold leading-tight text-left">
+                Premium<br/>Quality
+             </div>
+           </div>
+
+           <div className="hidden md:block w-px h-10 bg-border/60"></div>
+
+           {/* Item 3 */}
+           <div className="flex items-center justify-center md:justify-start gap-3 md:gap-4 w-full md:w-auto">
+             <HeartIcon className="h-6 w-6 md:h-7 md:w-7 text-[#4a148c]" strokeWidth={1.5} />
+             <div className="text-[#4a148c] text-[11px] md:text-[13px] font-semibold leading-tight text-left">
+                Made<br/>with Love
+             </div>
+           </div>
+
+           <div className="hidden md:block w-px h-10 bg-border/60"></div>
+
+           {/* Item 4 */}
+           <div className="flex items-center justify-center md:justify-start gap-3 md:gap-4 w-full md:w-auto">
+             <ShieldCheck className="h-6 w-6 md:h-7 md:w-7 text-[#4a148c]" strokeWidth={1.5} />
+             <div className="text-[#4a148c] text-[11px] md:text-[13px] font-semibold leading-tight text-left">
+                Secure<br/>Checkout
+             </div>
+           </div>
         </div>
       </div>
     </section>

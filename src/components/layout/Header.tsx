@@ -119,8 +119,8 @@ export function Header() {
       <header className="sticky top-0 z-50 w-full border-b bg-white/60 backdrop-blur-sm">
 
         {/* Announcement Bar */}
-        <div className="bg-primary text-primary-foreground py-1 text-center text-[12px] font-medium tracking-wider overflow-hidden">
-          <div className="hidden lg:block px-4">
+        <div className="bg-primary text-primary-foreground py-2 text-center text-[12px] font-medium tracking-wider overflow-hidden">
+          <div className="hidden lg:block text-[10px] px-4">
             • Free Shipping Above AED 150 &nbsp;&nbsp;• Crafted With Love In UAE &nbsp;&nbsp;• Track Your Order
           </div>
           <div className="lg:hidden overflow-hidden">
@@ -136,7 +136,7 @@ export function Header() {
           </div>
         </div>
 
-        <div className="flex h-16 items-center justify-between px-4">
+        <div className="flex h-20 items-center justify-between px-4 sm:px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto w-full">
 
           {/* Logo */}
           <div className="flex items-center">
@@ -144,13 +144,13 @@ export function Header() {
               <img
                 src="/images/logo/logo.png"
                 alt="The Scarlet Thread Logo"
-                className="h-10 w-10 lg:h-8 lg:w-8 object-contain"
+                className="h-10 w-10 lg:h-9 lg:w-9 object-contain"
                 style={{ filter: "hue-rotate(23deg) saturate(138%) brightness(70%) contrast(335%)" }}
               />
               <img
                 src="/images/logo/name.png"
                 alt="The Scarlet Thread"
-                className="h-10 lg:h-8 w-auto object-contain"
+                className="h-10 lg:h-9 w-28 object-contain ml-1.5"
                 style={{ filter: "hue-rotate(12deg) saturate(76%) brightness(76%) contrast(315%)" }}
               />
             </Link>
@@ -162,19 +162,21 @@ export function Header() {
               <Link
                 key={link.path}
                 href={link.path}
-                className={`transition-colors font-medium text-sm hover:text-primary ${
-                  isActive(link.path) ? 'text-primary' : 'text-muted-foreground'
+                className={`relative transition-colors font-semibold text-[14px] hover:text-primary py-1 ${
+                  isActive(link.path) ? 'text-primary' : 'text-slate-700'
                 }`}
               >
                 {link.name}
+              
               </Link>
             ))}
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2 lg:gap-3">
+            {/* Search Toggle (Mobile Only) */}
             <button
-              className="p-2 text-foreground hover:text-primary transition-colors"
+              className="lg:hidden flex items-center justify-center w-10 h-10 rounded-full text-foreground hover:bg-muted/50 transition-colors"
               onClick={() => {
                 setSearchOpen((prev) => !prev)
                 setMenuOpen(false)
@@ -183,11 +185,29 @@ export function Header() {
             >
               {searchOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
             </button>
+
+            {/* Desktop Search */}
+            <div className="hidden lg:flex items-center border border-border/80 rounded-full px-3 py-1.5 w-[220px] xl:w-[260px] bg-white focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20 transition-all mr-2">
+              <Search className="h-[18px] w-[18px] text-muted-foreground mr-2 shrink-0" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                     e.preventDefault()
+                     handleSearch(e)
+                  }
+                }}
+                placeholder="Search products..."
+                className="flex-1 bg-transparent text-[13px] text-foreground outline-none placeholder:text-muted-foreground"
+              />
+            </div>
+
             {user ? (
-              <div className="relative group p-2 hidden lg:block">
-                <Link href="/account" className="flex items-center gap-1.5 text-foreground hover:text-primary transition-colors">
-                  <User className="h-5 w-5" />
-                  <span className="text-xs font-semibold max-w-[120px] truncate">Hi, {firstName}</span>
+              <div className="relative group hidden lg:block">
+                <Link href="/account" className="flex items-center justify-center w-10 h-10 rounded-full border border-border/60 bg-white hover:bg-muted/50 transition-colors text-foreground">
+                  <User className="h-[18px] w-[18px]" />
                 </Link>
                 
                 {/* User Dropdown (Logged In Only) */}
@@ -218,20 +238,27 @@ export function Header() {
                 </div>
               </div>
             ) : (
-              <Link href="/login" className="hidden lg:flex items-center px-2 text-sm font-semibold text-foreground hover:text-primary transition-colors">
-                Sign In
+              <Link href="/login" className="hidden lg:flex items-center justify-center w-10 h-10 rounded-full border border-border/60 bg-white hover:bg-muted/50 transition-colors text-foreground">
+                <User className="h-[18px] w-[18px]" />
               </Link>
             )}
-            <Link href="/cart" className="p-2 text-foreground hover:text-primary transition-colors relative">
-              <ShoppingBag className="h-5 w-5" />
-              {cartCount > 0 && (
-                <span className="absolute top-1 right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
+
+            <Link href="/wishlist" className="hidden lg:flex relative items-center justify-center w-10 h-10 rounded-full bg-primary/5 hover:bg-primary/10 transition-colors text-foreground">
+              <Heart className="h-[18px] w-[18px]" />
+              <span className="absolute -top-1 -right-1 h-[18px] w-[18px] rounded-full bg-[#31006E] text-[10px] font-bold text-white flex items-center justify-center shadow-sm border border-white">
+                {wishlistCount}
+              </span>
             </Link>
+            
+            <Link href="/cart" className="relative flex items-center justify-center w-10 h-10 rounded-full bg-primary/5 hover:bg-primary/10 transition-colors text-foreground">
+              <ShoppingBag className="h-[18px] w-[18px]" />
+              <span className="absolute -top-1 -right-1 h-[18px] w-[18px] rounded-full bg-[#31006E] text-[10px] font-bold text-white flex items-center justify-center shadow-sm border border-white">
+                {cartCount}
+              </span>
+            </Link>
+
             <button
-              className="lg:hidden p-2 text-foreground hover:text-primary transition-colors ml-1"
+              className="lg:hidden flex items-center justify-center w-10 h-10 text-foreground hover:bg-muted/50 transition-colors rounded-full ml-1"
               onClick={() => {
                 setMenuOpen((prev) => !prev)
                 setSearchOpen(false)

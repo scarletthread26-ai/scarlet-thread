@@ -1,140 +1,80 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import Image from "next/image"
-import { motion } from "framer-motion"
-import Link from "next/link"
-import { useBanners } from "@/hooks/use-cms"
+import { useProducts } from "@/hooks/use-products"
+import { ProductCard } from "@/components/product/ProductCard"
 import { useMemo } from "react"
+import { Sparkles } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 export function FeaturedBanner() {
-  const { data: dbBanners } = useBanners()
+  const { data: dbProducts, isLoading } = useProducts()
 
-  const featuredBanner = useMemo(() => {
-    if (!dbBanners || dbBanners.length === 0) {
-      return {
-        badge: "Best Seller",
-        title: "New Born Gift Sets",
-        subtitle: "Thoughtful & adorable gifts for your little ones.",
-        imageUrl: "/images/scarlet-bestseller-banner.png",
-        mobileImageUrl: null as string | null,
-        linkUrl: "/products",
-      }
-    }
+  const bestSellers = useMemo(() => {
+    if (!dbProducts) return []
+    
+    // Filter best seller, sort by latest
+    const filtered = dbProducts.filter((p) => p.best_seller === true)
+    
+    // Fallback: If no products are marked as best seller yet, show the latest 4 products
+    const displayProducts = filtered.length > 0 ? filtered : [...dbProducts]
 
-    // Find first active banner of type 'featured_banner'
-    const fb = dbBanners.find((b) => b.is_active && b.banner_type === "featured_banner")
-    if (!fb) {
-      const activeAny = dbBanners.find((b) => b.is_active)
-      if (!activeAny) {
-        return {
-          badge: "Best Seller",
-          title: "New Born Gift Sets",
-          subtitle: "Thoughtful & adorable gifts for your little ones.",
-          imageUrl: "/images/scarlet-bestseller-banner.png",
-          mobileImageUrl: null,
-          linkUrl: "/products",
-        }
-      }
-      return {
-        badge: "Special Offer",
-        title: activeAny.title || "Featured Banner",
-        subtitle: activeAny.subtitle || "",
-        imageUrl: activeAny.image_url || "/images/scarlet-bestseller-banner.png",
-        mobileImageUrl: activeAny.image_mobile_url || null,
-        linkUrl: activeAny.link_url || "/products",
-      }
-    }
+    return displayProducts
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 4)
+  }, [dbProducts])
 
-    return {
-      badge: "Best Seller",
-      title: fb.title || "Featured Banner",
-      subtitle: fb.subtitle || "",
-      imageUrl: fb.image_url || "/images/scarlet-bestseller-banner.png",
-      mobileImageUrl: fb.image_mobile_url || null,
-      linkUrl: fb.link_url || "/products",
-    }
-  }, [dbBanners])
+  if (isLoading) {
+    return null
+  }
 
   return (
-    <section className="py-5 md:py-24">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 lg:px-16">
-        <motion.div
-          className="rounded-3xl bg-[#FDF8EB] overflow-hidden flex flex-col md:flex-row relative min-h-[400px] md:min-h-[450px] lg:min-h-[480px]"
-          initial={{ opacity: 0, scale: 0.97 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        >
-          {/* Background Image */}
-          <motion.div
-            className="absolute inset-0 z-0"
-            initial={{ scale: 1.06 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.9, ease: "easeOut" }}
-          >
-            <Image
-              src={featuredBanner.imageUrl}
-              alt={featuredBanner.title}
-              fill
-              className={`object-cover ${featuredBanner.mobileImageUrl ? 'hidden sm:block' : ''}`}
-              priority
-            />
-            {featuredBanner.mobileImageUrl && (
-              <Image
-                src={featuredBanner.mobileImageUrl}
-                alt={featuredBanner.title}
-                fill
-                className="object-cover sm:hidden"
-                priority
-              />
-            )}
-          </motion.div>
+    <section className="py-16 md:py-16 bg-white border-y border-border/40">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-10 md:mb-14">
+          
+          <h2 className="text-3xl md:text-4xl font-heading font-bold flex items-center justify-center gap-3">
+            Best <span className="text-primary">Sellers</span>
+            
+          </h2>
+          <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">
+            Our most loved products, carefully curated for you.
+          </p>
+        </div>
 
-          <div className="p-8 md:p-12 lg:p-16 md:w-1/2 flex flex-col justify-end md:justify-center items-start relative z-10 mt-auto md:mt-0">
-            {/* Badge */}
-            <motion.div
-              className="inline-block px-3 py-1 bg-white rounded-full text-xs font-semibold tracking-widest text-primary uppercase mb-6 w-max"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
-            >
-              {featuredBanner.badge}
-            </motion.div>
+        <div className="relative max-w-7xl mx-auto px-0 sm:px-4 md:px-10">
+          {/* Responsive grid for best sellers */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-sm:gap-0 max-sm:border-t max-sm:border-slate-200/50">
+            {bestSellers.map((product, idx) => {
+              const formattedProduct = {
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                compare_at_price: product.compare_at_price,
+                image: product.images?.[0]?.url || "",
+                imagePlaceholder: "Gift",
+                category: product.categories?.name || "Best Seller",
+                slug: product.slug,
+                bestSeller: product.best_seller
+              }
 
-            {/* Heading */}
-            <motion.h2
-              className="text-3xl md:text-5xl font-heading font-bold text-foreground mb-4"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.45, ease: "easeOut" }}
-            >
-              {featuredBanner.title}
-            </motion.h2>
-
-            {/* Description */}
-            <motion.p
-              className="text-muted-foreground mb-8 text-lg max-w-md"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.6, ease: "easeOut" }}
-            >
-              {featuredBanner.subtitle}
-            </motion.p>
-
-            {/* Button */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.75, ease: "easeOut" }}
-            >
-              <Link href={featuredBanner.linkUrl}>
-                <Button size="lg" className="w-max px-8 text-base shadow-md h-12 rounded-[5px]">
-                  Shop Now
-                </Button>
-              </Link>
-            </motion.div>
+              return (
+                <div
+                  key={product.id}
+                  className={cn(
+                    "flex flex-col rounded-2xl w-full",
+                    "max-sm:border-b max-sm:border-slate-200/50 max-sm:rounded-none",
+                    idx % 2 === 0 ? "max-sm:border-r" : ""
+                  )}
+                >
+                  <ProductCard 
+                    product={formattedProduct} 
+                    className="max-sm:rounded-none max-sm:border-0 max-sm:shadow-none"
+                  />
+                </div>
+              )
+            })}
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   )
