@@ -13,6 +13,11 @@ import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Loader2, CreditCard, ChevronRight, MapPin, Shield, CheckCircle } from "lucide-react";
 
+// Stripe integration imports
+import { Elements } from "@stripe/react-stripe-js";
+import { getStripe } from "@/lib/stripe";
+import StripeCheckoutForm from "@/components/checkout/StripeCheckoutForm";
+
 interface SavedAddress {
   id: string;
   label: string;
@@ -31,7 +36,8 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { getTotal, items } = useCartStore();
   const createOrderMutation = useCreateOrder();
-  
+
+  const [mounted, setMounted] = useState(false);
   const [step, setStep] = useState(1); // 1: Shipping, 2: Payment
   const [isSameAddress, setIsSameAddress] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -42,7 +48,7 @@ export default function CheckoutPage() {
   // Form states
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  
+
   // Shipping Address State
   const [fullName, setFullName] = useState("");
   const [addressLine1, setAddressLine1] = useState("");
@@ -59,15 +65,18 @@ export default function CheckoutPage() {
   const [billingState, setBillingState] = useState("");
   const [billingPostalCode, setBillingPostalCode] = useState("");
 
-  // Payment mock states
-  const [cardNumber, setCardNumber] = useState("");
-  const [cardExpiry, setCardExpiry] = useState("");
-  const [cardCvc, setCardCvc] = useState("");
+  // Stripe Gateway states
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [isCreatingIntent, setIsCreatingIntent] = useState(false);
 
   const subtotal = getTotal();
   const { data: shippingData } = useCalculateShipping(subtotal, state, "United Arab Emirates");
   const shippingFee = shippingData ? shippingData.rate : (subtotal > 150 ? 0 : 15);
   const total = subtotal + shippingFee;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     // If cart is empty, send back to home
@@ -85,14 +94,14 @@ export default function CheckoutPage() {
         setIsAuthenticated(true);
         setCurrentUser(user);
         setEmail(user.email || "");
-        
+
         // Fetch user profile info
         const { data: profile } = await supabase
           .from("users")
           .select("*")
           .eq("id", user.id)
           .single();
-        
+
         if (profile) {
           setFullName(profile.full_name || "");
           setPhone(profile.phone || "");
@@ -137,25 +146,40 @@ export default function CheckoutPage() {
     setPostalCode("");
   };
 
-  const handleShippingSubmit = (e: React.FormEvent) => {
+  const handleShippingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !phone || !fullName || !addressLine1 || !city || !state || !postalCode) {
+    if (!email || !phone || !fullName || !addressLine1 || !city || !state) {
       toast.error("Please fill in all required shipping fields.");
       return;
     }
-    setStep(2);
+
+    setIsCreatingIntent(true);
+    try {
+      const response = await fetch("/api/stripe/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: total }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to initialize payment gateway.");
+      }
+
+      const data = await response.json();
+      setClientSecret(data.clientSecret);
+      setStep(2);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to initialize payment options. Please try again.");
+    } finally {
+      setIsCreatingIntent(false);
+    }
   };
 
-  const handlePlaceOrder = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (step !== 2) return;
-    
-    // Validate mock card details
-    if (cardNumber.replace(/\s/g, "").length < 16 || cardExpiry.length < 5 || cardCvc.length < 3) {
-      toast.error("Please enter valid card payment details.");
-      return;
-    }
-
+  const handlePaymentSuccess = async () => {
+    const isIndianAddress = 
+      (postalCode && /^\d{6}$/.test(postalCode)) || 
+      (phone && (phone.startsWith("+91") || phone.startsWith("91")));
+      
     const shippingAddress = {
       full_name: fullName,
       phone: phone,
@@ -163,22 +187,24 @@ export default function CheckoutPage() {
       address_line2: addressLine2,
       city: city,
       state: state,
-      postal_code: postalCode,
-      country: "United Arab Emirates",
+      postal_code: postalCode || "00000",
+      country: isIndianAddress ? "India" : "United Arab Emirates",
     };
 
-    const billingAddress = isSameAddress 
-      ? shippingAddress 
+    const billingAddress = isSameAddress
+      ? shippingAddress
       : {
-          full_name: billingFullName || fullName,
-          phone: phone,
-          address_line1: billingAddressLine1,
-          address_line2: billingAddressLine2,
-          city: billingCity,
-          state: billingState,
-          postal_code: billingPostalCode,
-          country: "United Arab Emirates",
-        };
+        full_name: billingFullName || fullName,
+        phone: phone,
+        address_line1: billingAddressLine1,
+        address_line2: billingAddressLine2,
+        city: billingCity,
+        state: billingState,
+        postal_code: billingPostalCode || "00000",
+        country: (billingPostalCode && /^\d{6}$/.test(billingPostalCode)) || (phone && (phone.startsWith("+91") || phone.startsWith("91")))
+          ? "India"
+          : "United Arab Emirates",
+      };
 
     const payload = {
       shippingAddress,
@@ -200,15 +226,28 @@ export default function CheckoutPage() {
 
     try {
       const createdOrder = await createOrderMutation.mutateAsync(payload);
-      
+
+      // Clear cart
+      const { clearCart } = useCartStore.getState();
+      await clearCart(isAuthenticated);
+
       // Navigate to success page
       toast.success("Order processed successfully!");
       const contactVal = isAuthenticated ? (currentUser?.email || email) : email;
       router.push(`/checkout/success?id=${createdOrder.id}&number=${createdOrder.order_number}&contact=${encodeURIComponent(contactVal)}`);
     } catch (err: any) {
       toast.error(err.message || "Failed to submit order. Please try again.");
+      throw err;
     }
   };
+
+  if (!mounted) {
+    return (
+      <div className="flex items-center justify-center py-32">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-6xl">
@@ -225,8 +264,8 @@ export default function CheckoutPage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Checkout Nav Tracker */}
           <div className="flex border rounded-2xl bg-white dark:bg-slate-900 p-4 gap-6 items-center shadow-sm">
-            <button 
-              onClick={() => step > 1 && setStep(1)} 
+            <button
+              onClick={() => step > 1 && setStep(1)}
               className={`flex items-center text-sm font-bold gap-2 ${step === 1 ? 'text-primary' : 'text-slate-500'}`}
             >
               <span className={`w-6 h-6 rounded-full flex items-center justify-center border text-xs ${step === 1 ? 'border-primary bg-primary text-white' : 'border-slate-300'}`}>1</span>
@@ -299,11 +338,10 @@ export default function CheckoutPage() {
                                 setSelectedAddressId(addr.id);
                               }
                             }}
-                            className={`text-left p-3 border rounded-xl transition w-full ${
-                              selectedAddressId === addr.id
+                            className={`text-left p-3 border rounded-xl transition w-full ${selectedAddressId === addr.id
                                 ? "border-primary bg-primary/5 ring-1 ring-primary"
                                 : "border-slate-200 hover:border-slate-400"
-                            }`}
+                              }`}
                           >
                             <div className="flex justify-between items-center mb-1">
                               <span className="text-xs font-bold text-primary">{addr.label}</span>
@@ -385,10 +423,9 @@ export default function CheckoutPage() {
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label htmlFor="postalCode" className="font-semibold text-slate-700 dark:text-slate-300">Postal Code / ZIP *</Label>
+                        <Label htmlFor="postalCode" className="font-semibold text-slate-700 dark:text-slate-300">Postal Code / ZIP (Optional)</Label>
                         <Input
                           id="postalCode"
-                          required
                           placeholder="00000"
                           value={postalCode}
                           onChange={(e) => setPostalCode(e.target.value)}
@@ -398,174 +435,146 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
-                  <Button type="submit" size="lg" className="rounded-full w-full font-bold shadow-md bg-primary hover:bg-primary/95 text-white">
-                    Continue to Payment Method
+                  <Button
+                    type="submit"
+                    size="lg"
+                    disabled={isCreatingIntent}
+                    className="rounded-full w-full font-bold shadow-md bg-primary hover:bg-primary/95 text-white gap-2"
+                  >
+                    {isCreatingIntent ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" /> Initializing Payment Gateway...
+                      </>
+                    ) : (
+                      "Continue to Payment Method"
+                    )}
                   </Button>
                 </form>
               </CardContent>
             </Card>
           ) : (
             <Card className="border-slate-200/60 dark:border-slate-800/80 rounded-2xl shadow-md">
-              <CardContent className="p-6 md:p-8">
-                <form onSubmit={handlePlaceOrder} className="space-y-6">
-                  {/* Payment simulation */}
-                  <div>
-                    <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
-                      <CreditCard className="w-5 h-5 text-primary" /> Stripe Payment Sandbox
-                    </h2>
-                    <p className="text-xs text-muted-foreground mb-4">
-                      Simulate checkout using sandbox keys. You can enter card number `4242 4242 4242 4242` for sandbox processing.
-                    </p>
-                    
-                    <div className="space-y-4 border p-4 rounded-xl bg-slate-50 dark:bg-slate-950/40">
-                      <div className="space-y-1.5">
-                        <Label htmlFor="cardNum" className="font-semibold">Card Number *</Label>
-                        <Input
-                          id="cardNum"
-                          required
-                          placeholder="4242 4242 4242 4242"
-                          value={cardNumber}
-                          onChange={(e) => setCardNumber(e.target.value)}
-                          className="rounded-lg bg-white"
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1.5">
-                          <Label htmlFor="expiry" className="font-semibold">Expiry Date (MM/YY) *</Label>
+              <CardContent className="p-6 md:p-8 space-y-6">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
+                    <CreditCard className="w-5 h-5 text-primary" /> Stripe Payment
+                  </h2>
+                </div>
+
+                {/* Billing address toggling */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="billingCheck"
+                      checked={isSameAddress}
+                      onChange={(e) => setIsSameAddress(e.target.checked)}
+                      className="rounded border-slate-300 text-primary focus:ring-primary w-4.5 h-4.5"
+                    />
+                    <Label htmlFor="billingCheck" className="font-semibold text-slate-700 dark:text-slate-300">
+                      Billing address matches shipping address
+                    </Label>
+                  </div>
+
+                  {!isSameAddress && (
+                    <div className="space-y-4 border p-4 rounded-xl bg-slate-50/50">
+                      <h3 className="font-bold text-sm text-slate-800 dark:text-slate-200">Billing Address</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-1.5 md:col-span-2">
+                          <Label htmlFor="bFullName">Billing Full Name</Label>
                           <Input
-                            id="expiry"
-                            required
-                            placeholder="12/28"
-                            value={cardExpiry}
-                            onChange={(e) => setCardExpiry(e.target.value)}
-                            className="rounded-lg bg-white"
+                            id="bFullName"
+                            placeholder="Name"
+                            value={billingFullName}
+                            onChange={(e) => setBillingFullName(e.target.value)}
+                            className="bg-white border-slate-300"
+                          />
+                        </div>
+                        <div className="space-y-1.5 md:col-span-2">
+                          <Label htmlFor="bAddr1">Billing Address Line 1</Label>
+                          <Input
+                            id="bAddr1"
+                            placeholder="Address Line 1"
+                            value={billingAddressLine1}
+                            onChange={(e) => setBillingAddressLine1(e.target.value)}
+                            className="bg-white border-slate-300"
+                          />
+                        </div>
+                        <div className="space-y-1.5 md:col-span-2">
+                          <Label htmlFor="bAddr2">Billing Address Line 2 (Optional)</Label>
+                          <Input
+                            id="bAddr2"
+                            placeholder="Address Line 2"
+                            value={billingAddressLine2}
+                            onChange={(e) => setBillingAddressLine2(e.target.value)}
+                            className="bg-white border-slate-300"
                           />
                         </div>
                         <div className="space-y-1.5">
-                          <Label htmlFor="cvc" className="font-semibold">CVC / CVV *</Label>
+                          <Label htmlFor="bCity">Billing City</Label>
                           <Input
-                            id="cvc"
-                            required
-                            type="password"
-                            maxLength={3}
-                            placeholder="123"
-                            value={cardCvc}
-                            onChange={(e) => setCardCvc(e.target.value)}
-                            className="rounded-lg bg-white"
+                            id="bCity"
+                            placeholder="City"
+                            value={billingCity}
+                            onChange={(e) => setBillingCity(e.target.value)}
+                            className="bg-white border-slate-300"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="bState">Billing State</Label>
+                          <Input
+                            id="bState"
+                            placeholder="Emirate"
+                            value={billingState}
+                            onChange={(e) => setBillingState(e.target.value)}
+                            className="bg-white border-slate-300"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="bPostalCode">Billing Postal Code (Optional)</Label>
+                          <Input
+                            id="bPostalCode"
+                            placeholder="Postal Code"
+                            value={billingPostalCode}
+                            onChange={(e) => setBillingPostalCode(e.target.value)}
+                            className="bg-white border-slate-300"
                           />
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
+                </div>
 
-                  {/* Billing address toggling */}
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <input 
-                        type="checkbox"
-                        id="billingCheck" 
-                        checked={isSameAddress} 
-                        onChange={(e) => setIsSameAddress(e.target.checked)}
-                        className="rounded border-slate-300 text-primary focus:ring-primary w-4.5 h-4.5"
-                      />
-                      <Label htmlFor="billingCheck" className="font-semibold text-slate-700 dark:text-slate-300">
-                        Billing address matches shipping address
-                      </Label>
+                <hr className="border-slate-100 dark:border-slate-800" />
+
+                {clientSecret ? (
+                  <Elements stripe={getStripe()} options={{ clientSecret }}>
+                    <StripeCheckoutForm
+                      total={total}
+                      email={email}
+                      name={fullName}
+                      phone={phone}
+                      postalCode={isSameAddress ? postalCode : billingPostalCode}
+                      onPaymentSuccess={handlePaymentSuccess}
+                      isOrderPending={createOrderMutation.isPending}
+                    />
+                    <div className="mt-4">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setStep(1)}
+                        className="rounded-full px-6 font-bold"
+                      >
+                        Back
+                      </Button>
                     </div>
-
-                    {!isSameAddress && (
-                      <div className="space-y-4 border p-4 rounded-xl bg-slate-50/50">
-                        <h3 className="font-bold text-sm text-slate-800 dark:text-slate-200">Billing Address</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-1.5 md:col-span-2">
-                            <Label htmlFor="bFullName">Billing Full Name</Label>
-                            <Input 
-                              id="bFullName" 
-                              placeholder="Name" 
-                              value={billingFullName} 
-                              onChange={(e) => setBillingFullName(e.target.value)} 
-                              className="bg-white border-slate-300"
-                            />
-                          </div>
-                          <div className="space-y-1.5 md:col-span-2">
-                            <Label htmlFor="bAddr1">Billing Address Line 1</Label>
-                            <Input 
-                              id="bAddr1" 
-                              placeholder="Address Line 1" 
-                              value={billingAddressLine1} 
-                              onChange={(e) => setBillingAddressLine1(e.target.value)} 
-                              className="bg-white border-slate-300"
-                            />
-                          </div>
-                          <div className="space-y-1.5 md:col-span-2">
-                            <Label htmlFor="bAddr2">Billing Address Line 2 (Optional)</Label>
-                            <Input 
-                              id="bAddr2" 
-                              placeholder="Address Line 2" 
-                              value={billingAddressLine2} 
-                              onChange={(e) => setBillingAddressLine2(e.target.value)} 
-                              className="bg-white border-slate-300"
-                            />
-                          </div>
-                          <div className="space-y-1.5">
-                            <Label htmlFor="bCity">Billing City</Label>
-                            <Input 
-                              id="bCity" 
-                              placeholder="City" 
-                              value={billingCity} 
-                              onChange={(e) => setBillingCity(e.target.value)} 
-                              className="bg-white border-slate-300"
-                            />
-                          </div>
-                          <div className="space-y-1.5">
-                            <Label htmlFor="bState">Billing State</Label>
-                            <Input 
-                              id="bState" 
-                              placeholder="Emirate" 
-                              value={billingState} 
-                              onChange={(e) => setBillingState(e.target.value)} 
-                              className="bg-white border-slate-300"
-                            />
-                          </div>
-                          <div className="space-y-1.5">
-                            <Label htmlFor="bPostalCode">Billing Postal Code</Label>
-                            <Input 
-                              id="bPostalCode" 
-                              placeholder="Postal Code" 
-                              value={billingPostalCode} 
-                              onChange={(e) => setBillingPostalCode(e.target.value)} 
-                              className="bg-white border-slate-300"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                  </Elements>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-8 space-y-4">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                    <p className="text-sm text-slate-500">Initializing payment gateway...</p>
                   </div>
-
-                  <div className="flex gap-4">
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      onClick={() => setStep(1)} 
-                      className="rounded-full px-6 font-bold"
-                    >
-                      Back
-                    </Button>
-                    <Button
-                      type="submit"
-                      disabled={createOrderMutation.isPending}
-                      className="rounded-full flex-1 font-bold shadow-md bg-primary hover:bg-primary/95 text-white gap-2"
-                    >
-                      {createOrderMutation.isPending ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin" /> Placing Order...
-                        </>
-                      ) : (
-                        `Pay AED ${total} Securely`
-                      )}
-                    </Button>
-                  </div>
-                </form>
+                )}
               </CardContent>
             </Card>
           )}
@@ -576,7 +585,7 @@ export default function CheckoutPage() {
           <Card className="border-slate-200/60 dark:border-slate-800/80 rounded-2xl shadow-md sticky top-24">
             <CardContent className="p-6">
               <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-6">Order Summary</h2>
-              
+
               {/* Product Listing */}
               <div className="space-y-4 mb-6 max-h-[340px] overflow-y-auto pr-2">
                 {items.map((item) => (
