@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAdminOrders } from "@/hooks/use-orders";
 import { DataTable } from "@/components/admin/data-table";
 import { ColumnDef } from "@tanstack/react-table";
@@ -10,10 +10,29 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Eye, Loader2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRealtime } from "@/hooks/use-realtime";
 
 export default function AdminOrdersPage() {
   const [statusFilter, setStatusFilter] = useState("all");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const { data: orders, isLoading, refetch, isFetching } = useAdminOrders({ status: statusFilter });
+
+  const queryClient = useQueryClient();
+
+  // Listen to realtime changes on orders table
+  useRealtime({
+    table: "orders",
+    event: "*",
+    onPayload: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
+    },
+  });
 
   const columns: ColumnDef<any>[] = [
     {
@@ -21,13 +40,22 @@ export default function AdminOrdersPage() {
       header: "Order Number",
       cell: ({ row }) => {
         const order = row.original;
+        const isActive = order.status === "pending";
         return (
-          <Link 
-            href={`/admin/orders/${order.id}`}
-            className="font-mono font-bold text-primary hover:underline"
-          >
-            {order.order_number}
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/admin/orders/${order.id}`}
+              className="font-mono font-bold text-primary hover:underline"
+            >
+              {order.order_number}
+            </Link>
+            {isActive && (
+              <span 
+                className="w-2 h-2 rounded-full bg-rose-500 shrink-0 shadow-sm animate-pulse" 
+                title="Active Order"
+              />
+            )}
+          </div>
         );
       },
     },
@@ -60,7 +88,7 @@ export default function AdminOrdersPage() {
       cell: ({ row }) => {
         const status = row.getValue("status") as string;
         let variant: "default" | "secondary" | "destructive" | "outline" = "default";
-        
+
         if (status === "cancelled") variant = "destructive";
         else if (status === "delivered") variant = "secondary";
         else if (status === "shipped") variant = "outline";
@@ -87,7 +115,7 @@ export default function AdminOrdersPage() {
         const order = row.original;
         return (
           <div>
-            <Badge 
+            <Badge
               variant={order.payment_status === "paid" ? "secondary" : "destructive"}
               className="text-xs uppercase font-bold"
             >
@@ -132,17 +160,17 @@ export default function AdminOrdersPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => refetch()} 
-            disabled={isLoading || isFetching}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            disabled={mounted ? (isLoading || isFetching) : false}
             className="rounded-lg h-9"
           >
             <RefreshCw className={`w-4 h-4 mr-1.5 ${isFetching ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
-          
+
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -157,7 +185,7 @@ export default function AdminOrdersPage() {
           </select>
         </div>
       </div>
-
+ 
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4">
           <Loader2 className="w-8 h-8 text-primary animate-spin" />
@@ -169,6 +197,27 @@ export default function AdminOrdersPage() {
           data={orders || []}
           searchKey="order_number"
           searchPlaceholder="Search order number..."
+          filterContent={
+            <div className="relative w-full max-w-sm">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-4 text-slate-800 dark:text-slate-100 outline-none transition duration-200 text-sm shadow-sm cursor-pointer h-[38px] font-medium appearance-none"
+              >
+                <option value="all">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="shipped">Shipped</option>
+                <option value="delivered">Delivered</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                </svg>
+              </div>
+            </div>
+          }
         />
       )}
     </div>
