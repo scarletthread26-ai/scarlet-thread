@@ -1,20 +1,24 @@
 "use client"
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInstagram, faFacebook, faPinterest, faXTwitter } from '@fortawesome/free-brands-svg-icons'
-import { Mail, Phone, Clock } from 'lucide-react'
+import { Mail, Phone, Clock, ChevronDown } from 'lucide-react'
 
 export function Footer() {
+  const [isQuickLinksOpen, setIsQuickLinksOpen] = useState(false)
+  const [isCustomerCareOpen, setIsCustomerCareOpen] = useState(false)
+
   return (
     <footer className="bg-[#4b0082] border-t border-white/10 text-white">
       <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-12">
 
         {/* Main Footer Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 md:gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-8 md:gap-12">
 
           {/* Column 1: Brand Info */}
-          <div className="space-y-4 flex flex-col items-start text-left">
+          <div className="border-b border-white/10 sm:border-none pb-4 sm:pb-0 w-full sm:w-auto space-y-4 flex flex-col items-start text-left">
             <div className="space-y-3">
               <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-white/20 shadow-sm w-fit">
                 <img
@@ -68,11 +72,19 @@ export function Footer() {
           </div>
 
           {/* Column 2: Quick Links */}
-          <div className="space-y-4 flex flex-col items-start text-left">
-            <h4 className="font-sans font-bold text-xs sm:text-sm tracking-widest uppercase text-white pb-1 w-full max-w-[200px] sm:max-w-none">
-              Quick Links
-            </h4>
-            <ul className="space-y-2.5 text-xs sm:text-sm text-white/70">
+          <div className="border-b border-white/10 sm:border-none pt-1 pb-3 sm:py-0 w-full sm:w-auto space-y-3 sm:space-y-4 flex flex-col items-start text-left">
+            <button 
+              onClick={() => setIsQuickLinksOpen(!isQuickLinksOpen)}
+              className="flex items-center justify-between w-full sm:w-auto text-left focus:outline-none sm:pointer-events-none cursor-pointer sm:cursor-default"
+            >
+              <h4 className="font-sans font-bold text-xs sm:text-sm tracking-widest uppercase text-white pb-1 w-full max-w-[200px] sm:max-w-none">
+                Quick Links
+              </h4>
+              <ChevronDown 
+                className={`w-4 h-4 text-white/70 transition-transform duration-200 sm:hidden ${isQuickLinksOpen ? 'rotate-180' : ''}`} 
+              />
+            </button>
+            <ul className={`${isQuickLinksOpen ? 'block' : 'hidden'} sm:block space-y-2.5 text-xs sm:text-sm text-white/70 w-full`}>
               <li>
                 <Link href="/about" className="hover:text-white hover:underline underline-offset-4 transition-colors font-medium">
                   About Us
@@ -97,11 +109,19 @@ export function Footer() {
           </div>
 
           {/* Column 3: Customer Care */}
-          <div className="space-y-4 flex flex-col items-start text-left">
-            <h4 className="font-sans font-bold text-xs sm:text-sm tracking-widest uppercase text-white pb-1 w-full max-w-[200px] sm:max-w-none">
-              Customer Care
-            </h4>
-            <ul className="space-y-2.5 text-xs sm:text-sm text-white/70">
+          <div className="border-b border-white/10 sm:border-none pt-1 pb-3 sm:py-0 w-full sm:w-auto space-y-3 sm:space-y-4 flex flex-col items-start text-left">
+            <button 
+              onClick={() => setIsCustomerCareOpen(!isCustomerCareOpen)}
+              className="flex items-center justify-between w-full sm:w-auto text-left focus:outline-none sm:pointer-events-none cursor-pointer sm:cursor-default"
+            >
+              <h4 className="font-sans font-bold text-xs sm:text-sm tracking-widest uppercase text-white pb-1 w-full max-w-[200px] sm:max-w-none">
+                Customer Care
+              </h4>
+              <ChevronDown 
+                className={`w-4 h-4 text-white/70 transition-transform duration-200 sm:hidden ${isCustomerCareOpen ? 'rotate-180' : ''}`} 
+              />
+            </button>
+            <ul className={`${isCustomerCareOpen ? 'block' : 'hidden'} sm:block space-y-2.5 text-xs sm:text-sm text-white/70 w-full`}>
               <li>
                 <Link href="/shipping" className="hover:text-white hover:underline underline-offset-4 transition-colors font-medium">
                   Shipping Policy
