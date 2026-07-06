@@ -278,7 +278,7 @@ export function Hero() {
 
   return (
     <section
-      className="relative w-full h-[90dvh] lg:min-h-[640px] lg:h-[80vh] lg:max-h-[850px] flex flex-col lg:flex-row lg:items-center"
+      className="relative w-full min-h-screen flex flex-col lg:flex-row lg:items-center"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -362,7 +362,7 @@ export function Hero() {
 
             <motion.div className="pt-1 flex flex-col items-start gap-3 w-full" variants={btnVariants}>
               <Link href="/products">
-                <Button size="lg" className="text-base h-10 px-4 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[5px] shadow-md transition-all">
+                <Button size="lg" className="text-base h-12 px-6 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[10px] shadow-md transition-all">
                   Shop Now
                   <span className="ml-2">→</span>
                 </Button>
@@ -426,7 +426,7 @@ export function Hero() {
                 variants={btnVariants}
               >
                 <Link href="/products">
-                  <Button size="lg" className="text-base h-12 px-8 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[5px] shadow-md transition-all">
+                  <Button size="lg" className="text-base h-12 px-8 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[10px] shadow-md transition-all">
                     Shop Now
                   </Button>
                 </Link>

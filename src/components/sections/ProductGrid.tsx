@@ -196,21 +196,21 @@ export function ProductGrid() {
   const subtitle = sectionData?.subtitle || "Carefully selected and thoughtfully crafted to bring joy, create meaningful connections, and make every moment feel extra special."
 
   return (
-    <section className="py-5 md:py-24 bg-[#F9F5FF]">
+    <section className="py-5 md:pb-24 bg-[#F9F5FF]">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 lg:px-16">
 
         {/* Heading */}
         <motion.div
-          className="text-center mb-10 md:mb-12"
+          className="text-left md:text-center mb-10 md:mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.55, ease: "easeOut" }}
         >
-          <h2 className="text-3xl font-bold flex items-center justify-center gap-2">
+          <h2 className="text-3xl font-bold flex items-center justify-start md:justify-center gap-2">
             {formatLovedGiftsTitle(title)}
           </h2>
-          <p className="text-muted-foreground text-sm mt-2 max-w-xl mx-auto">
+          <p className="text-muted-foreground text-sm mt-2 max-w-xl md:mx-auto">
             {subtitle}
           </p>
         </motion.div>
@@ -271,7 +271,7 @@ export function ProductGrid() {
           transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
         >
           <Link href="/products">
-            <Button size="lg" className="rounded-[5px] px-8 shadow-sm">View All Gifts</Button>
+            <Button size="lg" className="rounded-[10px] px-8 h-12 shadow-sm">View All Gifts</Button>
           </Link>
         </motion.div>
 

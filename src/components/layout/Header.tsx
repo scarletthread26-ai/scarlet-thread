@@ -116,7 +116,7 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b bg-white/60 backdrop-blur-sm">
+      <header className="sticky top-0 z-50 w-full border-b bg-white">
 
         {/* Announcement Bar */}
         <div className="bg-primary text-primary-foreground py-2 text-center text-[12px] font-medium tracking-wider overflow-hidden">

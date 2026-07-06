@@ -22,8 +22,8 @@ export default function Home() {
       {/* <HowItWorks /> */}
       <FeaturedBanner />
      
-      <StoreFeatures />
-      <CraftedGalleryHer />
+      {/* <StoreFeatures /> */}
+      {/* <CraftedGalleryHer /> */}
       <Testimonials />
       <SmileCTA />
     </div>
