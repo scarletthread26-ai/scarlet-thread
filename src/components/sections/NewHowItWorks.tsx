@@ -46,13 +46,7 @@ const arrowRightVariants = {
   },
 }
 
-const arrowDownVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 0.8,
-    transition: { duration: 0.5, ease: "easeOut" as const },
-  },
-}
+
 
 const defaultSteps = [
   {
@@ -97,24 +91,34 @@ export function NewHowItWorks() {
   const steps = section?.content?.steps || defaultSteps
 
   return (
-    <section className="py-10 md:py-16 bg-white">
+    <section className="py-5 md:py-16 bg-white">
       <div className="max-w-[1420px] mx-auto px-4 sm:px-6 md:px-12 lg:px-16">
         {/* ── Lavender outer rounded container ── */}
-        <div className="bg-[#EEE8FA] rounded-[28px] px-4 py-8 sm:px-8 md:px-12 md:py-12">
+        <div className=" rounded-[28px] py-8 sm:px-8 md:px-12 md:py-12">
           {/* Heading */}
           <motion.h2
-            className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#1A1530] uppercase text-center tracking-wide mb-12 md:mb-16"
+            className="text-3xl sm:text-3xl md:text-4xl font-bold text-[#1A1530] text-start sm:text-center tracking-wide mb-12 md:mb-16"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
             variants={headingVariants}
           >
-            {title}
+            Crafted Just For <span className="text-primary">You</span>
+            <motion.p
+              className="text-sm md:text-sm  leading-relaxed line-clamp-2 md:line-clamp-none"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={headingVariants}
+            >
+              Thoughtfully personalized gifts, crafted to celebrate every special moment.
+            </motion.p>
           </motion.h2>
+        
 
           {/* ── Steps row ── */}
           <motion.div
-            className="grid grid-cols-2 md:flex md:flex-row items-stretch gap-3 md:gap-2"
+            className="grid grid-cols-2 md:flex md:flex-row items-stretch gap-4 md:gap-3"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
@@ -166,7 +170,7 @@ function StepCard({
   const cardVariants = isDesktop ? stepDesktopVariants : stepMobileVariants
   return (
     <motion.div
-      className="relative flex-1 bg-white rounded-[18px] px-3.5 pt-6 pb-3.5 md:px-5 md:pt-8 md:pb-5
+      className="relative flex-1 bg-white rounded-[10px] px-3.5 pt-6 pb-3.5 md:px-5 md:pt-8 md:pb-5
                  shadow-[0_4px_20px_rgba(107,70,193,0.08)] border border-[#EDE6F8]
                  flex flex-col overflow-visible"
       variants={cardVariants}
@@ -184,7 +188,7 @@ function StepCard({
       {/* Stacked layout on all viewports */}
       <div className="flex flex-col items-center flex-1 w-full gap-4">
         {/* Image container on top, full size in a clean modern frame */}
-        <div className="relative w-full h-[110px] sm:h-[130px] md:h-[160px] bg-[#FAF8FF] rounded-2xl overflow-hidden flex items-center justify-center p-3 border border-[#F2EBFC]/60 shrink-0">
+        <div className="relative w-full h-[110px] sm:h-[130px] md:h-[160px] bg-[#FAF8FF] rounded-[10px] overflow-hidden flex items-center justify-center p-3 border border-[#F2EBFC]/60 shrink-0">
           {image && (
             <Image
               src={image}
