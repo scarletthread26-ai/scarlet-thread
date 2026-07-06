@@ -142,7 +142,7 @@ function formatHeroTitle(titleStr: string, isMobile: boolean) {
       <>
         <span className="block whitespace-nowrap">More Than a Gift.</span>
         <span className="block text-primary">
-          A Memory in the <span className="italic">Making</span>.
+          A Memory in the <span >Making</span>.
         </span>
       </>
     );
@@ -263,16 +263,6 @@ export function Hero() {
   const firstWithSub = slides.find(s => s.subtitle);
   const heroTitle = firstWithTitle?.title || "More Than a Gift. A Memory in the Making";
 
-  // Manual line breaks via "\n" — matches the reference image's 4-line wrap:
-  //   Whether you're celebrating
-  //   someone special or
-  //   treating yourself, make it uniquely
-  //   personal.
-  //
-  // NOTE: forced to always use this hardcoded string (ignoring any CMS
-  // subtitle) so the manual line breaks are guaranteed to show. Once this
-  // is confirmed working, you can switch back to `firstWithSub?.subtitle ||`
-  // as long as your CMS text also contains literal "\n" characters.
   const heroSubtitle =
     "Whether you're celebrating someone\nspecial or treating yourself, make it\nuniquely personal.";
 
@@ -331,16 +321,16 @@ export function Hero() {
         {/* Content — overlaid directly on the background image, pinned near the top-left */}
         <div className="relative z-20 w-full h-full flex flex-col px-5 pt-10 sm:px-10 sm:pt-20">
           <motion.div
-            className="flex flex-col items-start space-y-4 w-full max-w-md"
+            className="flex flex-col items-start space-y-2 w-full max-w-md"
             variants={contentVariants}
             initial="hidden"
             animate="visible"
           >
             <motion.div
-              className="flex items-center gap-2 text-xs font-semibold tracking-wider text-primary uppercase"
+              className="flex items-center gap-2 text-xs font-semibold text-primary "
               variants={headingVariants}
             >
-              <span>✦</span>
+             
               <span>For Every Moment That Matters</span>
             </motion.div>
 
@@ -351,10 +341,8 @@ export function Hero() {
               {formatHeroTitle(heroTitle, false)}
             </motion.h1>
 
-            <div className="w-10 h-[2px] bg-primary/50" />
-
             <motion.p
-              className="text-[14px] text-muted-foreground text-left max-w-xs whitespace-pre-line leading-relaxed"
+              className="text-[13px] text-muted-foreground text-left max-w-xs "
               variants={descVariants}
             >
               {formatDescription(heroSubtitle)}
@@ -362,16 +350,16 @@ export function Hero() {
 
             <motion.div className="pt-1 flex flex-col items-start gap-3 w-full" variants={btnVariants}>
               <Link href="/products">
-                <Button size="lg" className="text-base h-10 px-4 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[5px] shadow-md transition-all">
+                <Button size="lg" className="text-base h-12 px-8 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[10px] shadow-md transition-all">
                   Shop Now
-                  <span className="ml-2">→</span>
+                 
                 </Button>
               </Link>
             </motion.div>
           </motion.div>
 
-          {/* Dots — pinned to bottom-left, on top of the background image */}
-          <div className="mt-auto pb-10 flex justify-start">
+          {/* Dots — hidden on mobile, shown on tablet+ */}
+          <div className="hidden sm:flex mt-auto pb-10 justify-start">
             <Dots total={slides.length} active={current} onChange={setCurrent} />
           </div>
         </div>
@@ -394,7 +382,6 @@ export function Hero() {
 
             {/* Eyebrow tag — matches reference image */}
             <div className="flex items-center gap-2 text-xs font-semibold tracking-wider text-primary uppercase">
-              <span>✦</span>
               <span>For Every Moment That Matters</span>
             </div>
 
@@ -453,9 +440,9 @@ export function Hero() {
       </div>
       
       {/* ══════════════════════════════════════════════
-          Floating Feature Bar
+          Floating Feature Bar — hidden on mobile (StoreFeatures handles mobile)
       ══════════════════════════════════════════════ */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-30 w-[95%] max-w-5xl mx-auto">
+      <div className=" absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-30 w-[95%] max-w-5xl mx-auto">
         <div className="bg-white rounded-[24px] md:rounded-[40px] shadow-[0_8px_30px_rgb(0,0,0,0.08)] py-5 md:py-5 px-2 sm:px-6 md:px-12 grid grid-cols-2 md:flex justify-between items-center border border-border/40 gap-y-5 md:gap-y-0 gap-x-2 md:gap-x-0">
            {/* Item 1 */}
            <div className="flex items-center justify-center md:justify-start gap-3 md:gap-4 w-full md:w-auto">
