@@ -9,6 +9,7 @@ import { Mail, Phone, Clock, ChevronDown } from 'lucide-react'
 export function Footer() {
   const [isQuickLinksOpen, setIsQuickLinksOpen] = useState(false)
   const [isCustomerCareOpen, setIsCustomerCareOpen] = useState(false)
+  const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false)
 
   return (
     <footer className="bg-[#4b0082] border-t border-white/10 text-white">
@@ -146,75 +147,86 @@ export function Footer() {
           </div>
 
           {/* Column 4: Need Help? */}
-          <div className="space-y-5 flex flex-col items-start text-left col-span-1 w-full">
-            <h4 className="font-sans font-bold text-xs sm:text-sm tracking-widest uppercase text-white pb-1 w-full max-w-[200px] sm:max-w-none">
-              Need Help?
-            </h4>
-            <ul className="space-y-3.5 text-xs sm:text-sm text-white/70 w-full">
-              <li className="flex items-start gap-2.5 justify-start">
-                <Mail className="w-4 h-4 text-white shrink-0 mt-0.5" />
-                <div>
-                  <span className="block font-semibold text-white">Email Us</span>
-                  <a href="mailto:support@thescarletthread.in" className="hover:text-white transition-colors font-medium">
-                    support@thescarletthread.in
-                  </a>
-                </div>
-              </li>
-              <li className="flex items-start gap-2.5 justify-start">
-                <Phone className="w-4 h-4 text-white shrink-0 mt-0.5" />
-                <div>
-                  <span className="block font-semibold text-white">Call / WhatsApp</span>
-                  <a href="tel:+919876543210" className="hover:text-white transition-colors font-medium">
-                    +91 98765 43210
-                  </a>
-                </div>
-              </li>
-              <li className="flex items-start gap-2.5 justify-start">
-                <Clock className="w-4 h-4 text-white shrink-0 mt-0.5" />
-                <div>
-                  <span className="block font-semibold text-white">Support Hours</span>
-                  <span className="font-medium">Mon - Sat: 9:00 AM - 6:00 PM</span>
-                </div>
-              </li>
-            </ul>
+          <div className="border-b border-white/10 sm:border-none pt-1 pb-3 sm:py-0 w-full sm:w-auto space-y-3 sm:space-y-4 flex flex-col items-start text-left col-span-1">
+            <button 
+              onClick={() => setIsNeedHelpOpen(!isNeedHelpOpen)}
+              className="flex items-center justify-between w-full sm:w-auto text-left focus:outline-none sm:pointer-events-none cursor-pointer sm:cursor-default"
+            >
+              <h4 className="font-sans font-bold text-xs sm:text-sm tracking-widest uppercase text-white pb-1 w-full max-w-[200px] sm:max-w-none">
+                Need Help?
+              </h4>
+              <ChevronDown 
+                className={`w-4 h-4 text-white/70 transition-transform duration-200 sm:hidden ${isNeedHelpOpen ? 'rotate-180' : ''}`} 
+              />
+            </button>
+            
+            <div className={`${isNeedHelpOpen ? 'block' : 'hidden'} sm:block w-full space-y-4`}>
+              <ul className="space-y-3.5 text-xs sm:text-sm text-white/70 w-full">
+                <li className="flex items-start gap-2.5 justify-start">
+                  <Mail className="w-4 h-4 text-white shrink-0 mt-0.5" />
+                  <div>
+                    <span className="block font-semibold text-white">Email Us</span>
+                    <a href="mailto:support@thescarletthread.in" className="hover:text-white transition-colors font-medium">
+                      support@thescarletthread.in
+                    </a>
+                  </div>
+                </li>
+                <li className="flex items-start gap-2.5 justify-start">
+                  <Phone className="w-4 h-4 text-white shrink-0 mt-0.5" />
+                  <div>
+                    <span className="block font-semibold text-white">Call / WhatsApp</span>
+                    <a href="tel:+919876543210" className="hover:text-white transition-colors font-medium">
+                      +91 98765 43210
+                    </a>
+                  </div>
+                </li>
+                <li className="flex items-start gap-2.5 justify-start">
+                  <Clock className="w-4 h-4 text-white shrink-0 mt-0.5" />
+                  <div>
+                    <span className="block font-semibold text-white">Support Hours</span>
+                    <span className="font-medium">Mon - Sat: 9:00 AM - 6:00 PM</span>
+                  </div>
+                </li>
+              </ul>
 
-            {/* Social Links (Mobile view only) */}
-            <div className="flex sm:hidden justify-center gap-3 pt-4 w-full">
-              <a
-                href="#"
-                className="w-9 h-9 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white hover:text-[#4b0082] hover:bg-white hover:border-transparent transition-all duration-300 hover:-translate-y-1 shadow-[0_2px_6px_rgba(0,0,0,0.02)]"
-                aria-label="Instagram"
-              >
-                <FontAwesomeIcon icon={faInstagram} className="h-4 w-4" />
-              </a>
-              <a
-                href="#"
-                className="w-9 h-9 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white hover:text-[#4b0082] hover:bg-white hover:border-transparent transition-all duration-300 hover:-translate-y-1 shadow-[0_2px_6px_rgba(0,0,0,0.02)]"
-                aria-label="Facebook"
-              >
-                <FontAwesomeIcon icon={faFacebook} className="h-4 w-4" />
-              </a>
-              <a
-                href="#"
-                className="w-9 h-9 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white hover:text-[#4b0082] hover:bg-white hover:border-transparent transition-all duration-300 hover:-translate-y-1 shadow-[0_2px_6px_rgba(0,0,0,0.02)]"
-                aria-label="Pinterest"
-              >
-                <FontAwesomeIcon icon={faPinterest} className="h-4 w-4" />
-              </a>
-              <a
-                href="#"
-                className="w-9 h-9 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white hover:text-[#4b0082] hover:bg-white hover:border-transparent transition-all duration-300 hover:-translate-y-1 shadow-[0_2px_6px_rgba(0,0,0,0.02)]"
-                aria-label="X (Twitter)"
-              >
-                <FontAwesomeIcon icon={faXTwitter} className="h-4 w-4" />
-              </a>
+              {/* Social Links (Mobile view only) */}
+              <div className="flex sm:hidden justify-center gap-3 pt-4 w-full">
+                <a
+                  href="#"
+                  className="w-9 h-9 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white hover:text-[#4b0082] hover:bg-white hover:border-transparent transition-all duration-300 hover:-translate-y-1 shadow-[0_2px_6px_rgba(0,0,0,0.02)]"
+                  aria-label="Instagram"
+                >
+                  <FontAwesomeIcon icon={faInstagram} className="h-4 w-4" />
+                </a>
+                <a
+                  href="#"
+                  className="w-9 h-9 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white hover:text-[#4b0082] hover:bg-white hover:border-transparent transition-all duration-300 hover:-translate-y-1 shadow-[0_2px_6px_rgba(0,0,0,0.02)]"
+                  aria-label="Facebook"
+                >
+                  <FontAwesomeIcon icon={faFacebook} className="h-4 w-4" />
+                </a>
+                <a
+                  href="#"
+                  className="w-9 h-9 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white hover:text-[#4b0082] hover:bg-white hover:border-transparent transition-all duration-300 hover:-translate-y-1 shadow-[0_2px_6px_rgba(0,0,0,0.02)]"
+                  aria-label="Pinterest"
+                >
+                  <FontAwesomeIcon icon={faPinterest} className="h-4 w-4" />
+                </a>
+                <a
+                  href="#"
+                  className="w-9 h-9 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white hover:text-[#4b0082] hover:bg-white hover:border-transparent transition-all duration-300 hover:-translate-y-1 shadow-[0_2px_6px_rgba(0,0,0,0.02)]"
+                  aria-label="X (Twitter)"
+                >
+                  <FontAwesomeIcon icon={faXTwitter} className="h-4 w-4" />
+                </a>
+              </div>
             </div>
           </div>
 
         </div>
 
         {/* Footer Bottom bar */}
-        <div className="pt-8 mt-12 border-t border-white/10 flex flex-col items-center justify-center text-center pb-6 sm:pb-0">
+        <div className="pt-8 mt-6 sm:mt-12 border-t border-white/10 flex flex-col items-center justify-center text-center pb-6 sm:pb-0">
           <div className="text-xs sm:text-sm text-white/70 flex flex-row flex-wrap sm:flex-col items-center justify-center gap-x-2 gap-y-0.5 sm:gap-2">
             <span>© {new Date().getFullYear()} The Scarlet Thread. All rights reserved.</span>
             <span className="flex items-center gap-1">
