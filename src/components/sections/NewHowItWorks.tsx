@@ -57,26 +57,26 @@ const arrowDownVariants = {
 const defaultSteps = [
   {
     number: "1",
-    title: "Choose Your Product",
-    description: "Find your favorite base product and complete secure payment to lock in your order.",
+    title: "Select a Product",
+    description: "Find your favorite base product (hoodie, tee, cap, etc.) and complete secure payment to lock in your order slot.",
     image: "/images/heropage/scarlet-heartbag.png"
   },
   {
     number: "2",
-    title: "WhatsApp Us Details",
-    description: "Check your email confirmation for your order details and share your design idea with us on WhatsApp.",
+    title: "Personalize Details",
+    description: "Check your email confirmation for your Order # and a direct link to chat with us on WhatsApp. Share your design idea!",
     image: "/images/heropage/scarlet-phone.png"
   },
   {
     number: "3",
-    title: "Mockup & Approval",
-    description: "We create a realistic digital mockup for your review. Give us your final thumbs up before we craft!",
+    title: "Meticulous Crafting",
+    description: "We create a realistic digital mockup for your review. Give us your final 'Thumbs Up' before we craft!",
     image: "/images/heropage/scarlet-laptop.png"
   },
   {
     number: "4",
-    title: "We Craft & Ship",
-    description: "Once approved, our team creates your unique gift with care and ships it straight to your doorstep.",
+    title: "Gift-Wrapped Delivery",
+    description: "Once approved, our team produces your unique gift with care and ships it straight to your door!",
     image: "/images/heropage/scarlet-delivery.png"
   }
 ]
@@ -114,7 +114,7 @@ export function NewHowItWorks() {
 
           {/* ── Steps row ── */}
           <motion.div
-            className="flex flex-col md:flex-row items-stretch gap-1.5 md:gap-2"
+            className="grid grid-cols-2 md:flex md:flex-row items-stretch gap-3 md:gap-2"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
@@ -131,14 +131,15 @@ export function NewHowItWorks() {
                 />
                 
                 {index < steps.length - 1 && (
-                  <>
-                    <motion.div className="hidden md:flex items-center flex-shrink-0 text-[#9B6BD3]" variants={arrowRightVariants}>
-                      <ArrowRightIcon />
-                    </motion.div>
-                    <motion.div className="flex md:hidden justify-center text-[#9B6BD3] my-0" variants={arrowDownVariants}>
-                      <ArrowDownIcon />
-                    </motion.div>
-                  </>
+                  <motion.div 
+                    className="hidden md:flex items-center flex-shrink-0 text-[#9B6BD3]" 
+                    variants={arrowRightVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.1 }}
+                  >
+                    <ArrowRightIcon />
+                  </motion.div>
                 )}
               </React.Fragment>
             ))}
@@ -169,6 +170,9 @@ function StepCard({
                  shadow-[0_4px_20px_rgba(107,70,193,0.08)] border border-[#EDE6F8]
                  flex flex-col overflow-visible"
       variants={cardVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.1 }}
       whileHover={{ y: -4 }}
       transition={{ type: "spring", stiffness: 260, damping: 20 }}
     >
@@ -177,28 +181,28 @@ function StepCard({
         {number}
       </div>
 
-      {/* Row on desktop/tablet, stacked on mobile */}
-      <div className="flex flex-row items-center md:items-end justify-between gap-3 md:gap-2 flex-1">
-        {/* Text */}
-        <div className="flex-1 min-w-0 md:self-start">
-          <h3 className="text-[13px] md:text-sm font-bold text-[#1A1530] mb-1.5 leading-snug">
-            {title}
-          </h3>
-          <p className="text-[11px] text-[#8B8194] leading-relaxed">
-            {desc}
-          </p>
-        </div>
-
-        {/* Image container */}
-        <div className="relative flex-shrink-0 w-[85px] h-[85px] md:w-[115px] md:h-[115px] md:self-end">
+      {/* Stacked layout on all viewports */}
+      <div className="flex flex-col items-center flex-1 w-full gap-4">
+        {/* Image container on top, full size in a clean modern frame */}
+        <div className="relative w-full h-[110px] sm:h-[130px] md:h-[160px] bg-[#FAF8FF] rounded-2xl overflow-hidden flex items-center justify-center p-3 border border-[#F2EBFC]/60 shrink-0">
           {image && (
             <Image
               src={image}
               alt={title}
               fill
-              className="object-contain md:object-cover"
+              className="object-contain p-2 hover:scale-105 transition-transform duration-300"
             />
           )}
+        </div>
+
+        {/* Content Section */}
+        <div className="flex flex-col items-center text-center w-full px-1">
+          <h3 className="text-sm md:text-base font-extrabold text-[#1A1530] mb-2 leading-snug tracking-tight">
+            {title}
+          </h3>
+          <p className="text-[11px] md:text-xs text-[#736880] leading-relaxed line-clamp-2 md:line-clamp-none">
+            {desc}
+          </p>
         </div>
       </div>
     </motion.div>
