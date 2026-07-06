@@ -210,7 +210,7 @@ export function ProductCard({ product, className, buttonClassName, customTopRigh
                   onClick={handleAddToCart}
                   className={cn(
                     buttonVariants({ variant: "default" }),
-                    "w-full h-9 rounded-[10px] text-xs font-bold transition-transform hover:-translate-y-0.5 active:translate-y-0 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer relative z-20",
+                    "w-full h-13 rounded-[10px] text-xs font-bold transition-transform hover:-translate-y-0.5 active:translate-y-0 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer relative z-20",
                     buttonClassName || "bg-primary hover:bg-primary/90 text-white"
                   )}
                 >
