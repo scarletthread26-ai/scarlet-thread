@@ -217,7 +217,7 @@ export function Hero() {
 
   return (
     <section
-      className="relative w-full h-[90dvh] lg:min-h-[640px] lg:h-[80vh] lg:max-h-[850px] flex flex-col lg:flex-row lg:items-center"
+      className="relative w-full h-[100svh] lg:min-h-[640px] lg:h-[80vh] lg:max-h-[850px] flex flex-col lg:flex-row lg:items-center"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
