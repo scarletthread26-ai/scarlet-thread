@@ -119,7 +119,7 @@ export function Header() {
       <header className="sticky top-0 z-50 w-full border-b bg-white">
 
         {/* Announcement Bar */}
-        <div className="bg-primary text-primary-foreground py-1 text-center text-[12px] font-medium tracking-wider overflow-hidden">
+        <div className="bg-primary text-primary-foreground py-2 text-center text-[12px] font-medium tracking-wider overflow-hidden">
           <div className="hidden lg:block text-[8px] px-4">
             • Free Shipping Above AED 150 &nbsp;&nbsp;• Crafted With Love In UAE &nbsp;&nbsp;• Track Your Order
           </div>
@@ -136,7 +136,7 @@ export function Header() {
           </div>
         </div>
 
-        <div className="flex h-16 items-center justify-between px-2 sm:px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto w-full">
+        <div className="flex h-18 items-center justify-between px-2 sm:px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto w-full">
 
           {/* Logo */}
           <div className="flex items-center">
@@ -157,7 +157,7 @@ export function Header() {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
                 key={link.path}

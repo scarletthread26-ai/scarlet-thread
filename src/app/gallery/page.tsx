@@ -42,7 +42,7 @@ export default async function GalleryPage({
     <div className="flex flex-col min-h-screen">
       <HeroGallery />
       <GalleryFilter categories={categories || []} activeCategory={category} />
-      <MasonryGrid items={items || []} />
+      <MasonryGrid items={items || []} activeCategory={category} />
     </div>
   );
 }

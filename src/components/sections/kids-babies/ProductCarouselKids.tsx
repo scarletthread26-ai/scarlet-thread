@@ -178,7 +178,7 @@ export function ProductCarouselKids() {
             href="/products?category=kids-babies"
             className={cn(
               buttonVariants({ variant: "default" }),
-              "px-8 py-5 h-auto rounded-xl text-xs sm:text-sm font-bold bg-primary hover:bg-primary/90 text-primary-foreground transition-transform hover:-translate-y-0.5 active:translate-y-0 shadow-md shadow-primary/10"
+              "px-8 py-5 h-13 rounded-xl text-xs sm:text-sm font-bold bg-primary hover:bg-primary/90 text-primary-foreground transition-transform hover:-translate-y-0.5 active:translate-y-0 shadow-md shadow-primary/10"
             )}
           >
             View All Kids & Baby Gifts

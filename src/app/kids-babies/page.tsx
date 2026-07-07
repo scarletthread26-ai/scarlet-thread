@@ -14,12 +14,12 @@ export default function KidsBabiesPage() {
       <HeroKids />
       {/* <CategoryIconsKids /> */}
       <ProductCarouselKids />
-      <MidValuePropsKids />
+      {/* <MidValuePropsKids /> */}
       {/* <LivePreviewFeatureKids /> */}
       <OccasionsGridKids />
       <CraftedGalleryKids />
       {/* <TestimonialsKids /> */}
-      <BottomValuePropsKids />
+      {/* <BottomValuePropsKids /> */}
     </div>
   )
 }
