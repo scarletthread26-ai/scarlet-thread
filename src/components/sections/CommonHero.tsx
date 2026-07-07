@@ -120,7 +120,7 @@ export function CommonHero({
 
   return (
     <section
-      className="relative h-[90dvh] md:h-auto md:py-6 mb-16 md:mb-20"
+      className="relative h-[100svh] md:h-auto md:py-6 mb-16 md:mb-20"
       style={{ backgroundColor: bgColor }}
     >
       {/* ── Background Wrapper (clips scaled images and blobs) ── */}
@@ -178,7 +178,7 @@ export function CommonHero({
         animate="show"
         className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 lg:px-16 relative z-10 h-full"
       >
-        <div className="flex flex-col md:flex-row items-end md:items-center gap-12 h-[90dvh] md:h-auto md:min-h-[500px]">
+        <div className="flex flex-col md:flex-row items-end md:items-center gap-12 h-[100svh] md:h-auto md:min-h-[500px]">
           {/* Left content */}
           <div className="flex-1 text-left pb-24 sm:pb-32 md:pb-0 md:py-0 flex flex-col justify-end md:justify-center h-full">
 
