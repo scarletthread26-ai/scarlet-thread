@@ -46,37 +46,31 @@ const arrowRightVariants = {
   },
 }
 
-const arrowDownVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 0.8,
-    transition: { duration: 0.5, ease: "easeOut" as const },
-  },
-}
+
 
 const defaultSteps = [
   {
     number: "1",
-    title: "Choose Your Product",
-    description: "Find your favorite base product and complete secure payment to lock in your order.",
+    title: "Select a Product",
+    description: "Find your favorite base product (hoodie, tee, cap, etc.) and complete secure payment to lock in your order slot.",
     image: "/images/heropage/scarlet-heartbag.png"
   },
   {
     number: "2",
-    title: "WhatsApp Us Details",
-    description: "Check your email confirmation for your order details and share your design idea with us on WhatsApp.",
+    title: "Personalize Details",
+    description: "Check your email confirmation for your Order # and a direct link to chat with us on WhatsApp. Share your design idea!",
     image: "/images/heropage/scarlet-phone.png"
   },
   {
     number: "3",
-    title: "Mockup & Approval",
-    description: "We create a realistic digital mockup for your review. Give us your final thumbs up before we craft!",
+    title: "Meticulous Crafting",
+    description: "We create a realistic digital mockup for your review. Give us your final 'Thumbs Up' before we craft!",
     image: "/images/heropage/scarlet-laptop.png"
   },
   {
     number: "4",
-    title: "We Craft & Ship",
-    description: "Once approved, our team creates your unique gift with care and ships it straight to your doorstep.",
+    title: "Gift-Wrapped Delivery",
+    description: "Once approved, our team produces your unique gift with care and ships it straight to your door!",
     image: "/images/heropage/scarlet-delivery.png"
   }
 ]
@@ -97,24 +91,36 @@ export function NewHowItWorks() {
   const steps = section?.content?.steps || defaultSteps
 
   return (
-    <section className="py-10 md:py-16 bg-white">
-      <div className="max-w-[1420px] mx-auto px-4 sm:px-6 md:px-12 lg:px-16">
+    <section className="py-5 md:py-16 bg-white">
+      <div className="max-w-[1420px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
         {/* ── Lavender outer rounded container ── */}
-        <div className="bg-[#EEE8FA] rounded-[28px] px-4 py-8 sm:px-8 md:px-12 md:py-12">
+        <div className="rounded-[28px] py-8 sm:px-2 md:px-4 lg:px-6 md:py-12">
           {/* Heading */}
-          <motion.h2
-            className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#1A1530] uppercase text-center tracking-wide mb-12 md:mb-16"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={headingVariants}
-          >
-            {title}
-          </motion.h2>
+          <div className="text-start sm:text-center mb-12 md:mb-16">
+            <motion.h2
+              className="text-3xl sm:text-3xl md:text-4xl font-bold text-[#1A1530] tracking-wide mb-3"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={headingVariants}
+            >
+              Crafted Just For <span className="text-primary">You</span>
+            </motion.h2>
+            <motion.p
+              className="text-[13px] md:text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={headingVariants}
+            >
+              Thoughtfully personalized gifts, crafted to celebrate every special moment.
+            </motion.p>
+          </div>
+        
 
           {/* ── Steps row ── */}
           <motion.div
-            className="flex flex-col md:flex-row items-stretch gap-1.5 md:gap-2"
+            className="grid grid-cols-2 md:flex md:flex-row items-stretch gap-4 md:gap-3"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
@@ -131,14 +137,15 @@ export function NewHowItWorks() {
                 />
                 
                 {index < steps.length - 1 && (
-                  <>
-                    <motion.div className="hidden md:flex items-center flex-shrink-0 text-[#9B6BD3]" variants={arrowRightVariants}>
-                      <ArrowRightIcon />
-                    </motion.div>
-                    <motion.div className="flex md:hidden justify-center text-[#9B6BD3] my-0" variants={arrowDownVariants}>
-                      <ArrowDownIcon />
-                    </motion.div>
-                  </>
+                  <motion.div 
+                    className="hidden md:flex items-center flex-shrink-0 text-[#9B6BD3]" 
+                    variants={arrowRightVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.1 }}
+                  >
+                    <ArrowRightIcon />
+                  </motion.div>
                 )}
               </React.Fragment>
             ))}
@@ -165,40 +172,43 @@ function StepCard({
   const cardVariants = isDesktop ? stepDesktopVariants : stepMobileVariants
   return (
     <motion.div
-      className="relative flex-1 bg-white rounded-[18px] px-3.5 pt-6 pb-3.5 md:px-5 md:pt-8 md:pb-5
+      className="relative flex-1 bg-white rounded-[10px] px-2 pt-6 pb-2 md:px-3 md:pt-8 md:pb-3
                  shadow-[0_4px_20px_rgba(107,70,193,0.08)] border border-[#EDE6F8]
                  flex flex-col overflow-visible"
       variants={cardVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.1 }}
       whileHover={{ y: -4 }}
       transition={{ type: "spring", stiffness: 260, damping: 20 }}
     >
-      {/* Number badge — overlaps top-left edge, overflow-visible keeps it visible */}
-      <div className="absolute -top-4 left-3 w-9 h-9 rounded-full bg-[#6F35C4] text-white flex items-center justify-center text-sm font-bold shadow-md z-10 select-none">
+      {/* Number badge — overlaps top-center edge, overflow-visible keeps it visible */}
+      <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-[#6F35C4] text-white flex items-center justify-center text-sm font-bold shadow-md z-10 select-none">
         {number}
       </div>
 
-      {/* Row on desktop/tablet, stacked on mobile */}
-      <div className="flex flex-row items-center md:items-end justify-between gap-3 md:gap-2 flex-1">
-        {/* Text */}
-        <div className="flex-1 min-w-0 md:self-start">
-          <h3 className="text-[13px] md:text-sm font-bold text-[#1A1530] mb-1.5 leading-snug">
-            {title}
-          </h3>
-          <p className="text-[11px] text-[#8B8194] leading-relaxed">
-            {desc}
-          </p>
-        </div>
-
-        {/* Image container */}
-        <div className="relative flex-shrink-0 w-[85px] h-[85px] md:w-[115px] md:h-[115px] md:self-end">
+      {/* Stacked layout on all viewports */}
+      <div className="flex flex-col items-center flex-1 w-full gap-4">
+        {/* Image container on top, full size in a clean modern frame */}
+        <div className="relative w-full h-[110px] sm:h-[130px] md:h-[160px] bg-[#FAF8FF] rounded-[10px] overflow-hidden flex items-center justify-center p-3 border border-[#F2EBFC]/60 shrink-0">
           {image && (
             <Image
               src={image}
               alt={title}
               fill
-              className="object-contain md:object-cover"
+              className="object-contain p-2 hover:scale-105 transition-transform duration-300"
             />
           )}
+        </div>
+
+        {/* Content Section */}
+        <div className="flex flex-col items-center text-center w-full px-1">
+          <h3 className="text-sm md:text-base font-extrabold text-primary mb-2 leading-snug tracking-tight">
+            {title}
+          </h3>
+          <p className="text-[11px] md:text-xs text-[#736880] leading-relaxed line-clamp-2 md:line-clamp-none">
+            {desc}
+          </p>
         </div>
       </div>
     </motion.div>

@@ -94,12 +94,12 @@ INSERT INTO public.hero_slides (title, subtitle, image_desktop, image_mobile, bu
 
 -- 8. Seed CMS: Homepage Sections
 INSERT INTO public.homepage_sections (section_key, title, subtitle, content, is_active) VALUES
-('how-it-works', 'Crafted Just For You', 'The simple path to personalized gifting excellence', '{
+('how-it-works', 'Crafted Just For', 'The simple path to personalized gifting excellence', '{
   "steps": [
-    {"number": "01", "title": "Select a Product", "description": "Choose from our premium towels, cozy hoodies, elegant cosmetics cases, or bespoke linen options."},
-    {"number": "02", "title": "Personalize Details", "description": "Specify names, initials, select elegant scripts, thread colors, and customization placements."},
-    {"number": "03", "title": "Meticulous Crafting", "description": "Our expert team hand-threads and embroiders each piece with detailed craftsmanship in our local Dubai studio."},
-    {"number": "04", "title": "Gift-Wrapped Delivery", "description": "We carefully steam, luxury-wrap, and dispatch your custom item within 2-3 business days across the UAE."}
+    {"number": "01", "title": "Select a Product", "description": " Find your favorite base product (hoodie, tee, cap, etc.) and complete secure payment to lock in your order slot."},
+    {"number": "02", "title": "Personalize Details", "description": " Check your email confirmation for your Order # and a direct link to chat with us on WhatsApp. Share your design idea!"},
+    {"number": "03", "title": "Meticulous Crafting", "description": "We create a realistic digital mockup for your review. Give us your final 'Thumbs Up' before we craft!"},
+    {"number": "04", "title": "Gift-Wrapped Delivery", "description": "Once approved, our team produces your unique gift with care and ships it straight to your door!"}
   ]
 }', true),
 ('store-features', 'Why Choose Scarlet Thread', 'Our commitment to beautiful execution and customer delight', '{

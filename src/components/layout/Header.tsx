@@ -126,7 +126,7 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b bg-white/60 backdrop-blur-sm">
+      <header className="sticky top-0 z-50 w-full border-b bg-white">
 
         {/* Announcement Bar */}
         <div className="bg-primary text-primary-foreground py-2 text-center text-[12px] font-medium tracking-wider overflow-hidden">
@@ -153,7 +153,7 @@ export function Header() {
           </div>
         </div>
 
-        <div className="flex h-20 items-center justify-between px-4 sm:px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto w-full">
+        <div className="flex h-18 items-center justify-between px-2 sm:px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto w-full">
 
           {/* Logo */}
           <div className="flex items-center">
@@ -172,13 +172,14 @@ export function Header() {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 href={link.path}
-                className={`relative transition-colors font-semibold text-[14px] hover:text-primary py-1 ${isActive(link.path) ? 'text-primary' : 'text-slate-700'
-                  }`}
+                className={`relative transition-colors font-semibold text-[12px] uppercase  hover:text-primary py-1 ${
+                  isActive(link.path) ? 'text-primary' : 'text-slate-700'
+                }`}
               >
                 {link.name}
 

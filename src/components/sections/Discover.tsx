@@ -34,11 +34,11 @@ function ImageColumn({
     <div className="flex-1 overflow-hidden relative h-[340px] sm:h-[420px] lg:h-[480px] rounded-[5px]">
       <div
         className="absolute top-0 left-0 right-0 h-12 z-10 pointer-events-none"
-        style={{ background: "linear-gradient(to bottom, #fffafc, transparent)" }}
+       
       />
       <div
         className="absolute bottom-0 left-0 right-0 h-12 z-10 pointer-events-none"
-        style={{ background: "linear-gradient(to top, #fffafc, transparent)" }}
+        
       />
 
       <motion.div
@@ -126,7 +126,7 @@ export function Discover() {
 
   const title = sectionData?.title || "Discover The Scarlet Thread";
   const subtitle = sectionData?.subtitle || "Bringing Your Gift Ideas To Life";
-  const description = sectionData?.content?.description || "At Scarlet, we believe the most meaningful gifts are the ones created with love, thought and personal touch. Whether it's a heartfelt gift for him, a thoughtful gift for her, a precious keepsake for a new born, a surprise gift for a toddler or unforgettable baby shower gifts, we turn emotions into meaningful gifts that hold memories forever.";
+  const description = sectionData?.content?.description || "At Scarlet, we create meaningful, personalized gifts made with love—from gifts for him and her to keepsakes for newborns, toddlers, and baby showers.";
   const buttonText = sectionData?.content?.button_text || "Read Our Story";
   const buttonLink = sectionData?.content?.button_link || "/about";
   const getActiveImages = () => {
@@ -155,61 +155,76 @@ export function Discover() {
     : activeImages;
 
   return (
-    <section className="pt-20 pb-8 md:py-24 bg-[#F9F5FF]">
+    <section className="pt-28 pb-8 md:py-24 bg-[#fffff]">
       <div className="w-full max-w-[1400px] mx-auto  px-4 sm:px-6 md:px-12 lg:px-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-8 lg:gap-20 items-center">
-
-          {/* Mobile/Tab: subheading → heading → image → description */}
-          {/* Desktop: content left, image right (natural order) */}
-
-          {/* Subheading — always first */}
-          <div className="text-primary font-medium tracking-wide flex items-center gap-2 order-1 lg:hidden">
-            <HeartIcon className="w-4 h-4 fill-primary/20" />
-            {subtitle}
+        {/* MOBILE & TABLET VIEW */}
+        <div className="flex flex-col gap-6 md:gap-8 lg:hidden">
+          {/* 1. Heading & Description */}
+          <div className="space-y-4">
+            <div className="hidden lg:flex text-primary font-medium tracking-wide items-center gap-2">
+              <HeartIcon className="w-4 h-4 fill-primary/20" />
+              {subtitle}
+            </div>
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground leading-tight">
+              {formatDiscoverTitle(title, false)}
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed ">
+              {description}
+            </p>
           </div>
 
-          {/* Heading — second on mobile/tab */}
-          <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground leading-tight order-2 lg:hidden">
-            {formatDiscoverTitle(title, false)}
-          </h2>
-
-          {/* Image columns — third on mobile/tab, right side on desktop */}
-          <div className="order-3 lg:order-2 flex gap-2 sm:gap-3 overflow-hidden lg:col-start-2 lg:row-start-1 lg:row-span-1">
+          {/* 2. Image */}
+          <div className="flex gap-2 sm:gap-3 overflow-hidden">
             <ImageColumn images={col1Images} direction="up"   duration={28} />
             <ImageColumn images={col2Images} direction="down" duration={22} />
             <ImageColumn images={col3Images} direction="up"   duration={32} />
           </div>
 
-          {/* Full content block — desktop only (left side) */}
-          <div className="space-y-6 order-4 lg:order-1 lg:col-start-1 lg:row-start-1">
-            {/* Subheading — desktop only */}
-            <div className="text-primary font-medium tracking-wide items-center gap-2 hidden lg:flex">
+          {/* 3. Button */}
+          <div className="flex justify-center md:justify-start pt-2">
+            <Button
+              nativeButton={false}
+              render={<Link href={buttonLink} />}
+              size="lg"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-[10px] px-8 h-12 shadow-sm transition-transform hover:-translate-y-0.5"
+            >
+              {buttonText}
+            </Button>
+          </div>
+        </div>
+
+        {/* DESKTOP VIEW */}
+        <div className="hidden lg:grid lg:grid-cols-2 lg:gap-20 lg:items-center">
+          {/* Content Left */}
+          <div className="space-y-6">
+            <div className="text-primary font-medium tracking-wide flex items-center gap-2">
               <HeartIcon className="w-4 h-4 fill-primary/20" />
               {subtitle}
             </div>
-
-            {/* Heading — desktop only */}
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight hidden lg:block">
+            <h2 className="text-4xl lg:text-5xl font-bold text-foreground leading-tight">
               {formatDiscoverTitle(title, true)}
             </h2>
-
-            {/* Description — fourth on mobile/tab, part of left block on desktop */}
             <p className="text-sm text-muted-foreground leading-relaxed ">
               {description}
             </p>
-
-            <div className="pt-2 lg:pt-4 flex justify-center md:justify-start">
+            <div className="pt-4 flex justify-start">
               <Button
                 nativeButton={false}
                 render={<Link href={buttonLink} />}
                 size="lg"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-[5px] px-8 h-12 shadow-sm transition-transform hover:-translate-y-0.5"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-[10px] px-8 h-12 shadow-sm transition-transform hover:-translate-y-0.5"
               >
                 {buttonText}
               </Button>
             </div>
           </div>
 
+          {/* Image Right */}
+          <div className="flex gap-3 overflow-hidden">
+            <ImageColumn images={col1Images} direction="up"   duration={28} />
+            <ImageColumn images={col2Images} direction="down" duration={22} />
+            <ImageColumn images={col3Images} direction="up"   duration={32} />
+          </div>
         </div>
       </div>
     </section>
