@@ -196,7 +196,7 @@ export function ProductCarousel() {
             href="/products?category=gifts-for-him"
             className={cn(
               buttonVariants({ variant: "default" }),
-              "px-8 py-5 h-auto rounded-xl text-xs sm:text-sm font-bold bg-primary hover:bg-primary/90 transition-transform hover:-translate-y-0.5 active:translate-y-0 shadow-md shadow-primary/10"
+              "px-8 py-5 h-13 rounded-[10px] text-xs sm:text-sm font-bold bg-primary hover:bg-primary/90 transition-transform hover:-translate-y-0.5 active:translate-y-0 shadow-md shadow-primary/10"
             )}
           >
             View All Gifts For Him

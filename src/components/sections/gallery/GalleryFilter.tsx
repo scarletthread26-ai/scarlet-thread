@@ -34,7 +34,7 @@ export function GalleryFilter({ categories, activeCategory }: GalleryFilterProps
   ];
 
   return (
-    <section className="py-8 bg-white sticky top-20 z-40 border-b border-border/50 shadow-sm backdrop-blur-md bg-white/90">
+    <section id="gallery-view" className="py-8 bg-white sticky top-20 z-40 border-b border-border/50 shadow-sm backdrop-blur-md bg-white/90 scroll-mt-20">
       <div className="container mx-auto px-4">
         <div className="flex overflow-x-auto gap-3 pb-2 hide-scrollbar justify-start xl:justify-center">
           {tabs.map((tab) => (

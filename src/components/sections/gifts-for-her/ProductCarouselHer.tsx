@@ -184,7 +184,7 @@ export function ProductCarouselHer() {
             href="/products?category=gifts-for-her"
             className={cn(
               buttonVariants({ variant: "default" }),
-              "px-8 py-5 h-auto rounded-xl text-xs sm:text-sm font-bold bg-[#c0004e] hover:bg-[#a0003f] text-white transition-transform hover:-translate-y-0.5 active:translate-y-0 shadow-md shadow-[#c0004e]/10"
+              "px-8 py-5 h-13 rounded-xl text-xs sm:text-sm font-bold bg-[#c0004e] hover:bg-[#a0003f] text-white transition-transform hover:-translate-y-0.5 active:translate-y-0 shadow-md shadow-[#c0004e]/10"
             )}
           >
             View All Gifts For Her
