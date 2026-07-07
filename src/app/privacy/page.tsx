@@ -3,14 +3,11 @@ import { PolicyPageLayout } from "@/components/layout/PolicyPageLayout";
 const PRIVACY_CONTENT = `
   <h2>1. Information We Collect</h2>
   <p>
-    To process your customized orders and provide customer support, we collect specific details when you visit our storefront or place an order:
+    To process your orders and provide customer support, we collect specific details when you visit our storefront or place an order. Please note that customization/personalization details are discussed and collected manually with you via WhatsApp, while shipping addresses and payment processing are handled securely on this website:
   </p>
   <ul>
     <li>
       <strong>Identity & Contact Details:</strong> Your name, email address, phone number, and delivery/billing address.
-    </li>
-    <li>
-      <strong>Order Personalization Data:</strong> The text, letters, dates, configurations, font choices, and layout requirements you enter on the product configurator page.
     </li>
     <li>
       <strong>Payment Information:</strong> Transaction identifiers and payment status. Credit/debit card numbers are processed directly by our secure payment gateways and are never stored on our servers.
@@ -26,7 +23,7 @@ const PRIVACY_CONTENT = `
   </p>
   <ul>
     <li>
-      To craft, digitize, and embroider your personalized items based on your customization choices.
+      To craft, digitize, and embroider your personalized items based on your customization choices shared with us via WhatsApp.
     </li>
     <li>
       To manage, ship, and coordinate courier delivery of your orders, including order tracking updates.
@@ -54,20 +51,20 @@ const PRIVACY_CONTENT = `
       <strong>Payment Processors:</strong> Transactions are routed through encrypted payment gateways for secure authorization.
     </li>
     <li>
-      <strong>Cloud Providers:</strong> We store configurations, orders, and personalization inputs in secure, encrypted Supabase databases.
+      <strong>Cloud Providers:</strong> We store orders, shipping addresses, and transaction configurations in secure, encrypted Supabase databases.
     </li>
   </ul>
 
   <h2>4. Data Retention & Safety</h2>
   <p>
-    We retain your order histories and personalization specifications as long as necessary to complete your order, manage transaction records, and coordinate customer service. 
+    We retain your order histories as long as necessary to complete your order, manage transaction records, and coordinate customer service. Customized/personalized products are non-returnable and non-refundable (except for damaged, defective, or incorrect items), and order cancellations are allowed only before customization or production begins.
     Our databases employ SSL encryption, row-level database security, and industry-standard security protocols to prevent unauthorized access.
   </p>
 
   <h2>5. Your Rights and Preferences</h2>
   <p>
     You have the right to request access to the personal data we store, request edits to correct errors, or ask that we delete your personal information from our databases. 
-    You can exercise these rights or request newsletter opt-outs by emailing us at <strong>support@thescarletthread.in</strong>.
+    You can exercise these rights or request newsletter opt-outs by emailing us at <strong>support@scarletthread.ae</strong>.
   </p>
 `;
 

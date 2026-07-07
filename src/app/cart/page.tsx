@@ -2,11 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useCartStore } from "@/store/useCartStore";
-import { useValidateCoupon } from "@/hooks/use-coupons";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Trash2, Plus, Minus, ShoppingBag, Tag, X, Sparkles, ShieldCheck } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingBag, Sparkles, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
@@ -14,21 +12,15 @@ import { toast } from "sonner";
 export default function CartPage() {
   const {
     items,
-    coupon,
     removeItem,
     updateQuantity,
     getTotal,
-    getDiscountAmount,
     getShippingFee,
     getGrandTotal,
-    applyCoupon,
-    removeCoupon,
     fetchCart
   } = useCartStore();
 
-  const [couponCodeInput, setCouponCodeInput] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const validateCouponMutation = useValidateCoupon();
 
   useEffect(() => {
     const supabase = createClient();
@@ -42,22 +34,6 @@ export default function CartPage() {
     }
     checkAuth();
   }, []);
-
-  const handleApplyCoupon = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!couponCodeInput.trim()) return;
-
-    try {
-      const validatedCoupon = await validateCouponMutation.mutateAsync({
-        code: couponCodeInput.trim(),
-        subtotal: getTotal()
-      });
-      applyCoupon(validatedCoupon);
-      setCouponCodeInput("");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to apply coupon");
-    }
-  };
 
   const handleRemoveItem = async (id: string) => {
     await removeItem(id, isAuthenticated);
@@ -89,7 +65,6 @@ export default function CartPage() {
   }
 
   const subtotal = getTotal();
-  const discount = getDiscountAmount();
   const shipping = getShippingFee();
   const grandTotal = getGrandTotal();
 
@@ -180,60 +155,11 @@ export default function CartPage() {
           <div className="border border-slate-200/60 dark:border-slate-800/80 rounded-2xl p-6 bg-white dark:bg-slate-900 shadow-sm sticky top-24 space-y-6">
             <h2 className="text-xl font-heading font-extrabold text-slate-800 dark:text-slate-100">Order Summary</h2>
 
-            {/* Promo Code Form */}
-            <form onSubmit={handleApplyCoupon} className="space-y-2">
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                  <Input
-                    placeholder="Enter Coupon Code"
-                    value={couponCodeInput}
-                    onChange={(e) => setCouponCodeInput(e.target.value.toUpperCase())}
-                    className="pl-9 rounded-xl border-slate-250 dark:border-slate-800 focus:border-purple-500 uppercase font-mono tracking-wider text-xs h-10"
-                    disabled={validateCouponMutation.isPending}
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  disabled={validateCouponMutation.isPending || !couponCodeInput}
-                  className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold px-4 h-10"
-                >
-                  Apply
-                </Button>
-              </div>
-            </form>
-
-            {/* Display applied coupon */}
-            {coupon && (
-              <div className="flex justify-between items-center bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/50 rounded-xl p-3 text-xs">
-                <div className="flex items-center gap-2">
-                  <Tag className="w-3.5 h-3.5 text-emerald-600" />
-                  <div className="font-semibold text-emerald-800 dark:text-emerald-350">
-                    <span className="font-mono">{coupon.code}</span> Applied!
-                  </div>
-                </div>
-                <button
-                  onClick={removeCoupon}
-                  className="p-1 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 rounded-full text-emerald-700"
-                  title="Remove Coupon"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            )}
-
             <div className="space-y-3.5 text-sm">
               <div className="flex justify-between">
                 <span className="text-slate-400 font-medium">Subtotal</span>
                 <span className="font-bold text-slate-800 dark:text-slate-200">AED {subtotal}</span>
               </div>
-
-              {discount > 0 && (
-                <div className="flex justify-between text-emerald-600 font-semibold">
-                  <span className="flex items-center gap-1">Discount</span>
-                  <span>-AED {discount}</span>
-                </div>
-              )}
 
               <div className="flex justify-between">
                 <span className="text-slate-400 font-medium">Shipping</span>

@@ -9,6 +9,17 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2, User, Phone, Mail } from "lucide-react";
 
+const cleanPhoneDigits = (rawPhone: string) => {
+  if (!rawPhone) return "";
+  let p = rawPhone.trim();
+  if (p.startsWith("+971")) {
+    p = p.slice(4);
+  } else if (p.startsWith("971")) {
+    p = p.slice(3);
+  }
+  return p.replace(/\D/g, "");
+};
+
 export default function CustomerProfilePage() {
   const supabase = createClient();
   const [loading, setLoading] = useState(false);
@@ -28,7 +39,7 @@ export default function CustomerProfilePage() {
         if (prof) {
           setProfile(prof);
           setFullName(prof.full_name || "");
-          setPhone(prof.phone || "");
+          setPhone(cleanPhoneDigits(prof.phone || ""));
         }
       }
     }
@@ -37,7 +48,7 @@ export default function CustomerProfilePage() {
 
   const isChanged = profile && (
     fullName.trim() !== (profile.full_name || "") || 
-    phone.trim() !== (profile.phone || "")
+    (phone.trim() ? `+971 ${phone.trim()}` : "") !== (profile.phone || "")
   );
 
   const handleUpdate = async (e: React.FormEvent) => {
@@ -54,7 +65,7 @@ export default function CustomerProfilePage() {
 
       const updatedFields = {
         full_name: fullName.trim(),
-        phone: phone.trim() || null,
+        phone: phone.trim() ? `+971 ${phone.trim()}` : null,
         updated_at: new Date().toISOString(),
       };
 
@@ -111,13 +122,20 @@ export default function CustomerProfilePage() {
                 <Label htmlFor="phone" className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1">
                   <Phone className="w-3.5 h-3.5" /> Phone Contact
                 </Label>
-                <Input
-                  id="phone"
-                  placeholder="+971 50 123 4567"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="rounded-lg border-slate-300"
-                />
+                <div className="flex">
+                  <span className="inline-flex items-center gap-1 px-3 rounded-l-lg border border-r-0 border-slate-300 bg-slate-50 text-slate-500 text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 select-none">
+                    <span className="text-base">🇦🇪</span>
+                    <span className="font-medium">+971</span>
+                  </span>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="50 XX XXXX"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+                    className="rounded-r-lg rounded-l-none border-slate-300 flex-1"
+                  />
+                </div>
               </div>
             </div>
 

@@ -9,28 +9,87 @@ import {
   Download, 
   Search, 
   AlertCircle,
-  TrendingUp
+  TrendingUp,
+  ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AdminReportsPage() {
   const { data: salesReport = [], isLoading } = useSalesReport();
   const [statusFilter, setStatusFilter] = useState("all");
+
+  // Export CSV Filters Modal State
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [exportStartDate, setExportStartDate] = useState("");
+  const [exportEndDate, setExportEndDate] = useState("");
+  const [exportStatus, setExportStatus] = useState("all");
+  const [exportCustomer, setExportCustomer] = useState("");
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
 
   const handleExportCSV = () => {
     if (salesReport.length === 0) {
       toast.error("No data to export");
       return;
     }
+    setIsExportModalOpen(true);
+  };
 
+  const triggerCSVDownload = () => {
     try {
-      const headers = ["Date", "Order Number", "Customer Name", "Items Count", "Subtotal (AED)", "Discount (AED)", "Shipping Fee (AED)", "Total Amount (AED)", "Payment Status", "Order Status"];
+      let dataToExport = [...salesReport];
+
+      // Filter by Start Date
+      if (exportStartDate) {
+        const start = new Date(exportStartDate);
+        start.setHours(0, 0, 0, 0);
+        dataToExport = dataToExport.filter(r => new Date(r.date) >= start);
+      }
+
+      // Filter by End Date
+      if (exportEndDate) {
+        const end = new Date(exportEndDate);
+        end.setHours(23, 59, 59, 999);
+        dataToExport = dataToExport.filter(r => new Date(r.date) <= end);
+      }
+
+      // Filter by Status
+      if (exportStatus !== "all") {
+        dataToExport = dataToExport.filter(r => r.status === exportStatus);
+      }
+
+      // Filter by Customer
+      if (exportCustomer) {
+        const query = exportCustomer.toLowerCase().trim();
+        dataToExport = dataToExport.filter(r => 
+          r.customer.toLowerCase().includes(query) || 
+          r.order_number.toLowerCase().includes(query)
+        );
+      }
+
+      if (dataToExport.length === 0) {
+        toast.error("No records found matching the selected export filters.");
+        return;
+      }
+
+      const headers = [
+        "Date", 
+        "Order Number", 
+        "Customer Name", 
+        "Items Count", 
+        "Subtotal (AED)", 
+        "Discount (AED)", 
+        "Shipping Fee (AED)", 
+        "Total Amount (AED)", 
+        "Payment Status", 
+        "Order Status"
+      ];
       
-      const rows = salesReport.map(r => [
+      const rows = dataToExport.map(r => [
         r.date,
         r.order_number,
         r.customer,
@@ -57,7 +116,8 @@ export default function AdminReportsPage() {
       link.click();
       document.body.removeChild(link);
       
-      toast.success("Sales report CSV exported successfully!");
+      toast.success(`Successfully exported ${dataToExport.length} orders to CSV!`);
+      setIsExportModalOpen(false);
     } catch (err) {
       console.error(err);
       toast.error("Failed to generate CSV file");
@@ -244,6 +304,157 @@ export default function AdminReportsPage() {
           searchPlaceholder="Search report log by order number..."
         />
       )}
+
+      {/* Export Configuration Modal */}
+      <AnimatePresence>
+        {isExportModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            {/* Backdrop overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsExportModalOpen(false)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+
+            {/* Modal Box */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="relative w-full max-w-md p-6 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl z-10 space-y-5 text-left"
+            >
+              <div>
+                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                  <FileSpreadsheet className="w-5 h-5 text-purple-600" />
+                  Configure CSV Export
+                </h3>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                  Select filters to customize your financial sales export.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                {/* Date range inputs */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      Start Date
+                    </label>
+                    <input
+                      type="date"
+                      value={exportStartDate}
+                      onChange={(e) => setExportStartDate(e.target.value)}
+                      className="w-full bg-slate-50/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs outline-none text-slate-805 dark:text-slate-195 focus:border-purple-550"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      End Date
+                    </label>
+                    <input
+                      type="date"
+                      value={exportEndDate}
+                      onChange={(e) => setExportEndDate(e.target.value)}
+                      className="w-full bg-slate-50/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs outline-none text-slate-805 dark:text-slate-195 focus:border-purple-550"
+                    />
+                  </div>
+                </div>
+
+                {/* Status selection */}
+                <div className="space-y-1.5 relative">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Order Status
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
+                    className="w-full flex items-center justify-between bg-slate-50/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs outline-none text-slate-805 dark:text-slate-195 focus:border-purple-500 text-left transition select-none"
+                  >
+                    <span className="capitalize">{exportStatus === "all" ? "All Orders" : exportStatus}</span>
+                    <ChevronRight className={cn("w-4 h-4 text-slate-400 transition-transform duration-200", isStatusDropdownOpen ? "rotate-90" : "")} />
+                  </button>
+
+                  <AnimatePresence>
+                    {isStatusDropdownOpen && (
+                      <>
+                        <div 
+                          className="fixed inset-0 z-10" 
+                          onClick={() => setIsStatusDropdownOpen(false)}
+                        />
+                        <motion.div
+                          initial={{ opacity: 0, y: -5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -5 }}
+                          className="absolute left-0 right-0 mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-20 overflow-hidden py-1"
+                        >
+                          {[
+                            { value: "all", label: "All Orders" },
+                            { value: "pending", label: "Pending" },
+                            { value: "processing", label: "Processing" },
+                            { value: "delivered", label: "Delivered" },
+                            { value: "cancelled", label: "Cancelled" }
+                          ].map((item) => (
+                            <button
+                              key={item.value}
+                              type="button"
+                              onClick={() => {
+                                setExportStatus(item.value);
+                                setIsStatusDropdownOpen(false);
+                              }}
+                              className={cn(
+                                "w-full text-left px-3 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-800/50 transition font-medium",
+                                exportStatus === item.value 
+                                  ? "text-purple-600 dark:text-purple-400 bg-purple-50/40 dark:bg-purple-950/20" 
+                                  : "text-slate-700 dark:text-slate-300"
+                              )}
+                            >
+                              {item.label}
+                            </button>
+                          ))}
+                        </motion.div>
+                      </>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Customer name input */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Customer Name / Order #
+                  </label>
+                  <input
+                    type="text"
+                    value={exportCustomer}
+                    onChange={(e) => setExportCustomer(e.target.value)}
+                    placeholder="Search customer name or order number..."
+                    className="w-full bg-slate-50/50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs outline-none text-slate-805 dark:text-slate-195 focus:border-purple-550"
+                  />
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  onClick={() => setIsExportModalOpen(false)}
+                  className="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-xl transition duration-150"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={triggerCSVDownload}
+                  className="px-4 py-2 text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white rounded-xl flex items-center gap-1.5 transition duration-150 shadow-md shadow-purple-600/10"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  Download CSV
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -50,7 +50,7 @@ INSERT INTO auth.users (
 
 -- Insert matching public.users profile
 INSERT INTO public.users (id, role_id, full_name, phone) VALUES
-('e3e0e660-31e0-4966-9e1f-7b0028ed2ce2', 'a3e0e660-31e0-4966-9e1f-7b0028ed2ce0', 'Scarlet Admin', '+971501234567')
+('e3e0e660-31e0-4966-9e1f-7b0028ed2ce2', 'a3e0e660-31e0-4966-9e1f-7b0028ed2ce0', 'Scarlet Admin', '+971501872337')
 ON CONFLICT (id) DO UPDATE SET role_id = EXCLUDED.role_id;
 
 -- Insert admin_users credentials
@@ -60,16 +60,18 @@ ON CONFLICT (id) DO NOTHING;
 
 -- 3. Seed Global Settings
 INSERT INTO public.settings (key, value, description) VALUES
-('store_info', '{"name": "Scarlet Thread", "email": "contact@scarletthread.com", "phone": "+971 50 123 4567", "address": "Dubai Marina, Dubai, UAE", "currency": "AED"}', 'Basic store metadata'),
+('store_info', '{"name": "Scarlet Thread", "email": "support@scarletthread.ae", "phone": "+971 50 187 2337", "address": "Dubai Marina, Dubai, UAE", "currency": "AED"}', 'Basic store metadata'),
 ('smtp_settings', '{"host": "smtp.gmail.com", "port": 587, "user": "placeholder@gmail.com", "pass": "placeholder"}', 'Nodemailer configuration settings'),
-('whatsapp_settings', '{"number": "+971501234567", "default_message": "Hello, I would like to inquire about my order.", "enabled": true}', 'WhatsApp click-to-chat settings'),
-('stripe_settings', '{"publishable_key": "pk_test_dummy", "secret_key": "sk_test_dummy", "enabled": true}', 'Stripe payment configuration')
+('whatsapp_settings', '{"number": "+971501872337", "default_message": "Hello, I would like to inquire about my order.", "enabled": true}', 'WhatsApp click-to-chat settings'),
+('stripe_settings', '{"publishable_key": "pk_test_dummy", "secret_key": "sk_test_dummy", "enabled": true}', 'Stripe payment configuration'),
+('free_shipping_min', '200', 'Free shipping threshold amount'),
+('shipping_rate', '18', 'Flat shipping rate amount')
 ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
 
 -- 4. Seed Shipping Zones (UAE regions, in AED)
 INSERT INTO public.shipping_zones (id, name, country, rate, free_shipping_threshold, estimated_delivery, is_active) VALUES
-('f3e0e660-31e0-4966-9e1f-7b0028ed2ce3', 'Dubai & Sharjah', 'United Arab Emirates', 15.00, 150.00, '1-2 business days', true),
-('f3e0e660-31e0-4966-9e1f-7b0028ed2ce4', 'Abu Dhabi & Rest of UAE', 'United Arab Emirates', 25.00, 200.00, '2-3 business days', true)
+('f3e0e660-31e0-4966-9e1f-7b0028ed2ce3', 'Dubai & Sharjah', 'United Arab Emirates', 18.00, 200.00, '1-2 business days', true),
+('f3e0e660-31e0-4966-9e1f-7b0028ed2ce4', 'Abu Dhabi & Rest of UAE', 'United Arab Emirates', 18.00, 200.00, '2-3 business days', true)
 ON CONFLICT (id) DO NOTHING;
 
 -- 5. Seed Coupons

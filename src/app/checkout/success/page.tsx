@@ -58,7 +58,7 @@ function SuccessContent() {
 
   // Construct WhatsApp redirect link for personalization guidelines
   const { data: settings } = useSettings();
-  const rawNumber = settings?.whatsapp_number || "971501234567";
+  const rawNumber = settings?.whatsapp_number || "971501872337";
   const whatsappNumber = rawNumber.replace(/\D/g, "");
   const whatsappText = encodeURIComponent(
     `Hello Scarlet Thread, I've just placed order ${order?.order_number || orderNum || ""}.\n\n` +

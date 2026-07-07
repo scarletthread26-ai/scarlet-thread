@@ -31,6 +31,8 @@ interface CartState {
   items: CartItem[];
   coupon: Coupon | null;
   isLoading: boolean;
+  shippingRate: number;
+  freeShippingMin: number;
   
   addItem: (item: Omit<CartItem, "id">, isAuthenticated: boolean) => Promise<void>;
   removeItem: (id: string, isAuthenticated: boolean) => Promise<void>;
@@ -44,6 +46,7 @@ interface CartState {
   getDiscountAmount: () => number;
   getShippingFee: () => number;
   getGrandTotal: () => number;
+  setShippingConfig: (rate: number, min: number) => void;
   
   fetchCart: (isAuthenticated: boolean) => Promise<void>;
   syncCart: (isAuthenticated: boolean) => Promise<void>;
@@ -70,6 +73,8 @@ export const useCartStore = create<CartState>()(
         items: [],
         coupon: null,
         isLoading: false,
+        shippingRate: 18,
+        freeShippingMin: 200,
 
         addItem: async (item, isAuthenticated) => {
           const id = Math.random().toString(36).substring(2, 9);
@@ -171,8 +176,7 @@ export const useCartStore = create<CartState>()(
           const coupon = get().coupon;
           if (coupon && coupon.discount_type === "free_shipping") return 0;
 
-          // Free shipping above 150 AED, else 15 AED
-          return subtotal > 150 ? 0 : 15;
+          return subtotal >= get().freeShippingMin ? 0 : get().shippingRate;
         },
 
         getGrandTotal: () => {
@@ -180,6 +184,10 @@ export const useCartStore = create<CartState>()(
           const discount = get().getDiscountAmount();
           const shipping = get().getShippingFee();
           return Math.max(0, subtotal - discount + shipping);
+        },
+
+        setShippingConfig: (rate, min) => {
+          set({ shippingRate: rate, freeShippingMin: min });
         },
 
         fetchCart: async (isAuthenticated) => {

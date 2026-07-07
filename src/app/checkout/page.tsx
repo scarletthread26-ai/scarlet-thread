@@ -12,11 +12,34 @@ import { useCalculateShipping } from "@/hooks/use-shipping";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Loader2, CreditCard, ChevronRight, MapPin, Shield, CheckCircle } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Stripe integration imports
 import { Elements } from "@stripe/react-stripe-js";
 import { getStripe } from "@/lib/stripe";
 import StripeCheckoutForm from "@/components/checkout/StripeCheckoutForm";
+
+const UAE_EMIRATES = [
+  "Abu Dhabi", "Dubai", "Sharjah", "Ajman",
+  "Umm Al Quwain", "Ras Al Khaimah", "Fujairah",
+];
+
+const cleanPhoneDigits = (rawPhone: string) => {
+  if (!rawPhone) return "";
+  let p = rawPhone.trim();
+  if (p.startsWith("+971")) {
+    p = p.slice(4);
+  } else if (p.startsWith("971")) {
+    p = p.slice(3);
+  }
+  return p.replace(/\D/g, "");
+};
 
 interface SavedAddress {
   id: string;
@@ -48,21 +71,24 @@ export default function CheckoutPage() {
   // Form states
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [notes, setNotes] = useState("");
 
   // Shipping Address State
-  const [fullName, setFullName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [addressLine1, setAddressLine1] = useState("");
   const [addressLine2, setAddressLine2] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
+  const [city, setCity] = useState("Dubai");
+  const [state, setState] = useState("Dubai");
   const [postalCode, setPostalCode] = useState("");
 
   // Billing Address State
-  const [billingFullName, setBillingFullName] = useState("");
+  const [billingFirstName, setBillingFirstName] = useState("");
+  const [billingLastName, setBillingLastName] = useState("");
   const [billingAddressLine1, setBillingAddressLine1] = useState("");
   const [billingAddressLine2, setBillingAddressLine2] = useState("");
-  const [billingCity, setBillingCity] = useState("");
-  const [billingState, setBillingState] = useState("");
+  const [billingCity, setBillingCity] = useState("Dubai");
+  const [billingState, setBillingState] = useState("Dubai");
   const [billingPostalCode, setBillingPostalCode] = useState("");
 
   // Stripe Gateway states
@@ -71,7 +97,7 @@ export default function CheckoutPage() {
 
   const subtotal = getTotal();
   const { data: shippingData } = useCalculateShipping(subtotal, state, "United Arab Emirates");
-  const shippingFee = shippingData ? shippingData.rate : (subtotal > 150 ? 0 : 15);
+  const shippingFee = shippingData ? shippingData.rate : (subtotal >= 200 ? 0 : 18);
   const total = subtotal + shippingFee;
 
   useEffect(() => {
@@ -103,8 +129,10 @@ export default function CheckoutPage() {
           .single();
 
         if (profile) {
-          setFullName(profile.full_name || "");
-          setPhone(profile.phone || "");
+          const parts = (profile.full_name || "").trim().split(/\s+/);
+          setFirstName(parts[0] || "");
+          setLastName(parts.slice(1).join(" ") || "");
+          setPhone(cleanPhoneDigits(profile.phone || ""));
         }
 
         // Fetch saved addresses
@@ -128,8 +156,10 @@ export default function CheckoutPage() {
   }, []);
 
   const applyAddress = (addr: SavedAddress) => {
-    setFullName(addr.full_name);
-    setPhone(addr.phone);
+    const parts = (addr.full_name || "").trim().split(/\s+/);
+    setFirstName(parts[0] || "");
+    setLastName(parts.slice(1).join(" ") || "");
+    setPhone(cleanPhoneDigits(addr.phone));
     setAddressLine1(addr.address_line1);
     setAddressLine2(addr.address_line2 ?? "");
     setCity(addr.city);
@@ -138,17 +168,18 @@ export default function CheckoutPage() {
   };
 
   const clearAddressFields = () => {
-    setFullName("");
+    setFirstName("");
+    setLastName("");
     setAddressLine1("");
     setAddressLine2("");
-    setCity("");
-    setState("");
+    setCity("Dubai");
+    setState("Dubai");
     setPostalCode("");
   };
 
   const handleShippingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !phone || !fullName || !addressLine1 || !city || !state) {
+    if (!email || !phone || !firstName || !lastName || !addressLine1 || !addressLine2 || !state) {
       toast.error("Please fill in all required shipping fields.");
       return;
     }
@@ -176,34 +207,28 @@ export default function CheckoutPage() {
   };
 
   const handlePaymentSuccess = async () => {
-    const isIndianAddress = 
-      (postalCode && /^\d{6}$/.test(postalCode)) || 
-      (phone && (phone.startsWith("+91") || phone.startsWith("91")));
-      
     const shippingAddress = {
-      full_name: fullName,
-      phone: phone,
+      full_name: `${firstName.trim()} ${lastName.trim()}`,
+      phone: `+971 ${phone.trim()}`,
       address_line1: addressLine1,
       address_line2: addressLine2,
-      city: city,
+      city: city || state,
       state: state,
       postal_code: postalCode || "00000",
-      country: isIndianAddress ? "India" : "United Arab Emirates",
+      country: "United Arab Emirates",
     };
 
     const billingAddress = isSameAddress
       ? shippingAddress
       : {
-        full_name: billingFullName || fullName,
-        phone: phone,
+        full_name: `${billingFirstName.trim()} ${billingLastName.trim()}`,
+        phone: `+971 ${phone.trim()}`,
         address_line1: billingAddressLine1,
         address_line2: billingAddressLine2,
-        city: billingCity,
+        city: billingCity || billingState,
         state: billingState,
         postal_code: billingPostalCode || "00000",
-        country: (billingPostalCode && /^\d{6}$/.test(billingPostalCode)) || (phone && (phone.startsWith("+91") || phone.startsWith("91")))
-          ? "India"
-          : "United Arab Emirates",
+        country: "United Arab Emirates",
       };
 
     const payload = {
@@ -221,7 +246,8 @@ export default function CheckoutPage() {
       total_amount: total,
       payment_method: "Card",
       guest_email: isAuthenticated ? null : email,
-      guest_phone: isAuthenticated ? null : phone,
+      guest_phone: isAuthenticated ? null : `+971 ${phone.trim()}`,
+      notes: notes.trim() || null,
     };
 
     try {
@@ -302,16 +328,22 @@ export default function CheckoutPage() {
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label htmlFor="phone" className="font-semibold text-slate-700 dark:text-slate-300">Phone Number (with country code) *</Label>
-                        <Input
-                          id="phone"
-                          type="tel"
-                          required
-                          placeholder="+971 50 123 4567"
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          className="rounded-lg border-slate-300"
-                        />
+                        <Label htmlFor="phone" className="font-semibold text-slate-700 dark:text-slate-300">Phone Number *</Label>
+                        <div className="flex">
+                          <span className="inline-flex items-center gap-1 px-3 rounded-l-lg border border-r-0 border-slate-300 bg-slate-50 text-slate-500 text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 select-none">
+                            <span className="text-base">🇦🇪</span>
+                            <span className="font-medium">+971</span>
+                          </span>
+                          <Input
+                            id="phone"
+                            type="tel"
+                            required
+                            placeholder="50 XX XXXX"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+                            className="rounded-r-lg rounded-l-none border-slate-300 flex-1"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -368,67 +400,78 @@ export default function CheckoutPage() {
                       <MapPin className="w-5 h-5 text-primary" /> Shipping Destination
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-1.5 md:col-span-2">
-                        <Label htmlFor="fullName" className="font-semibold text-slate-700 dark:text-slate-300">Receiver Full Name *</Label>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="firstName" className="font-semibold text-slate-700 dark:text-slate-300">First Name *</Label>
                         <Input
-                          id="fullName"
+                          id="firstName"
                           required
-                          placeholder="John Doe"
-                          value={fullName}
-                          onChange={(e) => setFullName(e.target.value)}
+                          placeholder="First Name"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          className="rounded-lg border-slate-300"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="lastName" className="font-semibold text-slate-700 dark:text-slate-300">Last Name *</Label>
+                        <Input
+                          id="lastName"
+                          required
+                          placeholder="Last Name"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
                           className="rounded-lg border-slate-300"
                         />
                       </div>
                       <div className="space-y-1.5 md:col-span-2">
-                        <Label htmlFor="address1" className="font-semibold text-slate-700 dark:text-slate-300">Address Line 1 *</Label>
+                        <Label htmlFor="address1" className="font-semibold text-slate-700 dark:text-slate-300">Street Address *</Label>
                         <Input
                           id="address1"
                           required
-                          placeholder="Street name, Villa/Apartment Number"
+                          placeholder="Building, Street, Area, Landmark"
                           value={addressLine1}
                           onChange={(e) => setAddressLine1(e.target.value)}
                           className="rounded-lg border-slate-300"
                         />
                       </div>
                       <div className="space-y-1.5 md:col-span-2">
-                        <Label htmlFor="address2" className="font-semibold text-slate-700 dark:text-slate-300">Address Line 2 (Optional)</Label>
+                        <Label htmlFor="address2" className="font-semibold text-slate-700 dark:text-slate-300">Apartment / Villa / Floor *</Label>
                         <Input
                           id="address2"
-                          placeholder="District, Landmarks"
+                          required
+                          placeholder="Flat/Villa/Floor number"
                           value={addressLine2}
                           onChange={(e) => setAddressLine2(e.target.value)}
                           className="rounded-lg border-slate-300"
                         />
                       </div>
-                      <div className="space-y-1.5">
-                        <Label htmlFor="city" className="font-semibold text-slate-700 dark:text-slate-300">City *</Label>
-                        <Input
-                          id="city"
-                          required
-                          placeholder="Dubai"
-                          value={city}
-                          onChange={(e) => setCity(e.target.value)}
-                          className="rounded-lg border-slate-300"
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label htmlFor="state" className="font-semibold text-slate-700 dark:text-slate-300">State / Emirate *</Label>
-                        <Input
-                          id="state"
-                          required
-                          placeholder="Dubai"
+                      <div className="space-y-1.5 md:col-span-2">
+                        <Label htmlFor="state" className="font-semibold text-slate-700 dark:text-slate-300">Delivery Emirate *</Label>
+                        <Select
                           value={state}
-                          onChange={(e) => setState(e.target.value)}
-                          className="rounded-lg border-slate-300"
-                        />
+                          onValueChange={(val) => {
+                            setState(val || "");
+                            setCity(val || "");
+                          }}
+                        >
+                          <SelectTrigger id="state" className="w-full h-10 rounded-lg border border-slate-300 bg-white pr-3 text-slate-800">
+                            <SelectValue placeholder="Please Select Delivery Emirate" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white border border-slate-200 shadow-xl rounded-xl">
+                            {UAE_EMIRATES.map((e) => (
+                              <SelectItem key={e} value={e}>
+                                {e}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
-                      <div className="space-y-1.5">
-                        <Label htmlFor="postalCode" className="font-semibold text-slate-700 dark:text-slate-300">Postal Code / ZIP (Optional)</Label>
+                      <div className="space-y-1.5 md:col-span-2">
+                        <Label htmlFor="deliveryNote" className="font-semibold text-slate-700 dark:text-slate-300">Delivery Note (Optional)</Label>
                         <Input
-                          id="postalCode"
-                          placeholder="00000"
-                          value={postalCode}
-                          onChange={(e) => setPostalCode(e.target.value)}
+                          id="deliveryNote"
+                          placeholder="Delivery instructions (e.g. leave at door, ring bell twice)"
+                          value={notes}
+                          onChange={(e) => setNotes(e.target.value)}
                           className="rounded-lg border-slate-300"
                         />
                       </div>
@@ -480,65 +523,70 @@ export default function CheckoutPage() {
                     <div className="space-y-4 border p-4 rounded-xl bg-slate-50/50">
                       <h3 className="font-bold text-sm text-slate-800 dark:text-slate-200">Billing Address</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-1.5 md:col-span-2">
-                          <Label htmlFor="bFullName">Billing Full Name</Label>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="bFirstName">Billing First Name *</Label>
                           <Input
-                            id="bFullName"
-                            placeholder="Name"
-                            value={billingFullName}
-                            onChange={(e) => setBillingFullName(e.target.value)}
-                            className="bg-white border-slate-300"
+                            id="bFirstName"
+                            required
+                            placeholder="First Name"
+                            value={billingFirstName}
+                            onChange={(e) => setBillingFirstName(e.target.value)}
+                            className="bg-white border-slate-300 rounded-lg"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="bLastName">Billing Last Name *</Label>
+                          <Input
+                            id="bLastName"
+                            required
+                            placeholder="Last Name"
+                            value={billingLastName}
+                            onChange={(e) => setBillingLastName(e.target.value)}
+                            className="bg-white border-slate-300 rounded-lg"
                           />
                         </div>
                         <div className="space-y-1.5 md:col-span-2">
-                          <Label htmlFor="bAddr1">Billing Address Line 1</Label>
+                          <Label htmlFor="bAddr1">Billing Street Address *</Label>
                           <Input
                             id="bAddr1"
-                            placeholder="Address Line 1"
+                            required
+                            placeholder="Building, Street, Area, Landmark"
                             value={billingAddressLine1}
                             onChange={(e) => setBillingAddressLine1(e.target.value)}
-                            className="bg-white border-slate-300"
+                            className="bg-white border-slate-300 rounded-lg"
                           />
                         </div>
                         <div className="space-y-1.5 md:col-span-2">
-                          <Label htmlFor="bAddr2">Billing Address Line 2 (Optional)</Label>
+                          <Label htmlFor="bAddr2">Billing Apartment / Villa / Floor *</Label>
                           <Input
                             id="bAddr2"
-                            placeholder="Address Line 2"
+                            required
+                            placeholder="Flat/Villa/Floor number"
                             value={billingAddressLine2}
                             onChange={(e) => setBillingAddressLine2(e.target.value)}
-                            className="bg-white border-slate-300"
+                            className="bg-white border-slate-300 rounded-lg"
                           />
                         </div>
-                        <div className="space-y-1.5">
-                          <Label htmlFor="bCity">Billing City</Label>
-                          <Input
-                            id="bCity"
-                            placeholder="City"
-                            value={billingCity}
-                            onChange={(e) => setBillingCity(e.target.value)}
-                            className="bg-white border-slate-300"
-                          />
-                        </div>
-                        <div className="space-y-1.5">
-                          <Label htmlFor="bState">Billing State</Label>
-                          <Input
-                            id="bState"
-                            placeholder="Emirate"
+                        <div className="space-y-1.5 md:col-span-2">
+                          <Label htmlFor="bState">Billing Delivery Emirate *</Label>
+                          <Select
                             value={billingState}
-                            onChange={(e) => setBillingState(e.target.value)}
-                            className="bg-white border-slate-300"
-                          />
-                        </div>
-                        <div className="space-y-1.5">
-                          <Label htmlFor="bPostalCode">Billing Postal Code (Optional)</Label>
-                          <Input
-                            id="bPostalCode"
-                            placeholder="Postal Code"
-                            value={billingPostalCode}
-                            onChange={(e) => setBillingPostalCode(e.target.value)}
-                            className="bg-white border-slate-300"
-                          />
+                            onValueChange={(val) => {
+                              setBillingState(val || "");
+                              setBillingCity(val || "");
+                            }}
+                          >
+                            <SelectTrigger id="bState" className="w-full h-10 rounded-lg border border-slate-300 bg-white pr-3 text-slate-800">
+                              <SelectValue placeholder="Please Select Delivery Emirate" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white border border-slate-200 shadow-xl rounded-xl">
+                              {UAE_EMIRATES.map((e) => (
+                                <SelectItem key={e} value={e}>
+                                  {e}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
                     </div>
@@ -552,9 +600,9 @@ export default function CheckoutPage() {
                     <StripeCheckoutForm
                       total={total}
                       email={email}
-                      name={fullName}
-                      phone={phone}
-                      postalCode={isSameAddress ? postalCode : billingPostalCode}
+                      name={`${firstName.trim()} ${lastName.trim()}`}
+                      phone={`+971 ${phone.trim()}`}
+                      postalCode={isSameAddress ? (postalCode || "00000") : (billingPostalCode || "00000")}
                       onPaymentSuccess={handlePaymentSuccess}
                       isOrderPending={createOrderMutation.isPending}
                     />

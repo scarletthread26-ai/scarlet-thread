@@ -10,43 +10,35 @@ export async function GET(request: Request) {
 
     const supabase = await createClient();
     
-    // Fetch active shipping zones
-    const { data: zones, error } = await supabase
-      .from("shipping_zones")
-      .select("*")
-      .eq("is_active", true);
+    // Fetch store settings
+    const { data: settingsData, error } = await supabase
+      .from("settings")
+      .select("*");
 
-    if (error || !zones || zones.length === 0) {
-      throw new Error("No active shipping zones found");
+    if (error) {
+      throw error;
     }
 
-    // Attempt matching by country or state
-    let matchedZone = zones.find(z => 
-      z.country.toLowerCase() === country.toLowerCase() && 
-      state && z.name.toLowerCase().includes(state.toLowerCase())
-    );
-
-    if (!matchedZone) {
-      // Fallback matching by country only
-      matchedZone = zones.find(z => z.country.toLowerCase() === country.toLowerCase());
+    const settings: Record<string, any> = {};
+    if (settingsData) {
+      settingsData.forEach(s => {
+        settings[s.key] = s.value;
+      });
     }
 
-    if (!matchedZone) {
-      // General fallback to the first active zone
-      matchedZone = zones[0];
-    }
+    const threshold = Number(settings.free_shipping_min ?? 200);
+    const flatRate = Number(settings.shipping_rate ?? 18);
 
-    // Calculate rate based on threshold
-    let rate = matchedZone.rate;
-    if (matchedZone.free_shipping_threshold && subtotal >= matchedZone.free_shipping_threshold) {
+    let rate = flatRate;
+    if (subtotal >= threshold) {
       rate = 0;
     }
 
     return NextResponse.json({
       rate,
-      estimated_delivery: matchedZone.estimated_delivery,
-      free_shipping_threshold: matchedZone.free_shipping_threshold,
-      zone_name: matchedZone.name
+      estimated_delivery: "1-2 Business Days",
+      free_shipping_threshold: threshold,
+      zone_name: "UAE Shipping"
     });
   } catch (error: any) {
     console.warn("Shipping zones calculation failed. Returning standard defaults:", error.message || error);
@@ -54,15 +46,15 @@ export async function GET(request: Request) {
     const subtotal = Number(searchParams.get("subtotal")) || 0;
     
     // Standard UAE defaults
-    let rate = 15;
-    if (subtotal >= 150) {
+    let rate = 18;
+    if (subtotal >= 200) {
       rate = 0;
     }
     
     return NextResponse.json({
-      rate,
+      rate: subtotal >= 200 ? 0 : 18,
       estimated_delivery: "1-2 Business Days",
-      free_shipping_threshold: 150,
+      free_shipping_threshold: 200,
       zone_name: "Standard UAE Shipping"
     });
   }

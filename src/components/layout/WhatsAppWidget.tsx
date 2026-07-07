@@ -6,7 +6,7 @@ import { X, Send } from 'lucide-react'
 
 import { useSettings } from '@/hooks/use-settings'
 
-const WHATSAPP_PHONE_NUMBER = "919876543210" // The Scarlet Thread business number fallback
+const WHATSAPP_PHONE_NUMBER = "971501872337" // The Scarlet Thread business number fallback
 
 interface ChatOption {
   id: string
@@ -70,7 +70,6 @@ export function WhatsAppWidget() {
                     src="/images/logo/logo.png"
                     alt="The Scarlet Thread Logo"
                     className="h-full w-full object-contain"
-                    style={{ filter: "hue-rotate(23deg) saturate(138%) brightness(70%) contrast(335%)" }}
                   />
                 </div>
                 <div>
