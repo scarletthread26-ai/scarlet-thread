@@ -16,12 +16,10 @@ export default function Home() {
       <Hero />
       <Discover />
       <ProductGrid />
-
       {/* <Categories /> */}
       <NewHowItWorks />
       {/* <HowItWorks /> */}
       <FeaturedBanner />
-
       {/* <StoreFeatures /> */}
       {/* <CraftedGalleryHer /> */}
       <Testimonials />
