@@ -42,13 +42,24 @@ const UAE_EMIRATES = [
   "Umm Al Quwain", "Ras Al Khaimah", "Fujairah",
 ];
 
+const cleanPhoneDigits = (rawPhone: string) => {
+  if (!rawPhone) return "";
+  let p = rawPhone.trim();
+  if (p.startsWith("+971")) {
+    p = p.slice(4);
+  } else if (p.startsWith("971")) {
+    p = p.slice(3);
+  }
+  return p.replace(/\D/g, "");
+};
+
 const emptyForm = {
   label: "Home",
   full_name: "",
   phone: "",
   address_line1: "",
   address_line2: "",
-  city: "",
+  city: "Dubai",
   emirate: "Dubai",
   postal_code: "",
   country: "United Arab Emirates",
@@ -63,6 +74,9 @@ export default function AccountAddresses() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<UserAddress | null>(null);
   const [form, setForm] = useState({ ...emptyForm });
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phoneVal, setPhoneVal] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -92,11 +106,19 @@ export default function AccountAddresses() {
   const openAdd = () => {
     setEditing(null);
     setForm({ ...emptyForm });
+    setFirstName("");
+    setLastName("");
+    setPhoneVal("");
     setModalOpen(true);
   };
 
   const openEdit = (addr: UserAddress) => {
     setEditing(addr);
+    const parts = (addr.full_name || "").trim().split(/\s+/);
+    const first = parts[0] || "";
+    const last = parts.slice(1).join(" ") || "";
+    const cleanPhone = cleanPhoneDigits(addr.phone);
+
     setForm({
       label: addr.label,
       full_name: addr.full_name,
@@ -109,6 +131,9 @@ export default function AccountAddresses() {
       country: addr.country,
       is_default: addr.is_default,
     });
+    setFirstName(first);
+    setLastName(last);
+    setPhoneVal(cleanPhone);
     setModalOpen(true);
   };
 
@@ -125,13 +150,27 @@ export default function AccountAddresses() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId) return;
+    if (!firstName.trim() || !lastName.trim() || !form.address_line1.trim() || !form.address_line2.trim() || !phoneVal.trim()) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
     setSaving(true);
 
+    const fullNameCombined = (firstName.trim() + " " + lastName.trim()).trim();
+    const combinedPhone = `+971 ${phoneVal.trim()}`;
+
     const payload = {
-      ...form,
+      label: form.label,
+      full_name: fullNameCombined,
+      phone: combinedPhone,
+      address_line1: form.address_line1,
+      address_line2: form.address_line2,
+      city: form.emirate,
+      emirate: form.emirate,
+      postal_code: "00000",
+      country: "United Arab Emirates",
+      is_default: form.is_default,
       user_id: userId,
-      address_line2: form.address_line2 || null,
-      postal_code: form.postal_code || null,
     };
 
     // If setting as default, clear previous defaults first
@@ -249,8 +288,7 @@ export default function AccountAddresses() {
                   {addr.address_line2 ? `, ${addr.address_line2}` : ""}
                 </p>
                 <p>
-                  {addr.city}, {addr.emirate}
-                  {addr.postal_code ? ` ${addr.postal_code}` : ""}
+                  {addr.city === addr.emirate ? addr.emirate : (addr.city ? `${addr.city}, ${addr.emirate}` : addr.emirate)}
                 </p>
                 <p>{addr.country}</p>
 
@@ -315,123 +353,102 @@ export default function AccountAddresses() {
               </div>
             </div>
 
-            {/* Form Fields Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Full Name */}
-              <div className="space-y-1.5">
-                <Label htmlFor="full_name" className="font-semibold text-slate-700 dark:text-slate-300">Full Name *</Label>
-                <Input
-                  id="full_name"
-                  name="full_name"
-                  required
-                  placeholder="John Doe"
-                  value={form.full_name}
-                  onChange={handleChange}
-                  className="rounded-lg"
-                />
-              </div>
+             {/* Form Fields Grid */}
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+               {/* First Name */}
+               <div className="space-y-1.5">
+                 <Label htmlFor="firstName" className="font-semibold text-slate-700 dark:text-slate-300">First Name *</Label>
+                 <Input
+                   id="firstName"
+                   required
+                   placeholder="First Name"
+                   value={firstName}
+                   onChange={(e) => setFirstName(e.target.value)}
+                   className="rounded-lg"
+                 />
+               </div>
 
-              {/* Phone */}
-              <div className="space-y-1.5">
-                <Label htmlFor="phone" className="font-semibold text-slate-700 dark:text-slate-300">Phone *</Label>
-                <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  required
-                  placeholder="+971 50 123 4567"
-                  value={form.phone}
-                  onChange={handleChange}
-                  className="rounded-lg"
-                />
-              </div>
+               {/* Last Name */}
+               <div className="space-y-1.5">
+                 <Label htmlFor="lastName" className="font-semibold text-slate-700 dark:text-slate-300">Last Name *</Label>
+                 <Input
+                   id="lastName"
+                   required
+                   placeholder="Last Name"
+                   value={lastName}
+                   onChange={(e) => setLastName(e.target.value)}
+                   className="rounded-lg"
+                 />
+               </div>
 
-              {/* Address Line 1 */}
-              <div className="space-y-1.5 sm:col-span-2">
-                <Label htmlFor="address_line1" className="font-semibold text-slate-700 dark:text-slate-300">Address Line 1 *</Label>
-                <Input
-                  id="address_line1"
-                  name="address_line1"
-                  required
-                  placeholder="Villa / Flat No., Building Name, Street"
-                  value={form.address_line1}
-                  onChange={handleChange}
-                  className="rounded-lg"
-                />
-              </div>
+               {/* Phone */}
+               <div className="space-y-1.5 sm:col-span-2">
+                 <Label htmlFor="phone" className="font-semibold text-slate-700 dark:text-slate-300">Phone Number *</Label>
+                 <div className="flex">
+                   <span className="inline-flex items-center gap-1 px-3 rounded-l-lg border border-r-0 border-slate-300 bg-slate-50 text-slate-500 text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 select-none">
+                     <span className="text-base">🇦🇪</span>
+                     <span className="font-medium">+971</span>
+                   </span>
+                   <Input
+                     id="phone"
+                     type="tel"
+                     required
+                     placeholder="50 XX XXXX"
+                     value={phoneVal}
+                     onChange={(e) => setPhoneVal(e.target.value.replace(/\D/g, ""))}
+                     className="rounded-r-lg rounded-l-none border-slate-300 flex-1"
+                   />
+                 </div>
+               </div>
 
-              {/* Address Line 2 */}
-              <div className="space-y-1.5 sm:col-span-2">
-                <Label htmlFor="address_line2" className="font-semibold text-slate-700 dark:text-slate-300">Address Line 2 (Optional)</Label>
-                <Input
-                  id="address_line2"
-                  name="address_line2"
-                  placeholder="Area, Landmark"
-                  value={form.address_line2}
-                  onChange={handleChange}
-                  className="rounded-lg"
-                />
-              </div>
+                {/* Address Line 1 */}
+                <div className="space-y-1.5 sm:col-span-2">
+                  <Label htmlFor="address_line1" className="font-semibold text-slate-700 dark:text-slate-300">Street Address *</Label>
+                  <Input
+                    id="address_line1"
+                    name="address_line1"
+                    required
+                    placeholder="Building, Street, Area, Landmark"
+                    value={form.address_line1}
+                    onChange={handleChange}
+                    className="rounded-lg"
+                  />
+                </div>
 
-              {/* City */}
-              <div className="space-y-1.5">
-                <Label htmlFor="city" className="font-semibold text-slate-700 dark:text-slate-300">City / Area *</Label>
-                <Input
-                  id="city"
-                  name="city"
-                  required
-                  placeholder="Dubai Marina"
-                  value={form.city}
-                  onChange={handleChange}
-                  className="rounded-lg"
-                />
-              </div>
+                {/* Address Line 2 */}
+                <div className="space-y-1.5 sm:col-span-2">
+                  <Label htmlFor="address_line2" className="font-semibold text-slate-700 dark:text-slate-300">Apartment / Villa / Floor *</Label>
+                  <Input
+                    id="address_line2"
+                    name="address_line2"
+                    required
+                    placeholder="Flat/Villa/Floor number"
+                    value={form.address_line2}
+                    onChange={handleChange}
+                    className="rounded-lg"
+                  />
+                </div>
 
-              {/* Emirate */}
-              <div className="space-y-1.5">
-                <Label htmlFor="emirate" className="font-semibold text-slate-700 dark:text-slate-300">Emirate *</Label>
-                <Select
-                  value={form.emirate}
-                  onValueChange={(val) => setForm((p) => ({ ...p, emirate: val ?? "" }))}
-                >
-                  <SelectTrigger id="emirate" className="w-full h-10 rounded-lg border border-slate-200 bg-white dark:bg-slate-900 pr-3">
-                    <SelectValue placeholder="Select Emirate" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-xl rounded-xl">
-                    {UAE_EMIRATES.map((e) => (
-                      <SelectItem key={e} value={e}>
-                        {e}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {/* Area Select Dropdown */}
+                <div className="space-y-1.5 sm:col-span-2">
+                  <Label htmlFor="emirate" className="font-semibold text-slate-700 dark:text-slate-300">Delivery Emirate *</Label>
+                  <Select
+                    value={form.emirate}
+                    onValueChange={(val) => setForm((p) => ({ ...p, emirate: val ?? "", city: val ?? "" }))}
+                  >
+                    <SelectTrigger id="emirate" className="w-full h-10 rounded-lg border border-slate-200 bg-white dark:bg-slate-900 pr-3 text-slate-800">
+                      <SelectValue placeholder="Please Select Delivery Emirate" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-xl rounded-xl">
+                      {UAE_EMIRATES.map((e) => (
+                        <SelectItem key={e} value={e}>
+                          {e}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-
-              {/* Postal Code */}
-              <div className="space-y-1.5">
-                <Label htmlFor="postal_code" className="font-semibold text-slate-700 dark:text-slate-300">Postal Code (Optional)</Label>
-                <Input
-                  id="postal_code"
-                  name="postal_code"
-                  placeholder="e.g. 00000"
-                  value={form.postal_code}
-                  onChange={handleChange}
-                  className="rounded-lg"
-                />
-              </div>
-
-              {/* Country */}
-              <div className="space-y-1.5">
-                <Label htmlFor="country" className="font-semibold text-slate-700 dark:text-slate-300">Country</Label>
-                <Input
-                  id="country"
-                  name="country"
-                  value={form.country}
-                  readOnly
-                  className="bg-slate-50 text-slate-500 cursor-not-allowed rounded-lg"
-                />
-              </div>
-            </div>
 
             {/* Default checkbox */}
             <div className="flex items-center gap-2 pt-2">

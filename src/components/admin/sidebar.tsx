@@ -114,8 +114,6 @@ export function Sidebar({ isCollapsed, setIsCollapsed, onMobileClose }: SidebarP
         { href: "/admin/orders", label: "Orders", icon: Tag },
         { href: "/admin/customers", label: "Customers", icon: Users },
         { href: "/admin/returns", label: "Returns", icon: RotateCcw },
-        { href: "/admin/coupons", label: "Coupons", icon: Tag },
-        { href: "/admin/shipping", label: "Shipping", icon: Truck },
         { href: "/admin/reports", label: "Reports", icon: BarChart3 },
       ],
     },

@@ -8,14 +8,27 @@ import { Order } from "@/types";
 import { format } from "date-fns";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Loader2, RefreshCw } from "lucide-react";
+import { Eye, Loader2, RefreshCw, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRealtime } from "@/hooks/use-realtime";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AdminOrdersPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [mounted, setMounted] = useState(false);
+  const [isTopDropdownOpen, setIsTopDropdownOpen] = useState(false);
+  const [isTableDropdownOpen, setIsTableDropdownOpen] = useState(false);
+
+  const statuses = [
+    { value: "all", label: "All Statuses" },
+    { value: "pending", label: "Pending" },
+    { value: "processing", label: "Processing" },
+    { value: "shipped", label: "Shipped" },
+    { value: "delivered", label: "Delivered" },
+    { value: "cancelled", label: "Cancelled" }
+  ];
 
   useEffect(() => {
     setMounted(true);
@@ -171,18 +184,55 @@ export default function AdminOrdersPage() {
             Refresh
           </Button>
 
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg py-1.5 px-3 text-slate-800 dark:text-slate-200 outline-none text-sm shadow-sm cursor-pointer h-9 font-medium"
-          >
-            <option value="all">All Statuses</option>
-            <option value="pending">Pending</option>
-            <option value="processing">Processing</option>
-            <option value="shipped">Shipped</option>
-            <option value="delivered">Delivered</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
+          {/* Top Custom Status Filter Dropdown */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setIsTopDropdownOpen(!isTopDropdownOpen)}
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg py-1.5 px-3 text-slate-800 dark:text-slate-200 outline-none text-sm shadow-sm cursor-pointer h-9 font-medium flex items-center justify-between gap-2 min-w-[130px] transition select-none"
+            >
+              <span className="capitalize">
+                {statusFilter === "all" ? "All Statuses" : statusFilter}
+              </span>
+              <ChevronRight className={cn("w-4 h-4 text-slate-400 transition-transform duration-200", isTopDropdownOpen ? "rotate-90" : "")} />
+            </button>
+
+            <AnimatePresence>
+              {isTopDropdownOpen && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-10" 
+                    onClick={() => setIsTopDropdownOpen(false)}
+                  />
+                  <motion.div
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    className="absolute right-0 mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-xl z-20 overflow-hidden py-1 min-w-[130px]"
+                  >
+                    {statuses.map((item) => (
+                      <button
+                        key={item.value}
+                        type="button"
+                        onClick={() => {
+                          setStatusFilter(item.value);
+                          setIsTopDropdownOpen(false);
+                        }}
+                        className={cn(
+                          "w-full text-left px-3.5 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850/50 transition font-medium",
+                          statusFilter === item.value 
+                            ? "text-purple-600 dark:text-purple-400 bg-purple-50/40 dark:bg-purple-950/20" 
+                            : "text-slate-700 dark:text-slate-350"
+                        )}
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
  
@@ -198,24 +248,53 @@ export default function AdminOrdersPage() {
           searchKey="order_number"
           searchPlaceholder="Search order number..."
           filterContent={
-            <div className="relative w-full max-w-sm">
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-4 text-slate-800 dark:text-slate-100 outline-none transition duration-200 text-sm shadow-sm cursor-pointer h-[38px] font-medium appearance-none"
+            <div className="relative w-full max-w-[180px]">
+              <button
+                type="button"
+                onClick={() => setIsTableDropdownOpen(!isTableDropdownOpen)}
+                className="w-full flex items-center justify-between bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:border-purple-500 rounded-xl py-2 px-4 text-slate-850 dark:text-slate-100 outline-none transition duration-200 text-sm shadow-sm cursor-pointer h-[38px] font-medium text-left select-none"
               >
-                <option value="all">All Statuses</option>
-                <option value="pending">Pending</option>
-                <option value="processing">Processing</option>
-                <option value="shipped">Shipped</option>
-                <option value="delivered">Delivered</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
-                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
-              </div>
+                <span className="capitalize">
+                  {statusFilter === "all" ? "All Statuses" : statusFilter}
+                </span>
+                <ChevronRight className={cn("w-4 h-4 text-slate-400 transition-transform duration-200", isTableDropdownOpen ? "rotate-90" : "")} />
+              </button>
+
+              <AnimatePresence>
+                {isTableDropdownOpen && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-10" 
+                      onClick={() => setIsTableDropdownOpen(false)}
+                    />
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -5 }}
+                      className="absolute left-0 right-0 mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-20 overflow-hidden py-1"
+                    >
+                      {statuses.map((item) => (
+                        <button
+                          key={item.value}
+                          type="button"
+                          onClick={() => {
+                            setStatusFilter(item.value);
+                            setIsTableDropdownOpen(false);
+                          }}
+                          className={cn(
+                            "w-full text-left px-3.5 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-850/50 transition font-medium",
+                            statusFilter === item.value 
+                              ? "text-purple-600 dark:text-purple-400 bg-purple-50/40 dark:bg-purple-950/20" 
+                              : "text-slate-700 dark:text-slate-350"
+                          )}
+                        >
+                          {item.label}
+                        </button>
+                      ))}
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
             </div>
           }
         />

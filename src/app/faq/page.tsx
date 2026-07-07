@@ -291,7 +291,7 @@ export default function FAQPage() {
 
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-2">
               <a
-                href="https://wa.me/919876543210"
+                href="https://wa.me/971501872337"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold px-5 py-3 rounded-xl transition duration-200 text-sm shadow-md"

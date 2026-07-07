@@ -92,7 +92,7 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
   const { data: settings } = useSettings();
 
   const handleWhatsAppChat = () => {
-    const rawPhone = settings?.whatsapp_number || "919876543210";
+    const rawPhone = settings?.whatsapp_number || "971501872337";
     const cleanedPhone = rawPhone.replace(/\D/g, "");
     
     let text = `Hello! I would like to inquire about personalizing and ordering the product: *${name}* (Price: AED ${price}).`;

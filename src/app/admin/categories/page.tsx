@@ -5,7 +5,6 @@ import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory 
 import { FolderTree, Plus, Edit, Trash2, Check, X, Loader2 } from "lucide-react";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
-import { SubcategoryManager } from "./subcategory-manager";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -284,10 +283,7 @@ export default function CategoriesPage() {
                   </div>
                   </div>
                   
-                  {/* Subcategories Inline Manager */}
-                  <div className="mt-4 border-t border-slate-100 dark:border-slate-800/60 pt-4">
-                    <SubcategoryManager categoryId={category.id} />
-                  </div>
+
                 </motion.div>
               ))}
             </div>

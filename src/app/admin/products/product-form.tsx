@@ -1,15 +1,17 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useCategories } from "@/hooks/use-categories";
 import { useSubcategories } from "@/hooks/use-subcategories";
 import { ImageUpload } from "@/components/admin/image-upload";
-import { Loader2, ArrowLeft, Save, Sparkles, Lock, Unlock } from "lucide-react";
+import { Loader2, ArrowLeft, Save, Sparkles, Lock, Unlock, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { decimalInputHandlers, integerInputHandlers } from "@/lib/numeric-input";
 
@@ -138,11 +140,17 @@ export function ProductForm({
   const [activeTab, setActiveTab] = useState<"basic" | "media" | "options" | "seo">("basic");
   const [isSkuEditable, setIsSkuEditable] = useState(false);
   const [isGeneratingSku, setIsGeneratingSku] = useState(false);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Dynamic Options States
-  const [colors, setColors] = useState<{ name: string; hex: string }[]>([]);
-  const [sizes, setSizes] = useState<string[]>([]);
-  const [specs, setSpecs] = useState<{ label: string; value: string }[]>([]);
+  const [colors, setColors] = useState<{ name: string; hex: string }[]>(initialValues?.colors || []);
+  const [sizes, setSizes] = useState<string[]>(initialValues?.sizes || []);
+  const [specs, setSpecs] = useState<{ label: string; value: string }[]>(initialValues?.specifications || []);
 
   // Color inputs
   const [newColorName, setNewColorName] = useState("");
@@ -157,10 +165,41 @@ export function ProductForm({
     handleSubmit,
     setValue,
     watch,
-    formState: { errors },
+    reset,
+    formState: { errors, isDirty },
   } = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema) as any,
-    defaultValues: {
+    defaultValues: initialValues ? {
+      name: initialValues.name || "",
+      slug: initialValues.slug || "",
+      sku: initialValues.sku || "",
+      description: initialValues.description || "",
+      price: Number(initialValues.price) || 0,
+      compare_at_price: initialValues.compare_at_price ? Number(initialValues.compare_at_price) : null,
+      category_id: initialValues.category_id || "",
+      sub_category_id: initialValues.sub_category_id || "",
+      stock_quantity: initialValues.stock_quantity || 0,
+      low_stock_threshold: initialValues.low_stock_threshold ?? 5,
+      track_inventory: initialValues.track_inventory ?? true,
+      is_active: initialValues.is_active ?? true,
+      featured: initialValues.featured ?? false,
+      best_seller: initialValues.best_seller ?? false,
+      trending: initialValues.trending ?? false,
+      new_arrival: initialValues.new_arrival ?? false,
+      is_personalized: initialValues.is_personalized ?? false,
+      personalization_price: Number(initialValues.personalization_price) || 0,
+      whatsapp_instructions: initialValues.whatsapp_instructions || "",
+      production_time: initialValues.production_time || 2,
+      meta_title: initialValues.meta_title || "",
+      meta_description: initialValues.meta_description || "",
+      weight: Number(initialValues.weight) || 0,
+      images: initialValues.images ? initialValues.images.map((img: any) => img.url) : [],
+      allowed_fields: initialValues.templates?.[0]?.allowed_fields || [],
+      allowed_fonts: initialValues.templates?.[0]?.allowed_fonts || [],
+      colors: initialValues.colors || [],
+      sizes: initialValues.sizes || [],
+      specifications: initialValues.specifications || [],
+    } : {
       name: "",
       slug: "",
       sku: "",
@@ -195,15 +234,15 @@ export function ProductForm({
 
   // Sync state values to react-hook-form
   useEffect(() => {
-    setValue("colors", colors);
+    setValue("colors", colors, { shouldDirty: true });
   }, [colors, setValue]);
 
   useEffect(() => {
-    setValue("sizes", sizes);
+    setValue("sizes", sizes, { shouldDirty: true });
   }, [sizes, setValue]);
 
   useEffect(() => {
-    setValue("specifications", specs);
+    setValue("specifications", specs, { shouldDirty: true });
   }, [specs, setValue]);
 
   // Load next available SKU for new products
@@ -232,6 +271,7 @@ export function ProductForm({
   const isPersonalized = watch("is_personalized");
   const images = watch("images");
   const currentCategoryId = watch("category_id");
+  const selectedCategory = categories.find((c: any) => c.id === currentCategoryId);
   const filteredSubcategories = subcategories.filter(sc => sc.parent_id === currentCategoryId);
   const allowedFields = watch("allowed_fields");
   const allowedFonts = watch("allowed_fonts");
@@ -326,33 +366,32 @@ export function ProductForm({
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setValue("name", value);
+    setValue("name", value, { shouldDirty: true, shouldValidate: true });
     if (!initialValues) {
       setValue(
         "slug",
         value
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, "-")
-          .replace(/(^-|-$)+/g, "")
+          .replace(/(^-|-$)+/g, ""),
+        { shouldDirty: true, shouldValidate: true }
       );
     }
   };
 
-
-
   const handleFieldToggle = (fieldId: string) => {
     if (allowedFields.includes(fieldId)) {
-      setValue("allowed_fields", allowedFields.filter((id) => id !== fieldId));
+      setValue("allowed_fields", allowedFields.filter((id) => id !== fieldId), { shouldDirty: true });
     } else {
-      setValue("allowed_fields", [...allowedFields, fieldId]);
+      setValue("allowed_fields", [...allowedFields, fieldId], { shouldDirty: true });
     }
   };
 
   const handleFontToggle = (fontName: string) => {
     if (allowedFonts.includes(fontName)) {
-      setValue("allowed_fonts", allowedFonts.filter((f) => f !== fontName));
+      setValue("allowed_fonts", allowedFonts.filter((f) => f !== fontName), { shouldDirty: true });
     } else {
-      setValue("allowed_fonts", [...allowedFonts, fontName]);
+      setValue("allowed_fonts", [...allowedFonts, fontName], { shouldDirty: true });
     }
   };
 
@@ -528,27 +567,74 @@ export function ProductForm({
                   </div>
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-1 relative">
                   <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
                     Category Department
                   </label>
-                  <select
-                    {...register("category_id")}
-                    className={`w-full bg-slate-50 dark:bg-black border rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-300 outline-none transition duration-200 text-sm shadow-sm cursor-pointer ${
+                  <button
+                    type="button"
+                    onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+                    className={cn(
+                      "w-full flex items-center justify-between bg-slate-50 dark:bg-black border rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-350 outline-none transition duration-200 text-sm shadow-sm cursor-pointer select-none text-left",
                       errors.category_id
                         ? "border-rose-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 bg-rose-50/10 dark:bg-rose-950/5"
                         : "border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-                    }`}
+                    )}
                   >
-                    <option value="">Select category...</option>
-                    {categories.map((cat: any) => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
+                    <span>
+                      {selectedCategory ? selectedCategory.name : "Select category..."}
+                    </span>
+                    <ChevronRight className={cn("w-4 h-4 text-slate-400 transition-transform duration-200", isCategoryDropdownOpen ? "rotate-90" : "")} />
+                  </button>
+
+                  <AnimatePresence>
+                    {isCategoryDropdownOpen && (
+                      <>
+                        <div 
+                          className="fixed inset-0 z-10" 
+                          onClick={() => setIsCategoryDropdownOpen(false)}
+                        />
+                        <motion.div
+                          initial={{ opacity: 0, y: -5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -5 }}
+                          className="absolute left-0 right-0 mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-20 overflow-hidden py-1"
+                        >
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setValue("category_id", "", { shouldDirty: true, shouldValidate: true });
+                              setIsCategoryDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800/50 transition font-medium text-slate-400"
+                          >
+                            Select category...
+                          </button>
+                          {categories.map((cat: any) => (
+                            <button
+                              key={cat.id}
+                              type="button"
+                              onClick={() => {
+                                setValue("category_id", cat.id, { shouldDirty: true, shouldValidate: true });
+                                setIsCategoryDropdownOpen(false);
+                              }}
+                              className={cn(
+                                "w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800/50 transition font-medium",
+                                currentCategoryId === cat.id 
+                                  ? "text-purple-600 dark:text-purple-400 bg-purple-50/40 dark:bg-purple-950/20" 
+                                  : "text-slate-700 dark:text-slate-350"
+                              )}
+                            >
+                              {cat.name}
+                            </button>
+                          ))}
+                        </motion.div>
+                      </>
+                    )}
+                  </AnimatePresence>
+
                   {errors.category_id && (
-                    <span className="text-xs text-red-505 mt-0.5 block">{errors.category_id.message}</span>
+                    <span className="text-xs text-red-500 mt-0.5 block">{errors.category_id.message}</span>
                   )}
                 </div>
               </div>
@@ -563,36 +649,6 @@ export function ProductForm({
                   rows={6}
                   className="w-full bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none transition duration-200 text-sm shadow-sm resize-none"
                 />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Subcategory (Optional)
-                  </label>
-                  <select
-                    {...register("sub_category_id")}
-                    className={`w-full bg-slate-50 dark:bg-black border rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-300 outline-none transition duration-200 text-sm shadow-sm cursor-pointer ${
-                      errors.sub_category_id
-                        ? "border-rose-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 bg-rose-50/10 dark:bg-rose-950/5"
-                        : "border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-                    }`}
-                    disabled={!currentCategoryId || filteredSubcategories.length === 0}
-                  >
-                    <option value="">Select subcategory...</option>
-                    {filteredSubcategories.map((cat: any) => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.sub_category_id && (
-                    <span className="text-xs text-red-505 mt-0.5 block">{errors.sub_category_id.message}</span>
-                  )}
-                  {currentCategoryId && filteredSubcategories.length === 0 && (
-                    <span className="text-[10px] text-slate-400 mt-1 block">No subcategories found for selected category.</span>
-                  )}
-                </div>
               </div>
             </div>
           )}
@@ -668,8 +724,8 @@ export function ProductForm({
                   <ImageUpload
                     bucket="products"
                     value={images}
-                    onChange={(urls) => setValue("images", urls)}
-                    onRemove={(url) => setValue("images", images.filter((u) => u !== url))}
+                    onChange={(urls) => setValue("images", urls, { shouldDirty: true })}
+                    onRemove={(url) => setValue("images", images.filter((u) => u !== url), { shouldDirty: true })}
                     maxFiles={5}
                   />
                 </div>
@@ -1049,6 +1105,66 @@ export function ProductForm({
                 </div>
               </div>
             </div>
+          )}
+          {/* Floating Save Changes Bar (Shopify Style via React Portal) */}
+          {isMounted && createPortal(
+            <AnimatePresence>
+              {isDirty && (
+                <motion.div
+                  initial={{ opacity: 0, y: -50, x: "-50%" }}
+                  animate={{ opacity: 1, y: 0, x: "-50%" }}
+                  exit={{ opacity: 0, y: -50, x: "-50%" }}
+                  transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                  className="fixed top-4 left-1/2 z-[100] flex items-center gap-5 bg-slate-900/95 dark:bg-slate-950/95 backdrop-blur-md text-white border border-slate-800 dark:border-slate-800 rounded-full px-4.5 py-2 shadow-2xl w-max"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-2 w-2 relative shrink-0">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+                    </span>
+                    <span className="text-xs font-semibold tracking-wide text-slate-200 select-none">
+                      Unsaved changes
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        reset();
+                        if (initialValues) {
+                          setColors(initialValues.colors || []);
+                          setSizes(initialValues.sizes || []);
+                          setSpecs(initialValues.specifications || []);
+                        } else {
+                          setColors([]);
+                          setSizes([]);
+                          setSpecs([]);
+                        }
+                        toast.success("Changes discarded");
+                      }}
+                      className="px-2.5 py-1 text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition duration-150 cursor-pointer"
+                    >
+                      Discard
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSubmit(onFormSubmit, onInvalidSubmit)}
+                      disabled={isLoading}
+                      className="bg-purple-600 hover:bg-purple-700 active:scale-[0.98] disabled:opacity-50 text-white font-bold px-3.5 py-1 rounded-lg transition duration-150 text-xs shadow-md shadow-purple-600/20 flex items-center gap-1 cursor-pointer"
+                    >
+                      {isLoading ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <Save className="w-3 h-3" />
+                      )}
+                      <span>Save</span>
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>,
+            document.body
           )}
         </form>
       </div>

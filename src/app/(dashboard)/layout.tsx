@@ -118,7 +118,7 @@ export default function CustomerDashboardLayout({ children }: { children: React.
               Questions about delivery times or custom embroidery requests? Contact our support team.
             </p>
             <a 
-              href="https://wa.me/971501234567"
+              href="https://wa.me/971501872337"
               target="_blank" 
               rel="noopener noreferrer" 
               className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-bold text-primary hover:underline"
