@@ -76,23 +76,34 @@ export async function GET() {
   try {
     const supabase = await createClient();
     
-    // Fetch products joining images and categories
+    // Fetch products joining images, categories and reviews
     const { data, error } = await supabase
       .from("products")
       .select(`
         *,
         categories:categories!products_category_id_fkey(name),
-        product_images(url, is_primary)
+        product_images(url, is_primary),
+        reviews(rating)
       `)
       .order("created_at", { ascending: false });
 
     if (error) throw error;
     
-    // Map database image list back to standard frontend array
-    const mapped = data.map((prod: any) => ({
-      ...prod,
-      images: prod.product_images || []
-    }));
+    // Map database image list back to standard frontend array, and aggregate reviews
+    const mapped = data.map((prod: any) => {
+      const prodReviews = prod.reviews || [];
+      const reviewsCount = prodReviews.length;
+      const averageRating = reviewsCount > 0
+        ? Number((prodReviews.reduce((sum: number, r: any) => sum + r.rating, 0) / reviewsCount).toFixed(1))
+        : 0;
+
+      return {
+        ...prod,
+        images: prod.product_images || [],
+        rating: reviewsCount > 0 ? averageRating : 0,
+        reviews: reviewsCount
+      };
+    });
 
     return NextResponse.json(mapped);
   } catch (error: any) {

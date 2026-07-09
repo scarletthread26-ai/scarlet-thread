@@ -24,7 +24,9 @@ import {
   LogOut,
   ChevronLeft,
   Menu,
-  BellRing
+  BellRing,
+  Newspaper,
+  FolderOpen
 } from "lucide-react";
 import { ConfirmDialog } from "./confirm-dialog";
 import { toast } from "sonner";
@@ -113,7 +115,6 @@ export function Sidebar({ isCollapsed, setIsCollapsed, onMobileClose }: SidebarP
       items: [
         { href: "/admin/orders", label: "Orders", icon: Tag },
         { href: "/admin/customers", label: "Customers", icon: Users },
-        { href: "/admin/returns", label: "Returns", icon: RotateCcw },
         { href: "/admin/reports", label: "Reports", icon: BarChart3 },
       ],
     },
@@ -129,7 +130,9 @@ export function Sidebar({ isCollapsed, setIsCollapsed, onMobileClose }: SidebarP
       items: [
         { href: "/admin/reviews", label: "Reviews", icon: MessageSquare },
         { href: "/admin/cms", label: "CMS Pages", icon: FileText },
-        { href: "/admin/gallery", label: "Gallery", icon: ImageIcon },
+        { href: "/admin/blogs", label: "Blogs", icon: Newspaper },
+        { href: "/admin/gallery", label: "Gallery", icon: FolderOpen },
+        { href: "/admin/media", label: "Media Library", icon: ImageIcon },
         { href: "/admin/notifications", label: "Notifications", icon: BellRing },
       ],
     },
@@ -189,7 +192,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed, onMobileClose }: SidebarP
         </div>
 
         {/* Sidebar Links (Scrollable) */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5 sidebar-scrollbar-none">
           {menuGroups.map((group) => (
             <div key={group.title} className="space-y-1.5">
               {!isCollapsed && (

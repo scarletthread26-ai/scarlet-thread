@@ -7,71 +7,30 @@ import { ProductCard } from "@/components/product/ProductCard"
 import { MobileProductCard } from "@/components/sections/FeaturedBanner"
 import { cn } from "@/lib/utils"
 
-const products = [
-  {
-    id: 101,
-    name: "Best Dad Ever Hoodie",
-    price: 149,
-    rating: 4.9,
-    reviews: 125,
-    badge: "Bestseller",
-    image: "/images/forhimpage/scarlet-dadhero.png",
-    compare_at_price: 199,
-  },
-  {
-    id: 102,
-    name: "Dad Est. Hoodie",
-    price: 149,
-    rating: 4.8,
-    reviews: 95,
-    badge: null,
-    image: "/images/forhimpage/scarlet-papahoodie.png",
-    compare_at_price: 199,
-  },
-  {
-    id: 103,
-    name: "Dad Life Cap",
-    price: 79,
-    rating: 4.9,
-    reviews: 74,
-    badge: "New",
-    image: "/images/forhimpage/scarlet-Cap.png",
-    compare_at_price: 99,
-  },
-  {
-    id: 104,
-    name: "Personalized Wallet",
-    price: 99,
-    rating: 4.9,
-    reviews: 62,
-    badge: null,
-    image: "/images/forhimpage/scarlet-pouch.png",
-    compare_at_price: 129,
-  },
-  {
-    id: 105,
-    name: "Super Dad Mug",
-    price: 59,
-    rating: 4.7,
-    reviews: 81,
-    badge: "Sale",
-    image: "/images/forhimpage/scarlet-mug.png",
-    compare_at_price: 79,
-  },
-  {
-    id: 106,
-    name: "The Man The Myth The Legend T-Shirt",
-    price: 99,
-    rating: 4.8,
-    reviews: 112,
-    badge: null,
-    image: "/images/forhimpage/scarlet-hoodie.png",
-    compare_at_price: 129,
-  },
-]
+import { useProducts } from "@/hooks/use-products"
 
-export function RelatedProductsCarousel() {
+export function RelatedProductsCarousel({ currentProduct }: { currentProduct?: any }) {
+  const { data: dbProducts = [], isLoading } = useProducts()
   const scrollRef = useRef<HTMLDivElement>(null)
+
+  const displayProducts = React.useMemo(() => {
+    // Filter active products, excluding the current product
+    const active = dbProducts.filter((p: any) => p.is_active && String(p.id) !== String(currentProduct?.id))
+    
+    // Try to get products from the same category
+    const categoryName = currentProduct?.categories?.name || currentProduct?.category?.name || currentProduct?.categories || currentProduct?.category
+    const sameCategory = active.filter((p: any) => {
+      const pCatName = p.categories?.name || p.category?.name || p.categories || p.category
+      return pCatName && categoryName && String(pCatName).toLowerCase() === String(categoryName).toLowerCase()
+    })
+
+    if (sameCategory.length > 0) {
+      return sameCategory
+    }
+    
+    // Otherwise fallback to other active products
+    return active
+  }, [dbProducts, currentProduct])
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
@@ -82,6 +41,8 @@ export function RelatedProductsCarousel() {
       })
     }
   }
+
+  if (isLoading || displayProducts.length === 0) return null
 
   return (
     <section className="pb-5 pt-2 bg-white ">
@@ -115,19 +76,19 @@ export function RelatedProductsCarousel() {
             ref={scrollRef}
             className="flex max-sm:grid max-sm:grid-cols-2 overflow-x-auto gap-6 max-sm:gap-2 pb-8 max-sm:pb-4 pt-4 max-sm:pt-2 px-2 max-sm:px-2 snap-x hide-scrollbar scroll-smooth"
           >
-          {products.map((product, idx) => {
+          {displayProducts.map((product, idx) => {
             const formattedProduct = {
               id: product.id,
               name: product.name,
               price: product.price,
               compare_at_price: product.compare_at_price,
-              image: product.image,
-              imagePlaceholder: "Product",
-              rating: product.rating,
-              reviews: product.reviews,
-              category: "You May Also Like",
-              slug: (product as any).slug,
-              bestSeller: product.badge === "Best Seller"
+              image: product.images?.[0]?.url || "/images/scarlet-lovedgift1.png",
+              imagePlaceholder: product.name ? product.name.split(" ")[0] : "Custom",
+              rating: product.rating || 0,
+              reviews: product.reviews || 0,
+              category: product.categories?.name || "You May Also Like",
+              slug: product.slug,
+              bestSeller: product.featured || false
             };
 
             return (

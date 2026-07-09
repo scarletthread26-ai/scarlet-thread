@@ -18,17 +18,17 @@ function SuccessContent() {
 
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  const clearCart = useCartStore((state) => state.clearCart);
+  const clearPurchasedItems = useCartStore((state) => state.clearPurchasedItems);
 
   // Clear cart upon arriving at success page
   useEffect(() => {
     const supabase = createClient();
     async function clean() {
       const { data: { user } } = await supabase.auth.getUser();
-      clearCart(!!user);
+      clearPurchasedItems(!!user);
     }
     clean();
-  }, [clearCart]);
+  }, [clearPurchasedItems]);
 
   useEffect(() => {
     if (!orderId && !orderNum) return;

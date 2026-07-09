@@ -12,7 +12,7 @@ import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
 
 export function useProductCard(product: any) {
-  const { addItem } = useCartStore()
+  const { addItem, setDrawerOpen } = useCartStore()
   const { toggleItem } = useWishlistStore()
   const wishlistItems = useWishlistStore((state) => state.items)
   const [isWishlisted, setIsWishlisted] = useState(false)
@@ -54,6 +54,11 @@ export function useProductCard(product: any) {
       await addItem({ productId: String(product.id), name: product.name, price: product.price, quantity: 1, image: product.image || "/images/scarlet-lovedgift1.png", personalization: null }, false)
       const shortName = product.name.length > 25 ? product.name.substring(0, 25) + "..." : product.name
       toast.success(`${shortName} added to cart!`)
+      
+      // Auto open drawer
+      setTimeout(() => {
+        setDrawerOpen(true)
+      }, 250)
     } catch (err) {
       console.error(err)
       toast.error("Failed to add product to cart")
@@ -251,8 +256,8 @@ export function FeaturedBanner() {
     category: product.categories?.name || "Gifts For Him",
     slug: product.slug,
     bestSeller: product.best_seller,
-    rating: 4.9,
-    reviews: 100
+    rating: product.rating || 0,
+    reviews: product.reviews || 0
   }))
 
   return (

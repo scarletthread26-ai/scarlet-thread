@@ -16,69 +16,6 @@ import { useProducts } from "@/hooks/use-products"
 import { ProductCard } from "@/components/product/ProductCard"
 import { MobileProductCard } from "@/components/sections/FeaturedBanner"
 
-const products = [
-  {
-    id: 11,
-    name: "Embroidered Hoodie",
-    price: 1499,
-    rating: 4.9,
-    reviews: 124,
-    imagePlaceholder: "Pink Hoodie",
-    image: "/images/forherproduct/scarlet-pinkhoodie.png",
-    bestSeller: false,
-    slug: "embroidered-hoodie-pink",
-    compare_at_price: 1999,
-  },
-  {
-    id: 12,
-    name: "Makeup Pouch",
-    price: 599,
-    rating: 4.8,
-    reviews: 98,
-    imagePlaceholder: "Pouch",
-    image: "/images/forherproduct/scarlet-pouch.png",
-    bestSeller: false,
-    slug: "makeup-pouch",
-    compare_at_price: 799,
-  },
-  {
-    id: 13,
-    name: "Personalized Jewelry Box",
-    price: 899,
-    rating: 4.9,
-    reviews: 215,
-    imagePlaceholder: "Jewelry Box",
-    image: "/images/forherproduct/scarlet-bag.png",
-    bestSeller: false,
-    slug: "personalized-jewelry-box",
-    compare_at_price: 1199,
-  },
-  {
-    id: 14,
-    name: "Metal Tumbler",
-    price: 699,
-    rating: 4.8,
-    reviews: 85,
-    imagePlaceholder: "Tumbler",
-    image: "/images/forherproduct/scarlet-trumbler.png",
-    bestSeller: false,
-    slug: "metal-tumbler",
-    compare_at_price: 899,
-  },
-  {
-    id: 15,
-    name: "Tote Bag",
-    price: 699,
-    rating: 4.7,
-    reviews: 72,
-    imagePlaceholder: "Tote Bag",
-    image: "/images/forherproduct/scarlet-totebag.png",
-    bestSeller: false,
-    slug: "tote-bag",
-    compare_at_price: 899,
-  },
-]
-
 export function ProductCarouselHer() {
   const { data: dbProducts = [] } = useProducts()
 
@@ -86,23 +23,22 @@ export function ProductCarouselHer() {
     const catProducts = dbProducts.filter(
       (p: any) => p.is_active && p.categories?.name === "Gifts For Her"
     )
-    if (catProducts.length > 0) {
-      return catProducts.map((p) => ({
-        id: p.id,
-        name: p.name,
-        price: p.price,
-        compare_at_price: p.compare_at_price,
-        rating: 4.9,
-        reviews: 100,
-        image: p.images?.[0]?.url || "/images/scarlet-lovedgift1.png",
-        imagePlaceholder: p.name ? p.name.split(" ")[0] : "Custom",
-        bestSeller: p.featured,
-        slug: p.slug,
-        is_personalized: p.is_personalized
-      }))
-    }
-    return products
+    return catProducts.map((p) => ({
+      id: p.id,
+      name: p.name,
+      price: p.price,
+      compare_at_price: p.compare_at_price,
+      rating: p.rating || 0,
+      reviews: p.reviews || 0,
+      image: p.images?.[0]?.url || "/images/scarlet-lovedgift1.png",
+      imagePlaceholder: p.name ? p.name.split(" ")[0] : "Custom",
+      bestSeller: p.featured,
+      slug: p.slug,
+      is_personalized: p.is_personalized
+    }))
   }, [dbProducts])
+
+  if (displayProducts.length === 0) return null
 
   return (
     <section className="py-10 lg:py-6 bg-white overflow-hidden">

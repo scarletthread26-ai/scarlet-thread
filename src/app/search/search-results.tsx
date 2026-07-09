@@ -245,8 +245,8 @@ export default function SearchResults() {
                   compare_at_price: product.compare_at_price,
                   image: product.images?.[0]?.url || "/images/scarlet-lovedgift1.png",
                   imagePlaceholder: product.name ? product.name.split(" ")[0] : "Custom",
-                  rating: 4.9,
-                  reviews: 100,
+                  rating: product.rating || 0,
+                  reviews: product.reviews || 0,
                   category: product.categories?.name || "Custom apparel",
                   slug: product.slug,
                   bestSeller: product.best_seller
@@ -302,8 +302,8 @@ export default function SearchResults() {
                 compare_at_price: product.compare_at_price,
                 image: product.images?.[0]?.url || "/images/scarlet-lovedgift1.png",
                 imagePlaceholder: product.name ? product.name.split(" ")[0] : "Custom",
-                rating: 4.9,
-                reviews: 100,
+                rating: product.rating || 0,
+                reviews: product.reviews || 0,
                 category: product.categories?.name || "Custom apparel",
                 slug: product.slug,
                 bestSeller: product.best_seller
