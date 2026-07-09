@@ -34,15 +34,15 @@ export function GalleryFilter({ categories, activeCategory }: GalleryFilterProps
   ];
 
   return (
-    <section id="gallery-view" className="py-8 bg-white sticky top-20 z-40 border-b border-border/50 shadow-sm backdrop-blur-md bg-white/90 scroll-mt-20">
+    <section id="gallery-view" className="py-4 bg-white sticky top-25 z-40 border-b border-border/50 shadow-sm  scroll-mt-20">
       <div className="container mx-auto px-4">
-        <div className="flex overflow-x-auto gap-3 pb-2 hide-scrollbar justify-start xl:justify-center">
+        <div className="flex overflow-x-auto gap-3  hide-scrollbar justify-start xl:justify-center">
           {tabs.map((tab) => (
             <Link
               key={tab.id}
               href={`/gallery?category=${tab.id}`}
               scroll={false}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all whitespace-nowrap border ${
+              className={`flex items-center gap-2 px-5 py-3 rounded-full text-sm font-semibold transition-all whitespace-nowrap border ${
                 tab.active
                   ? "bg-primary text-white border-primary shadow-md"
                   : "bg-white text-foreground/70 border-border hover:border-primary/50 hover:text-primary"

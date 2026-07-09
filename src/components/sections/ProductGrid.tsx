@@ -72,6 +72,7 @@ const itemVariants = {
 
 
 import { ProductCard } from "@/components/product/ProductCard"
+import { MobileProductCard } from "@/components/sections/FeaturedBanner"
 
 function formatLovedGiftsTitle(titleStr: string) {
   if (!titleStr) return "";
@@ -100,13 +101,13 @@ function ProductGridSkeleton() {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
       {[...Array(4)].map((_, i) => (
-        <div 
-          key={i} 
+        <div
+          key={i}
           className="rounded-3xl border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-950 overflow-hidden shadow-sm flex flex-col h-full min-h-[380px]"
         >
           {/* Image skeleton */}
           <div className="aspect-square w-full bg-slate-100 dark:bg-slate-900/60 animate-pulse relative" />
-          
+
           {/* Content skeleton */}
           <div className="p-4 flex flex-col flex-grow justify-between">
             <div className="space-y-3">
@@ -114,7 +115,7 @@ function ProductGridSkeleton() {
               <div className="w-5/6 h-4 bg-slate-100 dark:bg-slate-900 animate-pulse rounded" />
               <div className="w-2/3 h-4 bg-slate-100 dark:bg-slate-900 animate-pulse rounded" />
             </div>
-            
+
             <div className="flex justify-between items-center mt-6 pt-4 border-t border-slate-50 dark:border-slate-900/60 animate-pulse">
               <div className="w-16 h-6 bg-slate-100 dark:bg-slate-900 rounded" />
               <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-900" />
@@ -152,12 +153,12 @@ export function ProductGrid() {
 
   const displayProducts = React.useMemo(() => {
     const selectedIds = sectionData?.content?.product_ids || []
-    
+
     if (selectedIds.length > 0 && dbProducts.length > 0) {
       const selectedProds = selectedIds
         .map((id: string) => dbProducts.find((p) => p.id === id))
         .filter((p: any) => p && p.is_active)
-      
+
       if (selectedProds.length > 0) {
         return selectedProds.map((p: any) => ({
           id: p.id,
@@ -222,7 +223,7 @@ export function ProductGrid() {
           <>
             {/* Mobile: grid */}
             <motion.div
-              className="sm:hidden grid grid-cols-2 gap-0 border-t border-slate-200/50 dark:border-slate-800/80 bg-white dark:bg-slate-900"
+              className="sm:hidden grid grid-cols-2 gap-2 mt-2 px-1"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
@@ -235,12 +236,8 @@ export function ProductGrid() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: i * 0.05, ease: "easeOut" }}
-                  className={
-                    "border-b border-slate-200/50 dark:border-slate-800/80 " +
-                    (i % 2 === 0 ? "border-r" : "")
-                  }
                 >
-                  <ProductCard product={product} className="max-sm:rounded-none max-sm:border-0 max-sm:shadow-none" />
+                  <MobileProductCard product={product} />
                 </motion.div>
               ))}
             </motion.div>

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Heart } from "lucide-react"
 import { CommonHero } from "@/components/sections/CommonHero"
 
-const ACCENT = "#c0004e"
+const ACCENT = "#4b0082"
 
 export function HeroHer() {
   const [sectionData, setSectionData] = useState<any>(null)
