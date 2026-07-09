@@ -1,4 +1,3 @@
-'use client'
 
 interface CloudinaryLoaderProps {
   src: string;
@@ -39,4 +38,30 @@ export default function cloudinaryLoader({ src, width, quality }: CloudinaryLoad
   ].join(",");
 
   return `${baseUrl}${params}/${restUrl}`;
+}
+
+/**
+ * Takes a full Cloudinary secure URL and dynamically injects '/f_auto,q_auto/' to
+ * automatically compress quality and convert format to modern formats like WebP/AVIF.
+ * Falls back to the original URL if not from Cloudinary or already formatted.
+ */
+export function getOptimizedImageUrl(url: string | null | undefined): string {
+  if (!url) return "";
+  if (!url.includes("cloudinary.com")) return url;
+  
+  // Skip if it already contains optimization flags
+  if (url.includes("/f_auto,q_auto/")) return url;
+  
+  // Find "/upload/" segment in the URL
+  const uploadSegment = "/upload/";
+  const uploadIdx = url.indexOf(uploadSegment);
+  if (uploadIdx === -1) return url;
+  
+  // Insert "f_auto,q_auto/" right after "/upload/"
+  const insertPosition = uploadIdx + uploadSegment.length;
+  return (
+    url.substring(0, insertPosition) +
+    "f_auto,q_auto/" +
+    url.substring(insertPosition)
+  );
 }

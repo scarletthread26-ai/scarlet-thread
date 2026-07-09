@@ -42,7 +42,12 @@ export async function POST(request: Request) {
         .upload_stream(
           {
             folder: "scarlet_thread_products",
-            resource_type: "auto",
+            resource_type: "image",
+            format: "webp",
+            transformation: [
+              { width: 1600, height: 1600, crop: "limit" },
+              { quality: "auto:good" }
+            ]
           },
           (error, result) => {
             if (error) reject(error);

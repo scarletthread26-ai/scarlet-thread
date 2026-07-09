@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
+import Link from "next/link"
 import { useHomepageSection } from "@/hooks/use-cms"
 
 const headingVariants = {
@@ -104,7 +105,7 @@ export function NewHowItWorks() {
               viewport={{ once: true, amount: 0.3 }}
               variants={headingVariants}
             >
-              Crafted Just For <span className="text-primary">You</span>
+              {title}
             </motion.h2>
             <motion.p
               className="text-[13px] md:text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed mt-0"
@@ -134,6 +135,7 @@ export function NewHowItWorks() {
                   desc={step.description || step.desc}
                   image={defaultSteps[index]?.image}
                   isDesktop={isDesktop}
+                  link={index === 0 ? "/products" : undefined}
                 />
                 
                 {index < steps.length - 1 && (
@@ -162,19 +164,21 @@ function StepCard({
   desc,
   image,
   isDesktop,
+  link,
 }: {
   number: string
   title: string
   desc: string
   image?: string
   isDesktop: boolean
+  link?: string
 }) {
   const cardVariants = isDesktop ? stepDesktopVariants : stepMobileVariants
-  return (
+  const content = (
     <motion.div
-      className="relative flex-1 bg-white rounded-[10px] px-2 pt-6 pb-2 md:px-3 md:pt-8 md:pb-3
+      className={`relative flex-1 bg-white rounded-[10px] px-2 pt-6 pb-2 md:px-3 md:pt-8 md:pb-3
                  shadow-[0_4px_20px_rgba(107,70,193,0.08)] border border-[#EDE6F8]
-                 flex flex-col overflow-visible"
+                 flex flex-col overflow-visible ${link ? "cursor-pointer select-none" : ""}`}
       variants={cardVariants}
       initial="hidden"
       whileInView="visible"
@@ -213,6 +217,16 @@ function StepCard({
       </div>
     </motion.div>
   )
+
+  if (link) {
+    return (
+      <Link href={link} className="flex-1 flex flex-col">
+        {content}
+      </Link>
+    )
+  }
+
+  return content
 }
 
 function ArrowRightIcon() {

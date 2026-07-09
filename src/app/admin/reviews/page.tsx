@@ -2,250 +2,369 @@
 
 import React, { useState } from "react";
 import { 
-  useAdminReviews, 
-  useUpdateReviewStatus, 
-  useDeleteReview, 
-  ReviewWithUser 
-} from "@/hooks/use-reviews";
-import { DataTable } from "@/components/admin/data-table";
-import { ColumnDef } from "@tanstack/react-table";
-import { Star, Check, X, Trash2, MessageSquare, AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+  useTestimonials, 
+  useCreateTestimonial, 
+  useUpdateTestimonial, 
+  useDeleteTestimonial
+} from "@/hooks/use-cms";
+import { MessageSquare, Plus, Edit, Trash2, Star, Check, X, Loader2 } from "lucide-react";
+import { ImageUpload } from "@/components/admin/image-upload";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
-import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+
+const testimonialSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  role: z.string().optional(),
+  rating: z.number().min(1).max(5).default(5),
+  comment: z.string().min(10, "Comment must be at least 10 characters"),
+  avatar_url: z.string().optional(),
+  is_active: z.boolean().default(true),
+});
+
+type TestimonialFormValues = z.infer<typeof testimonialSchema>;
 
 export default function AdminReviewsPage() {
-  const [activeTab, setActiveTab] = useState<string>("all");
-  const { data: reviews = [], isLoading } = useAdminReviews(activeTab);
-  
-  const updateStatusMutation = useUpdateReviewStatus();
-  const deleteMutation = useDeleteReview();
+  const { data: testimonials = [], isLoading } = useTestimonials();
+  const createMutation = useCreateTestimonial();
+  const updateMutation = useUpdateTestimonial();
+  const deleteMutation = useDeleteTestimonial();
 
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const handleApprove = async (id: string) => {
-    await updateStatusMutation.mutateAsync({ id, status: "approved" });
-  };
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<TestimonialFormValues>({
+    resolver: zodResolver(testimonialSchema) as any,
+    defaultValues: {
+      name: "",
+      role: "",
+      rating: 5,
+      comment: "",
+      avatar_url: "",
+      is_active: true,
+    },
+  });
 
-  const handleReject = async (id: string) => {
-    await updateStatusMutation.mutateAsync({ id, status: "rejected" });
-  };
+  const avatarUrl = watch("avatar_url");
+  const currentRating = watch("rating");
 
-  const handleDeleteConfirm = async () => {
-    if (deleteId) {
-      await deleteMutation.mutateAsync(deleteId);
-      setDeleteId(null);
+  const onSubmit = async (values: TestimonialFormValues) => {
+    try {
+      if (editingId) {
+        await updateMutation.mutateAsync({ id: editingId, data: values });
+        setEditingId(null);
+      } else {
+        await createMutation.mutateAsync(values);
+      }
+      reset({
+        name: "",
+        role: "",
+        rating: 5,
+        comment: "",
+        avatar_url: "",
+        is_active: true,
+      });
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save review");
     }
   };
 
-  const columns: ColumnDef<ReviewWithUser>[] = [
-    {
-      accessorKey: "products.name",
-      header: "Product",
-      cell: ({ row }) => (
-        <div className="font-semibold text-slate-800 dark:text-slate-200">
-          {row.original.products?.name || "Unknown Product"}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "users.full_name",
-      header: "Customer",
-      cell: ({ row }) => (
-        <div>
-          <div className="font-medium text-slate-700 dark:text-slate-300">
-            {row.original.users?.full_name || "Guest / Customer"}
-          </div>
-          <div className="text-xs text-slate-400">
-            ID: {row.original.user_id.substring(0, 8)}...
-          </div>
-        </div>
-      ),
-    },
-    {
-      accessorKey: "rating",
-      header: "Rating",
-      cell: ({ row }) => (
-        <div className="flex items-center gap-0.5 text-amber-500">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Star
-              key={i}
-              className={`w-4 h-4 ${
-                i < row.original.rating ? "fill-amber-500" : "text-slate-300 dark:text-slate-700"
-              }`}
-            />
-          ))}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "comment",
-      header: "Review Details",
-      cell: ({ row }) => (
-        <div className="max-w-md space-y-1 py-1">
-          {row.original.title && (
-            <div className="font-bold text-slate-800 dark:text-slate-200 text-sm">
-              "{row.original.title}"
-            </div>
-          )}
-          <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">
-            {row.original.comment || "No comment content provided."}
-          </p>
-        </div>
-      ),
-    },
-    {
-      accessorKey: "created_at",
-      header: "Submitted At",
-      cell: ({ row }) => (
-        <span className="text-xs text-slate-500">
-          {format(new Date(row.original.created_at), "dd MMM yyyy, hh:mm a")}
-        </span>
-      ),
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => {
-        const status = row.original.status;
-        let variant: "default" | "secondary" | "destructive" = "secondary";
-        let customClass = "";
-        
-        if (status === "approved") {
-          variant = "default";
-          customClass = "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 border-emerald-100 dark:border-emerald-900/50 hover:bg-emerald-105";
-        } else if (status === "rejected") {
-          variant = "destructive";
-        } else {
-          // pending
-          variant = "secondary";
-          customClass = "bg-amber-50 text-amber-700 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900/50";
-        }
-        
-        return (
-          <Badge 
-            variant={variant} 
-            className={cn(
-              "capitalize rounded-full font-bold px-2.5 py-0.5 text-[11px] tracking-wide",
-              customClass
-            )}
-          >
-            {status}
-          </Badge>
-        );
-      },
-    },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => {
-        const item = row.original;
-        return (
-          <div className="flex items-center gap-1">
-            {item.status !== "approved" && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => handleApprove(item.id)}
-                disabled={updateStatusMutation.isPending}
-                className="w-8 h-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/20"
-                title="Approve"
-              >
-                <Check className="w-4 h-4" />
-              </Button>
-            )}
-            {item.status !== "rejected" && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => handleReject(item.id)}
-                disabled={updateStatusMutation.isPending}
-                className="w-8 h-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/20"
-                title="Reject"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            )}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setDeleteId(item.id)}
-              disabled={deleteMutation.isPending}
-              className="w-8 h-8 text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800"
-              title="Delete"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          </div>
-        );
-      },
-    },
-  ];
+  const handleEdit = (testi: any) => {
+    setEditingId(testi.id);
+    reset({
+      name: testi.name,
+      role: testi.role || "",
+      rating: testi.rating || 5,
+      comment: testi.comment,
+      avatar_url: testi.avatar_url || "",
+      is_active: testi.is_active,
+    });
+  };
+
+  const handleDelete = async () => {
+    if (deleteId) {
+      try {
+        await deleteMutation.mutateAsync(deleteId);
+      } catch (err: any) {
+        toast.error(err.message || "Failed to delete review");
+      } finally {
+        setDeleteId(null);
+      }
+    }
+  };
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-heading font-extrabold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <MessageSquare className="w-7 h-7 text-purple-600" />
-            Review Moderation
-          </h1>
-          <p className="text-slate-500 text-sm mt-1">
-            Manage customer feedback and moderate store product reviews.
-          </p>
-        </div>
+      {/* Header section */}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
+          Homepage Customer Reviews
+        </h1>
+        <p className="text-xs text-slate-400 mt-1">
+          Manage customer feedback and WhatsApp experiences to display on the storefront Testimonials slider.
+        </p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b border-slate-200 dark:border-slate-800 gap-6">
-        {["all", "pending", "approved", "rejected"].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`pb-3 text-sm font-bold capitalize transition duration-200 relative ${
-              activeTab === tab
-                ? "text-purple-600 dark:text-purple-400"
-                : "text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-400"
-            }`}
-          >
-            {tab}
-            {activeTab === tab && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-600 dark:bg-purple-400 rounded-full" />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Left Column: Create/Edit Form */}
+        <div className="lg:col-span-1">
+          <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/85 rounded-2xl shadow-sm space-y-4">
+            <h3 className="text-xs font-bold text-slate-805 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-850 pb-3">
+              <Plus className="w-4 h-4 text-purple-600" />
+              {editingId ? "Edit Review" : "Add Customer Review"}
+            </h3>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+                  Customer Name
+                </label>
+                <input
+                  type="text"
+                  {...register("name")}
+                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-805 bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-purple-650 focus:border-purple-650 dark:text-slate-200 transition"
+                  placeholder="e.g., Fatima Al-Mansoori"
+                />
+                {errors.name && (
+                  <p className="text-[10px] text-rose-500 mt-1 font-semibold">{errors.name.message as string}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+                  Star Rating
+                </label>
+                <div className="flex gap-1.5 mt-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setValue("rating", star)}
+                      className="text-slate-300 hover:scale-110 transition cursor-pointer"
+                    >
+                      <Star
+                        className={`w-6 h-6 ${
+                          star <= currentRating
+                            ? "fill-yellow-400 text-yellow-400"
+                            : "text-slate-200 dark:text-slate-800"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+                  Review Text
+                </label>
+                <textarea
+                  rows={4}
+                  {...register("comment")}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-805 bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-purple-650 focus:border-purple-650 dark:text-slate-200 transition"
+                  placeholder="Share the customer's shopping experience..."
+                />
+                {errors.comment && (
+                  <p className="text-[10px] text-rose-500 mt-1 font-semibold">{errors.comment.message as string}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+                  Customer Image (Optional)
+                </label>
+                <div className="mt-1">
+                  <ImageUpload
+                    bucket="avatars"
+                    value={avatarUrl ? [avatarUrl] : []}
+                    onChange={(urls) => setValue("avatar_url", urls[0] || "")}
+                    onRemove={() => setValue("avatar_url", "")}
+                    maxFiles={1}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 py-1">
+                <input
+                  type="checkbox"
+                  id="review-active"
+                  {...register("is_active")}
+                  className="w-4 h-4 rounded border-slate-350 text-purple-600 focus:ring-purple-500 cursor-pointer"
+                />
+                <label htmlFor="review-active" className="text-xs font-bold text-slate-500 dark:text-slate-450 cursor-pointer select-none">
+                  Display review on homepage slider
+                </label>
+              </div>
+
+              <div className="flex items-center gap-2 pt-2">
+                <button
+                  type="submit"
+                  disabled={createMutation.isPending || updateMutation.isPending}
+                  className="flex-1 bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white font-bold py-2.5 rounded-xl transition duration-155 text-xs shadow-md shadow-purple-600/10 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  {createMutation.isPending || updateMutation.isPending ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Check className="w-3.5 h-3.5" />
+                  )}
+                  <span>{editingId ? "Update Review" : "Publish Review"}</span>
+                </button>
+
+                {editingId && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingId(null);
+                      reset({
+                        name: "",
+                        role: "Verified Buyer",
+                        rating: 5,
+                        comment: "",
+                        avatar_url: "",
+                        is_active: true,
+                      });
+                    }}
+                    className="p-2.5 border border-slate-200 dark:border-slate-805 hover:bg-slate-50 dark:hover:bg-slate-850 rounded-xl transition cursor-pointer"
+                    title="Cancel edit"
+                  >
+                    <X className="w-4 h-4 text-slate-500" />
+                  </button>
+                )}
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {/* Right Column: Active Reviews List */}
+        <div className="lg:col-span-2">
+          <div className="p-6 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/85 rounded-2xl shadow-sm space-y-4">
+            <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-850 pb-3">
+              <div>
+                <h2 className="text-sm font-bold text-slate-805 dark:text-slate-200 uppercase tracking-wider">
+                  Active Reviews List
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Reviews added manually that will show on the storefront.
+                </p>
+              </div>
+              <span className="text-xs font-bold px-2.5 py-1 bg-purple-50 dark:bg-purple-950/40 text-purple-650 dark:text-purple-400 rounded-full border border-purple-100/50 dark:border-purple-900/30">
+                {testimonials.length} reviews
+              </span>
+            </div>
+
+            {isLoading ? (
+              <div className="py-16 flex justify-center">
+                <Loader2 className="w-6 h-6 text-purple-600 animate-spin" />
+              </div>
+            ) : testimonials.length === 0 ? (
+              <div className="text-center py-16 border border-dashed border-slate-250 dark:border-slate-805 rounded-2xl space-y-2">
+                <MessageSquare className="w-8 h-8 text-slate-300 mx-auto" />
+                <p className="text-xs text-slate-400 font-bold">No manual reviews created yet</p>
+              </div>
+            ) : (
+              <div className="space-y-4 max-h-[600px] overflow-y-auto pr-1">
+                <AnimatePresence>
+                  {testimonials.map((testi: any) => (
+                    <motion.div
+                      key={testi.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="p-4 bg-slate-50/50 dark:bg-slate-950/40 rounded-2xl border border-slate-200/20 dark:border-slate-850/60 flex gap-4 items-start group relative"
+                    >
+                      {/* Reviewer Profile Avatar or Fallback Letter Initials */}
+                      <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 dark:border-slate-800 bg-purple-50 flex items-center justify-center font-bold text-purple-650 shrink-0">
+                        {testi.avatar_url ? (
+                          <img src={testi.avatar_url} alt={testi.name} className="w-full h-full object-cover" />
+                        ) : (
+                          testi.name.charAt(0).toUpperCase()
+                        )}
+                      </div>
+
+                      {/* Review details */}
+                      <div className="flex-1 space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="text-xs font-bold text-slate-850 dark:text-slate-200 flex items-center gap-1.5">
+                              {testi.name}
+                              {!testi.is_active && (
+                                <span className="text-[9px] font-semibold text-rose-500 px-1.5 py-0.5 bg-rose-50 dark:bg-rose-955 rounded-full border border-rose-100">
+                                  Inactive
+                                </span>
+                              )}
+                            </h4>
+                            {testi.role && (
+                              <span className="text-[10px] font-bold text-slate-400">{testi.role}</span>
+                            )}
+                          </div>
+
+                          {/* Star rating rendering */}
+                          <div className="flex gap-0.5 shrink-0">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`w-3.5 h-3.5 ${
+                                  i < (testi.rating || 5)
+                                    ? "fill-yellow-400 text-yellow-400"
+                                    : "text-slate-200 dark:text-slate-800"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        </div>
+
+                        <p className="text-xs text-slate-600 dark:text-slate-450 leading-relaxed italic pr-16 select-text">
+                          &quot;{testi.comment}&quot;
+                        </p>
+                      </div>
+
+                      {/* Actions: Edit / Delete on Hover */}
+                      <div className="absolute right-4 bottom-4 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                        <button
+                          type="button"
+                          onClick={() => handleEdit(testi)}
+                          className="p-1.5 text-slate-500 hover:text-purple-650 hover:bg-white dark:hover:bg-slate-900 border border-transparent hover:border-slate-200 dark:hover:border-slate-805 rounded-lg transition cursor-pointer"
+                          title="Edit Review"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setDeleteId(testi.id)}
+                          className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-white dark:hover:bg-slate-900 border border-transparent hover:border-slate-200 dark:hover:border-slate-805 rounded-lg transition cursor-pointer"
+                          title="Delete Review"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
             )}
-          </button>
-        ))}
+          </div>
+        </div>
+
       </div>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-        </div>
-      ) : reviews.length === 0 ? (
-        <div className="border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-12 text-center max-w-lg mx-auto bg-white dark:bg-slate-900 shadow-sm mt-4">
-          <AlertCircle className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300">No reviews found</h3>
-          <p className="text-slate-400 text-xs mt-1">
-            There are no product reviews fitting this status category right now.
-          </p>
-        </div>
-      ) : (
-        <DataTable
-          columns={columns}
-          data={reviews}
-          searchKey="products.name"
-          searchPlaceholder="Search reviews by product name..."
-        />
-      )}
-
-      {/* Deletion confirmation */}
       <ConfirmDialog
-        isOpen={deleteId !== null}
+        isOpen={!!deleteId}
         onClose={() => setDeleteId(null)}
-        onConfirm={handleDeleteConfirm}
-        title="Delete Review"
-        description="Are you sure you want to delete this product review? This action cannot be undone."
+        onConfirm={handleDelete}
+        isDestructive={true}
+        title="Delete Customer Review"
+        description="Are you absolutely sure you want to permanently delete this customer review? This action cannot be undone."
       />
     </div>
   );
