@@ -202,7 +202,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed, onMobileClose }: SidebarP
               )}
               <div className="space-y-0.5">
                 {group.items.map((item) => {
-                  const isActive = pathname.startsWith(item.href);
+                  const isActive = pathname?.startsWith(item.href);
                   const Icon = item.icon;
 
                   return (

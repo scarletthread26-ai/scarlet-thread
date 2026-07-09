@@ -37,7 +37,7 @@ export function Header({ onMobileMenuOpen }: HeaderProps) {
   }, [supabase]);
 
   // Generate breadcrumbs from pathname
-  const paths = pathname.split("/").filter((x) => x);
+  const paths = (pathname || "").split("/").filter((x) => x);
   // Remove 'admin' from paths for cleaner admin breadcrumbs
   const breadcrumbs = paths.slice(1);
 
