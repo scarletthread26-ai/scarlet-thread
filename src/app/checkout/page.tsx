@@ -105,12 +105,16 @@ export default function CheckoutPage() {
   }, []);
 
   useEffect(() => {
-    // If cart is empty, send back to home
-    if (items.length === 0) {
+    // If cart is empty or no items are selected, send back to home
+    const selectedCount = items.filter(item => item.selected !== false).length;
+    if (mounted && items.length > 0 && selectedCount === 0) {
+      toast.error("Please select at least one item to purchase!");
+      router.push("/");
+    } else if (mounted && items.length === 0) {
       toast.error("Your shopping cart is empty!");
       router.push("/");
     }
-  }, [items, router]);
+  }, [items, router, mounted]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -234,7 +238,7 @@ export default function CheckoutPage() {
     const payload = {
       shippingAddress,
       billingAddress,
-      items: items.map(item => ({
+      items: items.filter(item => item.selected !== false).map(item => ({
         productId: item.productId,
         quantity: item.quantity,
         price: item.price,
@@ -253,9 +257,9 @@ export default function CheckoutPage() {
     try {
       const createdOrder = await createOrderMutation.mutateAsync(payload);
 
-      // Clear cart
-      const { clearCart } = useCartStore.getState();
-      await clearCart(isAuthenticated);
+      // Clear purchased items from cart
+      const { clearPurchasedItems } = useCartStore.getState();
+      await clearPurchasedItems(isAuthenticated);
 
       // Navigate to success page
       toast.success("Order processed successfully!");
@@ -603,6 +607,9 @@ export default function CheckoutPage() {
                       name={`${firstName.trim()} ${lastName.trim()}`}
                       phone={`+971 ${phone.trim()}`}
                       postalCode={isSameAddress ? (postalCode || "00000") : (billingPostalCode || "00000")}
+                      addressLine1={isSameAddress ? addressLine1 : billingAddressLine1}
+                      city={isSameAddress ? city : billingCity}
+                      state={isSameAddress ? state : billingState}
                       onPaymentSuccess={handlePaymentSuccess}
                       isOrderPending={createOrderMutation.isPending}
                     />
@@ -636,7 +643,7 @@ export default function CheckoutPage() {
 
               {/* Product Listing */}
               <div className="space-y-4 mb-6 max-h-[340px] overflow-y-auto pr-2">
-                {items.map((item) => (
+                {items.filter(item => item.selected !== false).map((item) => (
                   <div key={item.id} className="flex gap-4 text-xs sm:text-sm">
                     <div className="w-14 h-14 bg-slate-50 dark:bg-slate-900 border border-slate-200/40 rounded-lg overflow-hidden shrink-0">
                       <img src={item.image} alt={item.name} className="w-full h-full object-cover" />

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useCartStore } from "@/store/useCartStore";
+import { useProducts } from "@/hooks/use-products";
 import { Heart, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
@@ -12,7 +13,8 @@ import { ProductCard } from "@/components/product/ProductCard";
 
 export default function WishlistPage() {
   const { items, isLoading, toggleItem, fetchWishlist } = useWishlistStore();
-  const { addItem } = useCartStore();
+  const { data: dbProducts = [] } = useProducts();
+  const { addItem, setDrawerOpen } = useCartStore();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
@@ -41,6 +43,11 @@ export default function WishlistPage() {
 
     // Remove from wishlist
     await toggleItem(item, isAuthenticated);
+
+    // Slide open drawer
+    setTimeout(() => {
+      setDrawerOpen(true);
+    }, 250);
   };
 
   const handleRemove = async (item: any) => {
@@ -85,6 +92,7 @@ export default function WishlistPage() {
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0 sm:gap-6 max-sm:border-t max-sm:border-slate-200/50 dark:max-sm:border-slate-800/80 max-sm:bg-white dark:max-sm:bg-slate-900">
         {items.map((item, idx) => {
+          const matchedProd = dbProducts.find((p) => String(p.id) === String(item.productId));
           const formattedProduct = {
             id: item.productId,
             name: item.name,
@@ -92,11 +100,11 @@ export default function WishlistPage() {
             compare_at_price: item.compareAtPrice,
             image: item.image,
             imagePlaceholder: item.name ? item.name.split(" ")[0] : "Item",
-            rating: 4.9,
-            reviews: 100,
-            category: "Wishlist Item",
-            slug: item.productId, // Wishlist doesn't store slug, fallback to ID
-            bestSeller: false
+            rating: matchedProd?.rating || 0,
+            reviews: matchedProd?.reviews || 0,
+            category: matchedProd?.categories?.name || "Wishlist Item",
+            slug: item.slug || item.productId,
+            bestSeller: matchedProd?.featured || false
           };
 
           return (

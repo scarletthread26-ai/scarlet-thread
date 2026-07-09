@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { WhatsAppWidget } from "./WhatsAppWidget";
+import { MiniCartDrawer } from "../cart/MiniCartDrawer";
 
 export function StorefrontLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -30,6 +31,7 @@ export function StorefrontLayout({ children }: { children: React.ReactNode }) {
       </main>
       <Footer />
       <WhatsAppWidget />
+      <MiniCartDrawer />
     </>
   );
 }

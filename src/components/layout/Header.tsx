@@ -69,6 +69,7 @@ export function Header() {
   const [mounted, setMounted] = useState(false)
   const cartItems = useCartStore((state) => state.items)
   const setShippingConfig = useCartStore((state) => state.setShippingConfig)
+  const setDrawerOpen = useCartStore((state) => state.setDrawerOpen)
   const wishlistItems = useWishlistStore((state) => state.items)
   const fetchWishlist = useWishlistStore((state) => state.fetchWishlist)
   const { data: settings } = useSettings()
@@ -269,19 +270,22 @@ export function Header() {
               </Link>
             )}
 
-            <Link href="/wishlist" className="hidden lg:flex relative items-center justify-center w-10 h-10 rounded-full bg-primary/5 hover:bg-primary/10 transition-colors text-foreground">
-              <Heart className="h-[18px] w-[18px]" />
-              <span className="absolute -top-1 -right-1 h-[18px] w-[18px] rounded-full bg-[#31006E] text-[10px] font-bold text-white flex items-center justify-center shadow-sm border border-white">
-                {wishlistCount}
-              </span>
-            </Link>
 
-            <Link href="/cart" className="relative flex items-center justify-center w-10 h-10 rounded-full bg-primary/5 hover:bg-primary/10 transition-colors text-foreground">
+            <button 
+              onClick={() => setDrawerOpen(true)}
+              className="relative flex items-center justify-center w-10 h-10 rounded-full bg-primary/5 hover:bg-primary/10 transition-colors text-foreground cursor-pointer"
+            >
               <ShoppingBag className="h-[18px] w-[18px]" />
-              <span className="absolute -top-1 -right-1 h-[18px] w-[18px] rounded-full bg-[#31006E] text-[10px] font-bold text-white flex items-center justify-center shadow-sm border border-white">
+              <motion.span 
+                key={`header-${cartCount}`}
+                initial={{ scale: 0.8 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                className="absolute -top-1 -right-1 h-[18px] w-[18px] rounded-full bg-[#31006E] text-[10px] font-bold text-white flex items-center justify-center shadow-sm border border-white"
+              >
                 {cartCount}
-              </span>
-            </Link>
+              </motion.span>
+            </button>
 
             <button
               className="lg:hidden flex items-center justify-center w-10 h-10 text-foreground hover:bg-muted/50 transition-colors rounded-full ml-1"
@@ -376,13 +380,6 @@ export function Header() {
                   >
                     <User className="h-4 w-4" /> Account
                   </Link>
-                  <Link
-                    href="/wishlist"
-                    onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-2 text-[12px] font-medium text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <Heart className="h-4 w-4" /> Wishlist
-                  </Link>
                 </div>
               </nav>
             </motion.div>
@@ -428,18 +425,24 @@ export function Header() {
               {/* Central Cart Button */}
               <div className="relative flex flex-col items-center justify-center w-14">
                 <div className="absolute -top-10">
-                  <Link
-                    href="/cart"
-                    onClick={() => setMenuOpen(false)}
-                    className="flex flex-col items-center justify-center w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-xl border-[3px] border-white hover:scale-105 transition-transform"
+                  <button
+                    onClick={() => {
+                      setDrawerOpen(true);
+                      setMenuOpen(false);
+                    }}
+                    className="flex flex-col items-center justify-center w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-xl border-[3px] border-white hover:scale-105 transition-transform cursor-pointer"
                   >
                     <ShoppingBag className="w-6 h-6" />
-                    {cartCount > 0 && (
-                      <span className="absolute -top-1 -right-1 h-[18px] w-[18px] rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
-                        {cartCount}
-                      </span>
-                    )}
-                  </Link>
+                    <motion.span
+                      key={`bottom-nav-${cartCount}`}
+                      initial={{ scale: 0.8 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                      className="absolute -top-1 -right-1 h-[18px] w-[18px] rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm"
+                    >
+                      {cartCount}
+                    </motion.span>
+                  </button>
                 </div>
               </div>
 

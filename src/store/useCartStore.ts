@@ -9,12 +9,15 @@ export interface CartItem {
   price: number;
   quantity: number;
   image: string;
+  selected?: boolean;
   personalization?: {
     name?: string;
     customText?: string;
     fontStyle?: string;
     fontColor?: string;
     photoUrl?: string | null;
+    color?: string;
+    size?: string;
   } | null;
 }
 
@@ -50,6 +53,11 @@ interface CartState {
   
   fetchCart: (isAuthenticated: boolean) => Promise<void>;
   syncCart: (isAuthenticated: boolean) => Promise<void>;
+  isDrawerOpen: boolean;
+  setDrawerOpen: (open: boolean) => void;
+  toggleSelectItem: (id: string, isAuthenticated: boolean) => Promise<void>;
+  toggleAllSelection: (selected: boolean, isAuthenticated: boolean) => Promise<void>;
+  clearPurchasedItems: (isAuthenticated: boolean) => Promise<void>;
 }
 
 export const useCartStore = create<CartState>()(
@@ -75,6 +83,8 @@ export const useCartStore = create<CartState>()(
         isLoading: false,
         shippingRate: 18,
         freeShippingMin: 200,
+        isDrawerOpen: false,
+        setDrawerOpen: (open) => set({ isDrawerOpen: open }),
 
         addItem: async (item, isAuthenticated) => {
           const id = Math.random().toString(36).substring(2, 9);
@@ -89,10 +99,10 @@ export const useCartStore = create<CartState>()(
           let newItems;
           if (sameIndex !== -1) {
             newItems = currentItems.map((i, idx) => 
-              idx === sameIndex ? { ...i, quantity: i.quantity + item.quantity } : i
+              idx === sameIndex ? { ...i, quantity: i.quantity + item.quantity, selected: true } : i
             );
           } else {
-            newItems = [...currentItems, { ...item, id }];
+            newItems = [...currentItems, { ...item, id, selected: true }];
           }
 
           set({ items: newItems });
@@ -137,6 +147,44 @@ export const useCartStore = create<CartState>()(
           await dbSync([], isAuthenticated);
         },
 
+        toggleSelectItem: async (id, isAuthenticated) => {
+          const newItems = get().items.map((item) =>
+            item.id === id ? { ...item, selected: item.selected === false ? true : false } : item
+          );
+          set({ items: newItems });
+          
+          // If subtotal drops below coupon threshold, remove coupon
+          const subtotal = newItems.reduce((acc, item) => item.selected !== false ? acc + (item.price * item.quantity) : acc, 0);
+          const coupon = get().coupon;
+          if (coupon && subtotal < coupon.min_purchase_amount) {
+            set({ coupon: null });
+            toast.error("Coupon removed: subtotal fell below minimum purchase requirement");
+          }
+
+          await dbSync(newItems, isAuthenticated);
+        },
+
+        toggleAllSelection: async (selected, isAuthenticated) => {
+          const newItems = get().items.map((item) => ({ ...item, selected }));
+          set({ items: newItems });
+
+          // If subtotal drops below coupon threshold, remove coupon
+          const subtotal = newItems.reduce((acc, item) => item.selected !== false ? acc + (item.price * item.quantity) : acc, 0);
+          const coupon = get().coupon;
+          if (coupon && subtotal < coupon.min_purchase_amount) {
+            set({ coupon: null });
+            toast.error("Coupon removed: subtotal fell below minimum purchase requirement");
+          }
+
+          await dbSync(newItems, isAuthenticated);
+        },
+
+        clearPurchasedItems: async (isAuthenticated) => {
+          const remainingItems = get().items.filter(item => item.selected === false);
+          set({ items: remainingItems, coupon: null });
+          await dbSync(remainingItems, isAuthenticated);
+        },
+
         applyCoupon: (coupon) => {
           const subtotal = get().getTotal();
           if (subtotal < coupon.min_purchase_amount) {
@@ -153,7 +201,7 @@ export const useCartStore = create<CartState>()(
         },
 
         getTotal: () => {
-          return get().items.reduce((total, item) => total + item.price * item.quantity, 0);
+          return get().items.reduce((total, item) => item.selected !== false ? total + item.price * item.quantity : total, 0);
         },
 
         getDiscountAmount: () => {
@@ -235,6 +283,10 @@ export const useCartStore = create<CartState>()(
     },
     {
       name: "scarlet-thread-cart-v2", // changed name to avoid version collision
+      partialize: (state) => ({
+        items: state.items,
+        coupon: state.coupon,
+      }),
     }
   )
 );

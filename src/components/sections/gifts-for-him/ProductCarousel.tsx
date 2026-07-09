@@ -15,81 +15,6 @@ import {
 import { useProducts } from "@/hooks/use-products"
 import { ProductCard } from "@/components/product/ProductCard"
 
-const products = [
-  {
-    id: 1,
-    name: "Embroidered Hoodie",
-    price: 1499,
-    rating: 4.9,
-    reviews: 102,
-    imagePlaceholder: "Hoodie",
-    bestSeller: true,
-    image: "/images/forhimpage/scarlet-hoodie.png",
-    slug: "embroidered-hoodie",
-    compare_at_price: 1999,
-  },
-  {
-    id: 2,
-    name: "Embroidered Towel",
-    price: 899,
-    rating: 4.8,
-    reviews: 86,
-    imagePlaceholder: "Towel",
-    bestSeller: true,
-    image: "/images/forhimpage/scarlet-towel.png",
-    slug: "embroidered-towel",
-    compare_at_price: 1199,
-  },
-  {
-    id: 3,
-    name: "Travel Pouch",
-    price: 699,
-    rating: 4.9,
-    reviews: 44,
-    imagePlaceholder: "Pouch",
-    bestSeller: true,
-    image: "/images/forhimpage/scarlet-pouch.png",
-    slug: "travel-pouch",
-    compare_at_price: 999,
-  },
-  {
-    id: 4,
-    name: "Personalized Mug",
-    price: 449,
-    rating: 4.8,
-    reviews: 38,
-    imagePlaceholder: "Mug",
-    bestSeller: true,
-    image: "/images/forhimpage/scarlet-mug.png",
-    slug: "personalized-mug",
-    compare_at_price: 599,
-  },
-  {
-    id: 5,
-    name: "Embroidered Cap",
-    price: 499,
-    rating: 4.7,
-    reviews: 30,
-    imagePlaceholder: "Cap",
-    bestSeller: true,
-    image: "/images/forhimpage/scarlet-cap.png",
-    slug: "embroidered-cap",
-    compare_at_price: 699,
-  },
-  {
-    id: 6,
-    name: "Embroidery Gift Box",
-    price: 999,
-    rating: 4.9,
-    reviews: 57,
-    imagePlaceholder: "Box",
-    bestSeller: false,
-    image: "/images/forhimpage/scarlet-giftbox.png",
-    slug: "embroidery-gift-box",
-    compare_at_price: 1399,
-  },
-]
-
 export function ProductCarousel() {
   const { data: dbProducts = [] } = useProducts()
 
@@ -97,23 +22,22 @@ export function ProductCarousel() {
     const catProducts = dbProducts.filter(
       (p: any) => p.is_active && p.categories?.name === "Gifts For Him"
     )
-    if (catProducts.length > 0) {
-      return catProducts.map((p) => ({
-        id: p.id,
-        name: p.name,
-        price: p.price,
-        compare_at_price: p.compare_at_price,
-        rating: 4.9,
-        reviews: 100,
-        image: p.images?.[0]?.url || "/images/scarlet-lovedgift1.png",
-        imagePlaceholder: p.name ? p.name.split(" ")[0] : "Custom",
-        bestSeller: p.featured,
-        slug: p.slug,
-        is_personalized: p.is_personalized
-      }))
-    }
-    return products
+    return catProducts.map((p) => ({
+      id: p.id,
+      name: p.name,
+      price: p.price,
+      compare_at_price: p.compare_at_price,
+      rating: p.rating || 0,
+      reviews: p.reviews || 0,
+      image: p.images?.[0]?.url || "/images/scarlet-lovedgift1.png",
+      imagePlaceholder: p.name ? p.name.split(" ")[0] : "Custom",
+      bestSeller: p.featured,
+      slug: p.slug,
+      is_personalized: p.is_personalized
+    }))
   }, [dbProducts])
+
+  if (displayProducts.length === 0) return null
 
   return (
     <section className="py-3 lg:py-6 bg-white overflow-hidden">

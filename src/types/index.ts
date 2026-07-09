@@ -20,6 +20,8 @@ import {
 export interface ProductWithImages extends Product {
   images: ProductImage[];
   categories?: { name: string } | null;
+  rating?: number;
+  reviews?: number;
 }
 
 export interface ProductWithDetails extends Product {
@@ -28,6 +30,8 @@ export interface ProductWithDetails extends Product {
   sub_category?: Category | null;
   variants: ProductVariant[];
   templates: PersonalizationTemplate[];
+  rating?: number;
+  reviews?: number;
 }
 
 // 2. Composite Order Types

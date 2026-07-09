@@ -104,6 +104,11 @@ export function Footer() {
                   FAQs
                 </Link>
               </li>
+              <li>
+                <Link href="/blogs" className="hover:text-white hover:underline underline-offset-4 transition-colors font-medium">
+                  Blogs
+                </Link>
+              </li>
             </ul>
           </div>
 

@@ -37,7 +37,7 @@ export interface ProductCardProps {
 
 export function ProductCard({ product, className, buttonClassName, customTopRightAction, customActionButton }: ProductCardProps) {
   const href = `/product/${product.slug || product.id}`
-  const { addItem } = useCartStore()
+  const { addItem, setDrawerOpen } = useCartStore()
   const { toggleItem } = useWishlistStore()
   const wishlistItems = useWishlistStore((state) => state.items)
   const [isWishlisted, setIsWishlisted] = React.useState(false)
@@ -99,6 +99,11 @@ export function ProductCard({ product, className, buttonClassName, customTopRigh
       await addItem(cartItem, false)
       const shortName = product.name.length > 25 ? product.name.substring(0, 25) + "..." : product.name
       toast.success(`${shortName} added to cart!`)
+      
+      // Auto open drawer
+      setTimeout(() => {
+        setDrawerOpen(true)
+      }, 250)
     } catch (err) {
       console.error(err)
       toast.error("Failed to add product to cart")
@@ -176,15 +181,27 @@ export function ProductCard({ product, className, buttonClassName, customTopRigh
             </h3>
 
             {/* Ratings */}
-            <div className="flex items-center gap-1 mt-1 max-sm:mt-0.5 text-[11px] max-sm:text-[10px] text-slate-500 dark:text-slate-400">
-              <div className="flex text-yellow-400">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3 h-3 max-sm:w-2.5 max-sm:h-2.5 fill-current text-yellow-400" />
-                ))}
+            {product.reviews && product.reviews > 0 ? (
+              <div className="flex items-center gap-1 mt-1 max-sm:mt-0.5 text-[11px] max-sm:text-[10px] text-slate-500 dark:text-slate-400">
+                <div className="flex text-yellow-400">
+                  {[...Array(5)].map((_, i) => {
+                    const starVal = i + 1;
+                    const isFilled = starVal <= Math.round(product.rating || 0);
+                    return (
+                      <Star 
+                        key={i} 
+                        className={cn(
+                          "w-3 h-3 max-sm:w-2.5 max-sm:h-2.5 fill-current",
+                          isFilled ? "text-yellow-400" : "text-slate-350 dark:text-slate-650 fill-none"
+                        )} 
+                      />
+                    );
+                  })}
+                </div>
+                <span className="font-semibold">{(product.rating || 0).toFixed(1)}</span>
+                <span className="opacity-60">({product.reviews})</span>
               </div>
-              <span className="font-semibold">{product.rating || 4.9}</span>
-              <span className="opacity-60">({product.reviews || 100})</span>
-            </div>
+            ) : null}
           </div>
 
           <div className="sm:border-t sm:pt-2 border-slate-50 dark:border-slate-800/60 mt-auto">

@@ -17,13 +17,13 @@ interface ProductDetailsReviewsSplitProps {
 
 export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSplitProps) {
   const productId = product?.id || "f3a0e660-31e0-4966-9e1f-7b0028ed2cd4";
-  
+
   const { data: reviews = [], isLoading } = useProductReviews(productId);
   const submitReviewMutation = useSubmitReview();
-  
+
   const [user, setUser] = useState<any>(null);
   const [showReviewForm, setShowReviewForm] = useState(false);
-  
+
   // Review submission state
   const [rating, setRating] = useState(5);
   const [title, setTitle] = useState("");
@@ -66,14 +66,14 @@ export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSpl
 
   // Review calculations
   const totalReviewsCount = reviews.length;
-  const averageRating = totalReviewsCount > 0 
-    ? Number((reviews.reduce((acc, r) => acc + r.rating, 0) / totalReviewsCount).toFixed(1)) 
-    : 5.0;
+  const averageRating = totalReviewsCount > 0
+    ? Number((reviews.reduce((acc, r) => acc + r.rating, 0) / totalReviewsCount).toFixed(1))
+    : 0.0;
 
   // Star bars
   const distribution = [5, 4, 3, 2, 1].map(stars => {
     const count = reviews.filter(r => r.rating === stars).length;
-    const percentage = totalReviewsCount > 0 ? Math.round((count / totalReviewsCount) * 100) : stars === 5 ? 100 : 0;
+    const percentage = totalReviewsCount > 0 ? Math.round((count / totalReviewsCount) * 100) : 0;
     return { stars, percentage };
   });
 
@@ -81,7 +81,7 @@ export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSpl
     <section className="py-16 bg-slate-50/30 dark:bg-slate-950/20 border-t border-slate-100 dark:border-slate-800">
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="flex flex-col lg:flex-row gap-12">
-          
+
           {/* Left: Specs Panel */}
           {specs.length > 0 && (
             <div className="flex-1 lg:w-1/3">
@@ -107,7 +107,7 @@ export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSpl
                 Customer Reviews
               </h3>
               {user ? (
-                <Button 
+                <Button
                   onClick={() => setShowReviewForm(!showReviewForm)}
                   className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold px-3 py-1.5 flex items-center gap-1 shadow-sm transition"
                 >
@@ -137,12 +137,11 @@ export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSpl
                           onClick={() => setRating(stars)}
                           className="focus:outline-none"
                         >
-                          <Star 
-                            className={`w-6 h-6 ${
-                              stars <= rating 
-                                ? "fill-amber-400 text-amber-400 scale-105" 
+                          <Star
+                            className={`w-6 h-6 ${stars <= rating
+                                ? "fill-amber-400 text-amber-400 scale-105"
                                 : "text-slate-300 hover:text-amber-300"
-                            } transition`} 
+                              } transition`}
                           />
                         </button>
                       ))}
@@ -161,16 +160,16 @@ export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSpl
                   </div>
 
                   <div className="flex justify-end gap-2 pt-1">
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      onClick={() => setShowReviewForm(false)} 
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowReviewForm(false)}
                       className="rounded-xl text-xs font-bold"
                     >
                       Cancel
                     </Button>
-                    <Button 
-                      type="submit" 
+                    <Button
+                      type="submit"
                       disabled={submitReviewMutation.isPending}
                       className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold px-4"
                     >
@@ -184,7 +183,7 @@ export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSpl
             {/* Ratings Overview Card */}
             <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm">
               <div className="flex flex-col md:flex-row gap-8">
-                
+
                 {/* Score */}
                 <div className="w-full md:w-1/3 flex flex-col justify-center items-center md:items-start md:border-r border-slate-100 dark:border-slate-800/80 md:pr-8">
                   <div className="text-6xl font-heading font-extrabold text-slate-800 dark:text-slate-100 flex items-baseline gap-1">
@@ -192,16 +191,15 @@ export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSpl
                   </div>
                   <div className="flex text-amber-500 my-2">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star 
-                        key={i} 
-                        className={`w-4 h-4 ${
-                          i < Math.round(averageRating) ? "fill-amber-500" : "text-slate-200 dark:text-slate-800"
-                        }`} 
+                      <Star
+                        key={i}
+                        className={`w-4 h-4 ${i < Math.round(averageRating) ? "fill-amber-500" : "text-slate-200 dark:text-slate-800"
+                          }`}
                       />
                     ))}
                   </div>
                   <span className="text-xs font-bold text-slate-400">
-                    Based on {totalReviewsCount || 5} feedback reviews
+                    Based on {totalReviewsCount} {totalReviewsCount === 1 ? "feedback review" : "feedback reviews"}
                   </span>
                 </div>
 
