@@ -223,7 +223,7 @@ export function Footer() {
         </div>
 
         {/* Footer Bottom bar */}
-        <div className="pt-3 mt-6 sm:mt-3 border-t border-white/10 flex flex-col items-center justify-center text-center pb-4 sm:pb-0">
+        <div className="pt-3 mt-6 sm:mt-3 border-t border-white/10 flex flex-col items-center justify-center text-center pb-10 sm:pb-6">
           <div className="text-xs sm:text-sm text-white/70 flex flex-row flex-wrap sm:flex-col items-center justify-center gap-x-2 gap-y-0.5 sm:gap-2">
             <span>© {new Date().getFullYear()} The Scarlet Thread. All rights reserved.</span>
             <span className="flex items-center gap-1">

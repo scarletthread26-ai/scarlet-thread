@@ -18,7 +18,7 @@ export interface GalleryImage {
 
 export interface CraftedGallerySectionProps {
   /** Section heading text */
-  heading: string
+  heading: React.ReactNode
   /** API category query param e.g. "him" | "her" | "kids" */
   category: string
   /** Link href for "View More Creations" button */
@@ -99,7 +99,7 @@ export function CraftedGallerySection({
     scrollRef.current?.scrollBy({ left: 320, behavior: "smooth" })
 
   return (
-    <section className={`py-12 sm:py-16 ${bgColor} overflow-hidden`}>
+    <section className={`pt-2 pb-10 sm:py-16 overflow-hidden`}>
       <motion.div
         variants={scaleUp(1.02, 0)}
         initial="hidden"
@@ -113,17 +113,17 @@ export function CraftedGallerySection({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-8 sm:mb-10"
+          className="md:text-center  text-start mb-8 sm:mb-10"
         >
-          <h2 className="text-2xl md:text-3xl font-heading font-bold inline-flex items-center justify-center gap-2">
+          <h2 className="text-2xl md:text-3xl font-heading font-bold inline-flex items-center md:justify-center gap-2">
             {heading}
-            <motion.span
+            {/* <motion.span
               animate={{ scale: [1, 1.3, 1], rotate: [0, 6, -6, 0] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               className="inline-block"
             >
               <Heart className="w-5 h-5 text-primary fill-transparent" />
-            </motion.span>
+            </motion.span> */}
           </h2>
         </motion.div>
 
