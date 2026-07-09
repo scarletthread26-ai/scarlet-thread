@@ -6,52 +6,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useProducts } from "@/hooks/use-products"
 
-const products = [
-  {
-    id: 1,
-    name: "Mama Heart Hoodie",
-    category: "Hoodies",
-    price: 1499,
-    rating: 4.9,
-    reviews: 120,
-    imagePlaceholder: "Mama",
-    image: "/images/scarlet-lovedgift1.png",
-    compare_at_price: 1999,
-  },
-  {
-    id: 2,
-    name: "Personalized Hooded Towel",
-    category: "Towels",
-    price: 899,
-    rating: 4.8,
-    reviews: 86,
-    imagePlaceholder: "Aryan",
-    image: "/images/scarlet-lovedgift2.png",
-    compare_at_price: 1199,
-  },
-  {
-    id: 3,
-    name: "Bride Cosmetic Pouch",
-    category: "Pouches",
-    price: 699,
-    rating: 4.9,
-    reviews: 44,
-    imagePlaceholder: "Bride",
-    image: "/images/scarlet-lovedgift3.png",
-    compare_at_price: 999,
-  },
-  {
-    id: 4,
-    name: "Teacher's Day Notebook",
-    category: "Notebooks",
-    price: 449,
-    rating: 4.7,
-    reviews: 32,
-    imagePlaceholder: "Best Teacher",
-    image: "/images/scarlet-lovedgift4.png",
-    compare_at_price: 599,
-  },
-]
+// Static products fallback removed
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -166,8 +121,8 @@ export function ProductGrid() {
           category: p.categories?.name || "Apparel",
           price: p.price,
           compare_at_price: p.compare_at_price,
-          rating: 4.9,
-          reviews: 100,
+          rating: p.rating || 0,
+          reviews: p.reviews || 0,
           imagePlaceholder: p.name ? p.name.split(" ")[0] : "Custom",
           image: p.images?.[0]?.url || "/images/scarlet-lovedgift1.png",
           slug: p.slug
@@ -183,18 +138,20 @@ export function ProductGrid() {
         category: p.categories?.name || "Apparel",
         price: p.price,
         compare_at_price: p.compare_at_price,
-        rating: 4.9,
-        reviews: 100,
+        rating: p.rating || 0,
+        reviews: p.reviews || 0,
         imagePlaceholder: p.name ? p.name.split(" ")[0] : "Custom",
         image: p.images?.[0]?.url || "/images/scarlet-lovedgift1.png",
         slug: p.slug
       }))
     }
-    return products
+    return []
   }, [dbProducts, sectionData])
 
   const title = sectionData?.title || "Our Most Loved Gifts"
   const subtitle = sectionData?.subtitle || "Carefully selected and thoughtfully crafted to bring joy, create meaningful connections, and make every moment feel extra special."
+
+  if (!showSkeleton && displayProducts.length === 0) return null
 
   return (
     <section className="py-5 md:pb-24 bg-[#F9F5FF]">

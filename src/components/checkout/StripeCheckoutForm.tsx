@@ -17,6 +17,9 @@ interface StripeCheckoutFormProps {
   name?: string;
   phone?: string;
   postalCode?: string;
+  addressLine1?: string;
+  city?: string;
+  state?: string;
   onPaymentSuccess: () => Promise<void>;
   isOrderPending: boolean;
 }
@@ -28,6 +31,9 @@ export default function StripeCheckoutForm({
   name,
   phone,
   postalCode,
+  addressLine1,
+  city,
+  state,
   onPaymentSuccess,
   isOrderPending,
 }: StripeCheckoutFormProps) {
@@ -83,6 +89,9 @@ export default function StripeCheckoutForm({
               address: {
                 country: countryCode,
                 postal_code: postalCode || "00000",
+                line1: addressLine1 || "Main Street",
+                city: city || "Dubai",
+                state: state || "Dubai",
               },
             },
           },

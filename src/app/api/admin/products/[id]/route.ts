@@ -17,18 +17,27 @@ export async function GET(
         *,
         categories:categories!products_category_id_fkey(*),
         product_images(*),
-        personalization_templates(*)
+        personalization_templates(*),
+        reviews(rating)
       `);
 
     const { data: product, error } = await (isUUID ? baseQuery.eq("id", id) : baseQuery.eq("slug", id)).single();
 
     if (error) throw error;
 
+    const prodReviews = product.reviews || [];
+    const reviewsCount = prodReviews.length;
+    const averageRating = reviewsCount > 0
+      ? Number((prodReviews.reduce((sum: number, r: any) => sum + r.rating, 0) / reviewsCount).toFixed(1))
+      : 0;
+
     const mapped = {
       ...product,
       category: product.categories,
       images: product.product_images || [],
-      templates: product.personalization_templates || []
+      templates: product.personalization_templates || [],
+      rating: reviewsCount > 0 ? averageRating : 0,
+      reviews: reviewsCount
     };
 
     return NextResponse.json(mapped);

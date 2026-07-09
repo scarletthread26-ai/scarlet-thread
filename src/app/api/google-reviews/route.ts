@@ -105,6 +105,12 @@ export async function GET() {
     // Combine them
     let allReviews = [...googleReviews, ...manualReviews];
 
+    // Sort by rating desc, then date desc
+    allReviews.sort((a, b) => {
+      if (b.rating !== a.rating) return b.rating - a.rating;
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+
     const hasConfig = !!(settings?.is_active && settings.content?.place_id);
     const hasDbData = manualReviews.length > 0;
 
@@ -112,15 +118,10 @@ export async function GET() {
       allReviews = MOCK_GOOGLE_REVIEWS;
     }
 
-    // Sort by rating desc, then date desc
-    allReviews.sort((a, b) => {
-      if (b.rating !== a.rating) return b.rating - a.rating;
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    });
-
     return NextResponse.json({
       reviews: allReviews,
       totalCount: allReviews.length,
+      is_active: settings?.is_active !== false,
       settings: settings?.content || {}
     });
   } catch (error: any) {

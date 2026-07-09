@@ -49,7 +49,7 @@ export default function ProductDetailPage({ params }: PageProps) {
       </div>
 
       <ProductDetailsReviewsSplit product={product} />
-      <RelatedProductsCarousel />
+      <RelatedProductsCarousel currentProduct={product} />
     </div>
   );
 }
