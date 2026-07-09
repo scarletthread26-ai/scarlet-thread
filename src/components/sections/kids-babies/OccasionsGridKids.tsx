@@ -38,5 +38,5 @@ const occasions = [
 ]
 
 export function OccasionsGridKids() {
-  return <OccasionsGrid occasions={occasions} heading="Gifts For Every Occasion" />
+  return <OccasionsGrid occasions={occasions} heading={<>Gifts For Every <span className="text-primary">Occasion</span></>} />
 }

@@ -324,13 +324,13 @@ export default function CheckoutPage() {
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           disabled={isAuthenticated}
-                          className="rounded-lg border-slate-300"
+                          className="h-12 rounded-lg border-slate-300"
                         />
                       </div>
                       <div className="space-y-1.5">
                         <Label htmlFor="phone" className="font-semibold text-slate-700 dark:text-slate-300">Phone Number *</Label>
                         <div className="flex">
-                          <span className="inline-flex items-center gap-1 px-3 rounded-l-lg border border-r-0 border-slate-300 bg-slate-50 text-slate-500 text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 select-none">
+                          <span className="inline-flex h-12 items-center gap-1 px-3 rounded-l-lg border border-r-0 border-slate-300 bg-slate-50 text-slate-500 text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 select-none">
                             <span className="text-base">🇦🇪</span>
                             <span className="font-medium">+971</span>
                           </span>
@@ -338,12 +338,21 @@ export default function CheckoutPage() {
                             id="phone"
                             type="tel"
                             required
-                            placeholder="50 XX XXXX"
+                            placeholder="50 XXXXXXX"
                             value={phone}
-                            onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
-                            className="rounded-r-lg rounded-l-none border-slate-300 flex-1"
+                            onChange={(e) => {
+                              const val = e.target.value.replace(/\D/g, "");
+                              setPhone(val.slice(0, 9));
+                            }}
+                            pattern="^5[024568][0-9]{7}$"
+                            title="Please enter a valid UAE mobile number starting with 5 (e.g., 501234567)"
+                            maxLength={9}
+                            className={`h-12 rounded-r-lg rounded-l-none border-slate-300 flex-1 ${phone && !/^5[024568][0-9]{7}$/.test(phone) ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                           />
                         </div>
+                        {phone && !/^5[024568][0-9]{7}$/.test(phone) && (
+                          <p className="text-[11px] text-red-500 font-medium">Please enter a valid UAE mobile number (9 digits, starting with 5).</p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -408,7 +417,7 @@ export default function CheckoutPage() {
                           placeholder="First Name"
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
-                          className="rounded-lg border-slate-300"
+                          className="h-12 rounded-lg border-slate-300"
                         />
                       </div>
                       <div className="space-y-1.5">
@@ -419,7 +428,7 @@ export default function CheckoutPage() {
                           placeholder="Last Name"
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
-                          className="rounded-lg border-slate-300"
+                          className="h-12 rounded-lg border-slate-300"
                         />
                       </div>
                       <div className="space-y-1.5 md:col-span-2">
@@ -430,7 +439,7 @@ export default function CheckoutPage() {
                           placeholder="Building, Street, Area, Landmark"
                           value={addressLine1}
                           onChange={(e) => setAddressLine1(e.target.value)}
-                          className="rounded-lg border-slate-300"
+                          className="h-12 rounded-lg border-slate-300"
                         />
                       </div>
                       <div className="space-y-1.5 md:col-span-2">
@@ -441,7 +450,7 @@ export default function CheckoutPage() {
                           placeholder="Flat/Villa/Floor number"
                           value={addressLine2}
                           onChange={(e) => setAddressLine2(e.target.value)}
-                          className="rounded-lg border-slate-300"
+                          className="h-12 rounded-lg border-slate-300"
                         />
                       </div>
                       <div className="space-y-1.5 md:col-span-2">
@@ -453,7 +462,7 @@ export default function CheckoutPage() {
                             setCity(val || "");
                           }}
                         >
-                          <SelectTrigger id="state" className="w-full h-10 rounded-lg border border-slate-300 bg-white pr-3 text-slate-800">
+                          <SelectTrigger id="state" className="w-full h-12 rounded-lg border border-slate-300 bg-white pr-3 text-slate-800">
                             <SelectValue placeholder="Please Select Delivery Emirate" />
                           </SelectTrigger>
                           <SelectContent className="bg-white border border-slate-200 shadow-xl rounded-xl">
@@ -472,7 +481,7 @@ export default function CheckoutPage() {
                           placeholder="Delivery instructions (e.g. leave at door, ring bell twice)"
                           value={notes}
                           onChange={(e) => setNotes(e.target.value)}
-                          className="rounded-lg border-slate-300"
+                          className="h-12 rounded-lg border-slate-300"
                         />
                       </div>
                     </div>
@@ -482,7 +491,7 @@ export default function CheckoutPage() {
                     type="submit"
                     size="lg"
                     disabled={isCreatingIntent}
-                    className="rounded-full w-full font-bold shadow-md bg-primary hover:bg-primary/95 text-white gap-2"
+                    className="h-13 rounded-full w-full font-bold shadow-md bg-primary hover:bg-primary/95 text-white gap-2"
                   >
                     {isCreatingIntent ? (
                       <>
@@ -630,7 +639,7 @@ export default function CheckoutPage() {
 
         {/* Order Summary Column */}
         <div className="lg:col-span-1">
-          <Card className="border-slate-200/60 dark:border-slate-800/80 rounded-2xl shadow-md sticky top-24">
+          <Card className="border-slate-200/60 dark:border-slate-800/80 rounded-2xl shadow-md sticky top-30">
             <CardContent className="p-6">
               <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-6">Order Summary</h2>
 

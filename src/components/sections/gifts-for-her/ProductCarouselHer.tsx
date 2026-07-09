@@ -104,7 +104,7 @@ export function ProductCarouselHer() {
   }, [dbProducts])
 
   return (
-    <section className="py-3 lg:py-6 bg-white overflow-hidden">
+    <section className="py-10 lg:py-6 bg-white overflow-hidden">
       <div className="container mx-auto px-4 max-w-7xl">
 
         {/* Heading */}
@@ -113,11 +113,11 @@ export function ProductCarouselHer() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-8"
+          className="md:text-center text-start mb-4"
         >
-          <h2 className="text-3xl font-heading font-bold flex items-center justify-center gap-2">
-            Most Loved Gifts For Her{" "}
-            <motion.div
+          <h2 className="md:text-3xl text-2xl font-heading font-bold flex items-center md:justify-center gap-2">
+            Most Loved Gifts For <span className="text-primary">Her</span>{" "}
+            {/* <motion.div
               animate={{
                 y: [0, -4, 0],
                 rotate: [0, 10, -10, 0],
@@ -129,9 +129,9 @@ export function ProductCarouselHer() {
               className="inline-block"
             >
               <Heart className="w-5 h-5 text-[#c0004e] fill-[#c0004e]" />
-            </motion.div>
+            </motion.div> */}
           </h2>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground">
             Handpicked with love, just for her
           </p>
         </motion.div>
@@ -142,7 +142,7 @@ export function ProductCarouselHer() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-0 sm:gap-4 md:gap-6 sm:px-2 md:px-10 max-sm:border-t max-sm:border-slate-200/50 dark:max-sm:border-slate-800/80 max-sm:bg-white dark:max-sm:bg-slate-900"
+          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 sm:px-2 md:px-10"
         >
           {displayProducts.slice(0, 4).map((product, idx) => {
             const formattedProduct = {
@@ -162,16 +162,11 @@ export function ProductCarouselHer() {
             return (
               <div
                 key={product.id}
-                className={cn(
-                  "h-full sm:pt-2 sm:pb-6 group cursor-pointer",
-                  "max-sm:border-b max-sm:border-slate-200/50 dark:max-sm:border-slate-800/80",
-                  idx % 2 === 0 ? "max-sm:border-r" : ""
-                )}
+                className="h-full sm:pt-2 sm:pb-6 group cursor-pointer"
               >
                 <ProductCard 
                   product={formattedProduct} 
-                  buttonClassName="bg-[#c0004e] hover:bg-[#a0003f] text-white" 
-                  className="max-sm:rounded-none max-sm:border-0 max-sm:shadow-none"
+                  buttonClassName="bg-[#4b0082] hover:bg-[#3d0069] text-white" 
                 />
               </div>
             );
@@ -184,7 +179,7 @@ export function ProductCarouselHer() {
             href="/products?category=gifts-for-her"
             className={cn(
               buttonVariants({ variant: "default" }),
-              "px-8 py-5 h-13 rounded-xl text-xs sm:text-sm font-bold bg-[#c0004e] hover:bg-[#a0003f] text-white transition-transform hover:-translate-y-0.5 active:translate-y-0 shadow-md shadow-[#c0004e]/10"
+              "px-8 py-5 h-13 rounded-xl text-xs sm:text-sm font-bold bg-[#4b0082] hover:bg-[#3d0069] text-white transition-transform hover:-translate-y-0.5 active:translate-y-0 shadow-md shadow-[#4b0082]/10"
             )}
           >
             View All Gifts For Her

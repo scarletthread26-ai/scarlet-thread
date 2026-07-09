@@ -14,7 +14,7 @@ const fallbackImages = [
 export function CraftedGalleryHer() {
   return (
     <CraftedGallerySection
-      heading="Loved By Her, Crafted By Us"
+      heading={<>Made with love for <span className="text-primary">her</span></>}
       category="her"
       galleryHref="/gallery?category=her#gallery-grid"
       fallbackImages={fallbackImages}
