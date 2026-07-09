@@ -41,7 +41,7 @@ export interface CommonHeroProps {
   /** Label for the primary CTA button */
   primaryLabel?: string
   /** URL for the secondary outline CTA button */
-  secondaryHref: string
+  secondaryHref?: string
   /** Label for the secondary outline CTA button */
   secondaryLabel?: string
 
@@ -120,9 +120,23 @@ export function CommonHero({
 
   return (
     <section
-      className="relative h-[100svh] md:h-auto md:py-6 mb-16 md:mb-20"
+      className="relative md:py-6 mb-6 md:mb-20"
       style={{ backgroundColor: bgColor }}
     >
+      {/* ── Mobile background image (static to set section height) ── */}
+      <motion.div
+        initial={{ scale: 1.15 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 2.5, ease: "easeOut" }}
+        className="w-full md:hidden"
+      >
+        <img
+          src={mobileImage}
+          alt={imageAlt}
+          className="w-full h-auto object-cover"
+        />
+      </motion.div>
+
       {/* ── Background Wrapper (clips scaled images and blobs) ── */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* ── Desktop background image ── */}
@@ -139,22 +153,7 @@ export function CommonHero({
           />
         </motion.div>
 
-        {/* ── Mobile background image ── */}
-        <motion.div
-          initial={{ scale: 1.15 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 2.5, ease: "easeOut" }}
-          className="absolute inset-0 md:hidden"
-        >
-          <img
-            src={mobileImage}
-            alt={imageAlt}
-            className="w-full h-full object-cover object-top"
-          />
-        </motion.div>
-
-        {/* ── Mobile-only white gradient overlay on the background ── */}
-        <div className="md:hidden absolute inset-0 bg-gradient-to-t from-white/90 via-white/60 to-transparent" />
+        {/* ── Mobile-only white gradient overlay removed as content is baked into mobile image ── */}
 
         {/* ── Floating decorative blobs ── */}
         <motion.div
@@ -178,9 +177,9 @@ export function CommonHero({
         animate="show"
         className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 lg:px-16 relative z-10 h-full"
       >
-        <div className="flex flex-col md:flex-row items-end md:items-center gap-12 h-[100svh] md:h-auto md:min-h-[500px]">
+        <div className="flex flex-col md:flex-row items-end md:items-center gap-12 md:h-auto md:min-h-[500px]">
           {/* Left content */}
-          <div className="flex-1 text-left pb-24 sm:pb-32 md:pb-0 md:py-0 flex flex-col justify-end md:justify-center h-full">
+          <div className="hidden md:flex flex-1 text-left md:pb-0 md:py-0 flex-col md:justify-center h-full">
 
             <motion.div
               variants={fadeUp(0.8, 40)}
@@ -241,25 +240,27 @@ export function CommonHero({
                 </Link>
               </motion.div>
 
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.96 }} className="hidden md:block">
-                <Link
-                  href={secondaryHref}
-                  className="inline-flex h-10 md:h-11 items-center rounded-full border bg-white/60 px-6 text-[0.78rem] md:text-sm font-semibold backdrop-blur-sm transition-all duration-200 hover:bg-white hover:-translate-y-px active:translate-y-0"
-                  style={{
-                    borderColor: `${accentColor}99`,
-                    color: accentColor,
-                  }}
-                >
-                  {secondaryLabel}
-                  <motion.div
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                    className="inline-block"
+              {secondaryHref && (
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.96 }} className="hidden md:block">
+                  <Link
+                    href={secondaryHref}
+                    className="inline-flex h-10 md:h-11 items-center rounded-full border bg-white/60 px-6 text-[0.78rem] md:text-sm font-semibold backdrop-blur-sm transition-all duration-200 hover:bg-white hover:-translate-y-px active:translate-y-0"
+                    style={{
+                      borderColor: `${accentColor}99`,
+                      color: accentColor,
+                    }}
                   >
-                    <ArrowRight className="ml-1 h-4 w-4" />
-                  </motion.div>
-                </Link>
-              </motion.div>
+                    {secondaryLabel}
+                    <motion.div
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className="inline-block"
+                    >
+                      <ArrowRight className="ml-1 h-4 w-4" />
+                    </motion.div>
+                  </Link>
+                </motion.div>
+              )}
             </motion.div>
 
 
@@ -271,7 +272,7 @@ export function CommonHero({
       </motion.div>
 
       {/* ── Floating Feature Bar ── */}
-      <FloatingFeatureBar />
+      <FloatingFeatureBar className="hidden md:block absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-30 w-[95%] max-w-5xl mx-auto" />
     </section>
   )
 }

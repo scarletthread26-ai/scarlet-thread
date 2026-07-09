@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/carousel"
 import { useProducts } from "@/hooks/use-products"
 import { ProductCard } from "@/components/product/ProductCard"
+import { MobileProductCard } from "@/components/sections/FeaturedBanner"
 
 export function ProductCarouselKids() {
   const { data: dbProducts = [] } = useProducts()
@@ -78,7 +79,7 @@ export function ProductCarouselKids() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 sm:px-2 md:px-10"
+          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-2 sm:gap-4 md:gap-6 px-1 sm:px-2 md:px-10"
         >
           {displayProducts.slice(0, 4).map((product, idx) => {
             const formattedProduct = {
@@ -100,9 +101,14 @@ export function ProductCarouselKids() {
                 key={product.id}
                 className="h-full sm:pt-2 sm:pb-6 group cursor-pointer"
               >
-                <ProductCard 
-                  product={formattedProduct} 
-                />
+                <div className="sm:hidden w-full h-full">
+                  <MobileProductCard product={formattedProduct} />
+                </div>
+                <div className="hidden sm:block w-full h-full">
+                  <ProductCard 
+                    product={formattedProduct} 
+                  />
+                </div>
               </div>
             );
           })}

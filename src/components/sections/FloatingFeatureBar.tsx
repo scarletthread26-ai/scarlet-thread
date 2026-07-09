@@ -1,8 +1,12 @@
 import { GiftIcon, HeartIcon, StarIcon, ShieldCheck } from "lucide-react"
 
-export function FloatingFeatureBar() {
+interface FloatingFeatureBarProps {
+  className?: string
+}
+
+export function FloatingFeatureBar({ className }: FloatingFeatureBarProps) {
   return (
-    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-30 w-[95%] max-w-5xl mx-auto">
+    <div className={className || "absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-30 w-[95%] max-w-5xl mx-auto"}>
       <div className="bg-white rounded-[24px] md:rounded-[40px] shadow-[0_8px_30px_rgb(0,0,0,0.08)] py-5 md:py-5 px-2 sm:px-6 md:px-12 grid grid-cols-2 md:flex justify-between items-center border border-border/40 gap-y-5 md:gap-y-0 gap-x-2 md:gap-x-0">
         {/* Item 1 */}
         <div className="flex items-center justify-center md:justify-start gap-3 md:gap-4 w-full md:w-auto">

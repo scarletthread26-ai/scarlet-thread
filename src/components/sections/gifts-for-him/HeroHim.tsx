@@ -33,7 +33,7 @@ export function HeroHim() {
     "/images/forhimpage/scarlet-forhimbanner.png"
   const mobileImage =
     sectionData?.content?.image_mobile ||
-    "/images/forhimpage/scarlet-mobilebanner.png"
+    "/images/forhimpage/forhim-mobile-banner.png"
 
   return (
     <CommonHero
