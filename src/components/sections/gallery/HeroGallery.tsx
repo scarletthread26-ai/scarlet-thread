@@ -26,9 +26,9 @@ export function HeroGallery() {
       />
 
       {/* ── Content row ── */}
-      <div className="relative flex min-h-[240px] flex-col md:flex-row md:min-h-[280px] lg:min-h-[300px]">
+      <div className="relative flex min-h-[90dvh] md:min-h-[100dvh] flex-col md:flex-row">
         {/* ── Left Content ── */}
-        <div className="relative z-10 flex flex-[1.3] flex-col justify-center px-8 py-23 md:pl-14 md:pr-6 lg:pl-20 md:max-w-[60%]">
+        <div className="relative z-10 flex flex-[1.3] flex-col justify-end pb-16 md:pb-0 md:justify-center px-8 pt-32 md:py-16 md:pl-14 md:pr-6 lg:pl-20 md:max-w-[60%]">
           {/* Badge */}
           <div className="mb-3 flex items-center gap-1.5">
             <span
@@ -43,9 +43,8 @@ export function HeroGallery() {
 
           {/* Headline */}
           <h1 className="mb-3 font-sans text-[1.75rem] font-extrabold leading-[1.18] text-[#111] md:text-[2.2rem] lg:text-[2.6rem]">
-            Real Gifts.<br />
-            Real Smiles.<br />
-            Real <span className="text-[#4b0082]">Memories.</span>
+            Real Gifts,Real Smiles,<br />
+           <span className="text-[#4b0082]"> Real Memories.</span>
           </h1>
 
           {/* Sub-text */}
@@ -57,7 +56,7 @@ export function HeroGallery() {
           <div className="mb-6 flex flex-wrap items-center gap-2.5">
             <Link
               href="/products"
-              className="inline-flex h-9 items-center rounded-[5px] border border-[#8059BB]/60  px-5 text-[0.78rem] bg-[#4b0082] text-white backdrop-blur-sm transition-all duration-200 hover:bg-[#996cdc] hover:-translate-y-px active:translate-y-0"
+              className="inline-flex h-12 items-center rounded-full border border-[#8059BB]/60  px-5 text-[0.78rem] bg-[#4b0082] text-white backdrop-blur-sm transition-all duration-200 hover:-translate-y-px active:translate-y-0"
             >
               Explore Our Collection
               <ArrowRight className="ml-1 h-3 w-3" />
@@ -69,12 +68,4 @@ export function HeroGallery() {
   );
 }
 
-/* ── Helper ── */
-function TrustBadge({ icon, label }: { icon: React.ReactNode; label: string }) {
-  return (
-    <div className="flex items-center gap-1.5 rounded-full bg-white/55 px-3 py-1 text-[0.7rem] font-medium text-[#444] shadow-sm backdrop-blur-sm">
-      <span className="text-[#8059BB]">{icon}</span>
-      <span dangerouslySetInnerHTML={{ __html: label }} />
-    </div>
-  );
-}
+

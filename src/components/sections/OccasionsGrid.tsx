@@ -22,7 +22,7 @@ export interface OccasionItem {
 export interface OccasionsGridProps {
   occasions: OccasionItem[]
   /** Section heading — shown above the grid */
-  heading?: string
+  heading?: React.ReactNode
   /** Show the animated heart icon next to the heading */
   showHeartIcon?: boolean
 }
@@ -36,7 +36,7 @@ export function OccasionsGrid({
   showHeartIcon = true,
 }: OccasionsGridProps) {
   return (
-    <section className="py-10 sm:py-14 bg-white overflow-hidden perspective-1000">
+    <section className="pb-10 sm:py-14 bg-white overflow-hidden perspective-1000">
       <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 lg:px-16">
 
         {/* ── Heading ── */}
@@ -45,11 +45,11 @@ export function OccasionsGrid({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.55 }}
-          className="text-center mb-8 sm:mb-10"
+          className="md:text-center text-start mb-8 sm:mb-10"
         >
-          <h2 className="text-2xl md:text-3xl font-heading font-bold inline-flex items-center justify-center gap-2">
+          <h2 className="text-2xl md:text-3xl font-heading font-bold inline-flex items-center md:justify-center gap-2">
             {heading}
-            {showHeartIcon && (
+            {/* {showHeartIcon && (
               <motion.span
                 animate={{ scale: [1, 1.25, 1], rotate: [0, 5, -5, 0] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
@@ -57,7 +57,7 @@ export function OccasionsGrid({
               >
                 <Heart className="w-5 h-5 text-primary fill-transparent" />
               </motion.span>
-            )}
+            )} */}
           </h2>
         </motion.div>
 

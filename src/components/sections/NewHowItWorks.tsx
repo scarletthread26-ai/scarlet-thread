@@ -99,7 +99,7 @@ export function NewHowItWorks() {
           {/* Heading */}
           <div className="text-start sm:text-center mb-12 md:mb-16">
             <motion.h2
-              className="text-3xl sm:text-3xl md:text-4xl font-bold text-[#1A1530] tracking-wide mb-3"
+              className="text-3xl sm:text-3xl md:text-4xl font-bold text-[#1A1530] tracking-wide"
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
@@ -108,7 +108,7 @@ export function NewHowItWorks() {
               {title}
             </motion.h2>
             <motion.p
-              className="text-[13px] md:text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+              className="text-[13px] md:text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed mt-0"
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}

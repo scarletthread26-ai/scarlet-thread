@@ -40,7 +40,7 @@ export function ProductCarousel() {
   if (displayProducts.length === 0) return null
 
   return (
-    <section className="py-3 lg:py-6 bg-white overflow-hidden">
+    <section className="py-10 lg:py-6 bg-white overflow-hidden">
       <div className="container mx-auto px-4 max-w-7xl">
 
         {/* Heading */}
@@ -49,11 +49,11 @@ export function ProductCarousel() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-8"
+          className="md:text-center text-start mb-8"
         >
-          <h2 className="text-3xl font-heading font-bold flex items-center justify-center gap-2">
-            Most Loved Gifts For Him{" "}
-            <motion.div
+          <h2 className="md:text-3xl text-2xl font-heading font-bold flex items-center md:justify-center gap-2">
+            Most Loved Gifts For <span className="text-primary">Him</span>{" "}
+            {/* <motion.div
               animate={{
                 y: [0, -4, 0],
                 rotate: [0, 10, -10, 0],
@@ -65,7 +65,7 @@ export function ProductCarousel() {
               className="inline-block"
             >
               <Heart className="w-5 h-5 text-primary fill-transparent" />
-            </motion.div>
+            </motion.div> */}
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
             Handpicked gifts that he will truly appreciate
@@ -78,7 +78,7 @@ export function ProductCarousel() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-0 sm:gap-4 md:gap-6 sm:px-2 md:px-10 max-sm:border-t max-sm:border-slate-200/50 dark:max-sm:border-slate-800/80 max-sm:bg-white dark:max-sm:bg-slate-900"
+          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 sm:px-2 md:px-10"
         >
           {displayProducts.slice(0, 4).map((product, idx) => {
             const formattedProduct = {
@@ -98,16 +98,11 @@ export function ProductCarousel() {
             return (
               <div
                 key={product.id}
-                className={cn(
-                  "h-full sm:pt-2 sm:pb-6 group cursor-pointer",
-                  "max-sm:border-b max-sm:border-slate-200/50 dark:max-sm:border-slate-800/80",
-                  idx % 2 === 0 ? "max-sm:border-r" : ""
-                )}
+                className="h-full sm:pt-2 sm:pb-6 group cursor-pointer"
               >
-                <ProductCard 
-                  product={formattedProduct} 
-                  buttonClassName="bg-[#38015c] hover:bg-[#2a0145] text-white" 
-                  className="max-sm:rounded-none max-sm:border-0 max-sm:shadow-none"
+                <ProductCard
+                  product={formattedProduct}
+                  buttonClassName="bg-[#38015c] hover:bg-[#2a0145] text-white"
                 />
               </div>
             );

@@ -16,7 +16,7 @@ export function ProductOccasionsGrid() {
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-10">
           <h2 className="text-2xl md:text-3xl font-heading font-bold flex items-center justify-center gap-2">
-            Perfect For Every Occasion <Heart className="w-5 h-5 text-primary fill-primary" />
+            Perfect For Every <span className="text-primary">Occasion</span> <Heart className="w-5 h-5 text-primary fill-primary" />
           </h2>
         </div>
 

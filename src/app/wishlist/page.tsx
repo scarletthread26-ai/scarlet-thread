@@ -75,7 +75,7 @@ export default function WishlistPage() {
           href="/" 
           className={cn(
             buttonVariants({ variant: "default", size: "lg" }),
-            "rounded-xl px-8 bg-purple-600 hover:bg-purple-700 text-white font-bold"
+            "rounded-xl px-8 bg-primary hover:bg-primary/95 h-12 text-white font-bold"
           )}
         >
           Start Browsing

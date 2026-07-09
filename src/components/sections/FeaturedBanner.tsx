@@ -11,7 +11,7 @@ import { useWishlistStore } from "@/store/useWishlistStore"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
 
-function useProductCard(product: any) {
+export function useProductCard(product: any) {
   const { addItem, setDrawerOpen } = useCartStore()
   const { toggleItem } = useWishlistStore()
   const wishlistItems = useWishlistStore((state) => state.items)
@@ -69,12 +69,12 @@ function useProductCard(product: any) {
 }
 
 /* ─── Mobile: vertical card (2-col grid) ─── */
-function MobileProductCard({ product }: { product: any }) {
+export function MobileProductCard({ product }: { product: any }) {
   const href = `/product/${product.slug || product.id}`
   const { isWishlisted, hasDiscount, discountPercent, handleWishlistToggle } = useProductCard(product)
 
   return (
-    <Link href={href} className="group flex flex-col bg-white rounded-xl overflow-hidden shadow-[0_1px_6px_rgba(0,0,0,0.08)]">
+    <Link href={href} className="group flex flex-col h-full bg-white rounded-xl overflow-hidden shadow-[0_1px_6px_rgba(0,0,0,0.08)]">
       {/* ── Image ── */}
       <div className="relative w-full aspect-square bg-[#F7F7F7]">
         {product.image ? (
@@ -116,14 +116,14 @@ function MobileProductCard({ product }: { product: any }) {
       </div>
 
       {/* ── Details ── */}
-      <div className="px-2.5 pt-2 pb-3 flex flex-col gap-[5px]">
+      <div className="px-2.5 pt-2 pb-3 flex flex-col flex-1 gap-[5px]">
         {/* Category */}
         <span className="text-[9px] text-slate-400 font-semibold uppercase tracking-widest truncate leading-none">
           {product.category || "CATEGORY"}
         </span>
 
         {/* Product name — uppercase like in screenshot */}
-        <h3 className="font-bold text-[11px] text-[#1a1a1a] line-clamp-2 leading-[1.3] uppercase tracking-wide">
+        <h3 className="font-bold text-[11px] text-[#1a1a1a] line-clamp-2 leading-[1.3] min-h-[28.6px] uppercase tracking-wide">
           {product.name}
         </h3>
 
@@ -137,7 +137,7 @@ function MobileProductCard({ product }: { product: any }) {
         </div>
 
         {/* Price + strikethrough on SAME line */}
-        <div className="flex items-baseline gap-1.5 flex-wrap">
+        <div className="flex items-baseline gap-1.5 flex-wrap mt-auto">
           <span className="font-extrabold text-[13px] text-[#1a1a1a] leading-tight">
             AED {product.price}
           </span>
@@ -267,7 +267,7 @@ export function FeaturedBanner() {
           <h2 className="text-3xl md:text-4xl font-heading font-bold flex items-center justify-start md:justify-center gap-3">
             Best <span className="text-[#4a0b70]">Sellers</span>
           </h2>
-          <p className="text-muted-foreground mt-3 max-w-2xl md:mx-auto">
+          <p className="text-muted-foreground max-w-2xl md:mx-auto">
             Our most loved products, carefully curated for you.
           </p>
         </div>

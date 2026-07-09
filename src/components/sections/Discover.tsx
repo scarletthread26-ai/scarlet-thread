@@ -34,11 +34,11 @@ function ImageColumn({
     <div className="flex-1 overflow-hidden relative h-[340px] sm:h-[420px] lg:h-[480px] rounded-[5px]">
       <div
         className="absolute top-0 left-0 right-0 h-12 z-10 pointer-events-none"
-       
+
       />
       <div
         className="absolute bottom-0 left-0 right-0 h-12 z-10 pointer-events-none"
-        
+
       />
 
       <motion.div
@@ -147,7 +147,7 @@ export function Discover() {
   const activeImages = getActiveImages();
 
   const col1Images = activeImages;
-  const col2Images = activeImages.length >= 3 
+  const col2Images = activeImages.length >= 3
     ? [...activeImages.slice(Math.floor(activeImages.length / 3)), ...activeImages.slice(0, Math.floor(activeImages.length / 3))]
     : activeImages;
   const col3Images = activeImages.length >= 3
@@ -175,9 +175,9 @@ export function Discover() {
 
           {/* 2. Image */}
           <div className="flex gap-2 sm:gap-3 overflow-hidden">
-            <ImageColumn images={col1Images} direction="up"   duration={28} />
+            <ImageColumn images={col1Images} direction="up" duration={28} />
             <ImageColumn images={col2Images} direction="down" duration={22} />
-            <ImageColumn images={col3Images} direction="up"   duration={32} />
+            <ImageColumn images={col3Images} direction="up" duration={32} />
           </div>
 
           {/* 3. Button */}
@@ -221,9 +221,9 @@ export function Discover() {
 
           {/* Image Right */}
           <div className="flex gap-3 overflow-hidden">
-            <ImageColumn images={col1Images} direction="up"   duration={28} />
+            <ImageColumn images={col1Images} direction="up" duration={28} />
             <ImageColumn images={col2Images} direction="down" duration={22} />
-            <ImageColumn images={col3Images} direction="up"   duration={32} />
+            <ImageColumn images={col3Images} direction="up" duration={32} />
           </div>
         </div>
       </div>
