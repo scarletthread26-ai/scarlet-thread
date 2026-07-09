@@ -12,12 +12,12 @@ export function StorefrontLayout({ children }: { children: React.ReactNode }) {
   
   // Exclude admin dashboard, customer dashboard, and auth routes from storefront layouts
   const isExcludedRoute = 
-    pathname.startsWith("/admin") || 
-    pathname.startsWith("/account") ||
-    pathname.startsWith("/login") || 
-    pathname.startsWith("/register") || 
-    pathname.startsWith("/forgot-password") || 
-    pathname.startsWith("/reset-password");
+    pathname?.startsWith("/admin") || 
+    pathname?.startsWith("/account") ||
+    pathname?.startsWith("/login") || 
+    pathname?.startsWith("/register") || 
+    pathname?.startsWith("/forgot-password") || 
+    pathname?.startsWith("/reset-password");
 
   if (isExcludedRoute) {
     return <>{children}</>;
