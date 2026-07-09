@@ -23,7 +23,7 @@ export default function AdminNotificationsPage() {
   // WhatsApp States
   const [waConfirmation, setWaConfirmation] = useState("Hello {customer_name}, thank you for your order {order_number} at Scarlet Thread! We are preparing your handcrafted gift.");
   const [waShipping, setWaShipping] = useState("Hi {customer_name}, your order {order_number} has been shipped via {carrier}! Track it here: {tracking_link}");
-  const [waNumber, setWaNumber] = useState("+971501234567");
+  const [waNumber, setWaNumber] = useState("+971501872337");
 
   // Email States
   const [emailSubject, setEmailSubject] = useState("Your Scarlet Thread Order Confirmation - {order_number}");
@@ -97,7 +97,7 @@ export default function AdminNotificationsPage() {
                   <Label htmlFor="waNum" className="font-bold text-slate-700 dark:text-slate-350">Default Business Phone Number</Label>
                   <Input
                     id="waNum"
-                    placeholder="e.g. +971501234567"
+                    placeholder="e.g. +971501872337"
                     value={waNumber}
                     onChange={(e) => setWaNumber(e.target.value)}
                     className="rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950"

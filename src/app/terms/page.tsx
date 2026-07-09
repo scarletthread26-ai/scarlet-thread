@@ -19,6 +19,9 @@ const TERMS_CONTENT = `
     <li>
       <strong>Errors:</strong> We cannot modify embroidery details once production has started. The Scarlet Thread is not responsible for replacing or refunding items with incorrect text if the text matches your order configuration.
     </li>
+    <li>
+      <strong>Cancellations & Returns:</strong> Customized/personalized products are non-returnable and non-refundable, except in cases of damaged, defective, or incorrect items. Order cancellations or modifications are permitted only before customization or production begins.
+    </li>
   </ul>
 
   <h2>3. Product Color & Embroidery Variations</h2>
@@ -37,7 +40,7 @@ const TERMS_CONTENT = `
 
   <h2>4. Pricing, Payments, and Cash on Delivery (COD)</h2>
   <p>
-    All prices listed on the website are in UAE Dirhams (AED) and are exclusive of delivery fees unless specified. 
+    All prices listed on the website are in UAE Dirhams (AED) and are exclusive of delivery fees unless specified. Shipping is charged at a flat rate of <strong>AED 18</strong> for all deliveries within the UAE, or is <strong>FREE</strong> for orders with a subtotal of <strong>AED 200</strong> or above.
     We accept online card payments (Visa, Mastercard, AMEX) and Apple Pay.
   </p>
   <p>

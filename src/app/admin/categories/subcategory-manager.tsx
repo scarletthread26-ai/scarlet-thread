@@ -96,15 +96,6 @@ export function SubcategoryManager({ categoryId }: SubcategoryManagerProps) {
           <FolderTree className="w-3.5 h-3.5" />
           Subcategories ({subcategories.length})
         </h4>
-        {!isAdding && !editingId && (
-          <button
-            onClick={() => setIsAdding(true)}
-            className="text-xs text-purple-600 hover:text-purple-700 font-semibold flex items-center gap-1 transition"
-          >
-            <Plus className="w-3 h-3" />
-            Add New
-          </button>
-        )}
       </div>
 
       <div className="space-y-2">

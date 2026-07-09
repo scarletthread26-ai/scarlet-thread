@@ -16,38 +16,17 @@ const SHIPPING_CONTENT = `
   </p>
   <ul>
     <li>
-      <strong>Dubai, Sharjah & Ajman:</strong> Next-day delivery (1 business day after dispatch). Flat rate of <strong>AED 20</strong>, or <strong>FREE</strong> for orders above AED 250.
+      <strong>Flat Rate Shipping:</strong> Flat rate of <strong>AED 18</strong> for all deliveries within the UAE.
     </li>
     <li>
-      <strong>Abu Dhabi, Al Ain & Other Emirates:</strong> 2 business days after dispatch. Flat rate of <strong>AED 25</strong>, or <strong>FREE</strong> for orders above AED 250.
+      <strong>Free Shipping:</strong> Automatically applied to all orders with a subtotal of <strong>AED 200</strong> or above.
     </li>
     <li>
-      <strong>Remote & Western Regions:</strong> 2 to 3 business days after dispatch. Flat rate of <strong>AED 35</strong>.
+      <strong>Delivery Timeline:</strong> Standard delivery takes <strong>1 to 2 business days</strong> after production dispatch (across all Emirates including Dubai, Abu Dhabi, Sharjah, Ajman, Umm Al Quwain, Ras Al Khaimah, and Fujairah).
     </li>
   </ul>
 
-  <h2>3. Free Storefront Pickup (Dubai Studio)</h2>
-  <p>
-    For clients who prefer to collect their orders directly, we offer free self-pickup at our Dubai studio. 
-  </p>
-  <p>
-    To arrange a pickup, select the <strong>"Self-Pickup"</strong> option during checkout. We will email or text you a pickup notification with location details, maps, and studio hours once your order is crafted and packaged.
-  </p>
-
-  <h2>4. International & GCC Shipping</h2>
-  <p>
-    We currently ship custom orders to GCC countries (Saudi Arabia, Oman, Qatar, Bahrain, Kuwait) and selected global destinations. 
-  </p>
-  <ul>
-    <li>
-      <strong>GCC Shipping:</strong> 3 to 5 business days transit time. Rates start from AED 45 and are calculated at checkout based on package weight.
-    </li>
-    <li>
-      <strong>Rest of the World:</strong> 5 to 9 business days transit time. Customs duties and taxes are the responsibility of the recipient.
-    </li>
-  </ul>
-
-  <h2>5. Delivery Guidelines & Address Accuracy</h2>
+  <h2>3. Delivery Guidelines & Address Accuracy</h2>
   <p>
     To ensure seamless courier delivery, please provide a complete and accurate delivery address, including flat/villa number, street name, community name, city, and a reachable mobile phone number. 
   </p>

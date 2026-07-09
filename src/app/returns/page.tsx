@@ -4,7 +4,7 @@ const RETURNS_CONTENT = `
   <h2>1. Personalized and Custom Items</h2>
   <p>
     At The Scarlet Thread, each product is uniquely designed and custom embroidered based on the personalization details (names, initials, thread colors, and fonts) you select. 
-    Because these items are custom crafted specifically for you, <strong>we cannot accept returns, cancellations, or exchanges for personalized products</strong> due to change of mind, sizing preferences, or formatting requests.
+    Because these items are custom crafted specifically for you, <strong>customized/personalized products are non-returnable and non-refundable</strong>, except in cases of damaged, defective, or incorrect items.
   </p>
   <p>
     We highly recommend reviewing your spelling, capitalization, selection of fonts, and thread colors carefully in the product configurator before submitting your order.
@@ -35,7 +35,7 @@ const RETURNS_CONTENT = `
       Take clear photos of the defect, spelling mismatch, or incorrect item.
     </li>
     <li>
-      Email the photos along with your order number to <strong>support@thescarletthread.in</strong> or send them via WhatsApp to <strong>+91 98765 43210</strong>.
+      Email the photos along with your order number to <strong>support@scarletthread.ae</strong> or send them via WhatsApp to <strong>+971 50 187 2337</strong>.
     </li>
     <li>
       Our support team will review your claim and respond within 24 hours to arrange your replacement shipment.
@@ -50,8 +50,7 @@ const RETURNS_CONTENT = `
 
   <h2>5. Order Cancellation</h2>
   <p>
-    Because production setup begins shortly after order placement, orders can only be cancelled or modified within <strong>2 hours</strong> of order submission. 
-    Please contact us immediately via phone or WhatsApp to request an urgent modification. Once an item is digitized or embroidered, cancellations are no longer possible.
+    Because production setup begins shortly after order placement, <strong>order cancellation or modifications are allowed only before customization or production begins</strong>. Once design digitization, customization, or embroidery production starts, cancellations are no longer possible.
   </p>
 `;
 

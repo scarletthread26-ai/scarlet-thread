@@ -4,13 +4,14 @@ import { NextResponse } from "next/server";
 // Sample mock settings
 let mockSettings: Record<string, any> = {
   store_name: "Scarlet Thread",
-  store_email: "contact@scarletthread.ae",
+  store_email: "support@scarletthread.ae",
   currency: "AED",
-  whatsapp_number: "+971501234567",
+  whatsapp_number: "+971501872337",
   whatsapp_template: "Hello Scarlet Thread, I would like to inquire about order {order_number}",
   seo_title: "Scarlet Thread | Personalized Embroidered Gifts in UAE",
   seo_description: "Buy premium custom embroidered hoodies, towels, sweatshirts, and gifts in Dubai, Abu Dhabi, and across the UAE.",
-  free_shipping_min: 150,
+  free_shipping_min: 200,
+  shipping_rate: 18,
   tax_percentage: 5
 };
 

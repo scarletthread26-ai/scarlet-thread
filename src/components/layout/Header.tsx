@@ -8,9 +8,11 @@ import { useState, useRef, useEffect } from 'react'
 import { useCartStore } from '@/store/useCartStore'
 import { useWishlistStore } from '@/store/useWishlistStore'
 import { createClient } from '@/lib/supabase/client'
+import { useSettings } from '@/hooks/use-settings'
+
 
 const marqueeItems = [
-  "• Free Shipping Above AED 150",
+  "• Free Shipping Above AED 200",
   "• Crafted With Love In UAE",
   "• Track Your Order",
 ]
@@ -66,8 +68,16 @@ export function Header() {
 
   const [mounted, setMounted] = useState(false)
   const cartItems = useCartStore((state) => state.items)
+  const setShippingConfig = useCartStore((state) => state.setShippingConfig)
   const wishlistItems = useWishlistStore((state) => state.items)
   const fetchWishlist = useWishlistStore((state) => state.fetchWishlist)
+  const { data: settings } = useSettings()
+
+  useEffect(() => {
+    if (settings) {
+      setShippingConfig(Number(settings.shipping_rate ?? 18), Number(settings.free_shipping_min ?? 200))
+    }
+  }, [settings, setShippingConfig])
 
   useEffect(() => {
     setMounted(true)
@@ -99,7 +109,7 @@ export function Header() {
     { name: 'Kids & Babies', path: '/kids-babies', icon: Baby },
     { name: 'Gallery', path: '/gallery', icon: Image },
   ]
-  
+
   const getFirstName = () => {
     if (!user) return "";
     const fullName = user.user_metadata?.full_name;
@@ -120,8 +130,8 @@ export function Header() {
 
         {/* Announcement Bar */}
         <div className="bg-primary text-primary-foreground py-2 text-center text-[12px] font-medium tracking-wider overflow-hidden">
-          <div className="hidden lg:block text-[8px] px-4">
-            • Free Shipping Above AED 150 &nbsp;&nbsp;• Crafted With Love In UAE &nbsp;&nbsp;• Track Your Order
+          <div className="hidden lg:block text-[10px] px-4">
+            • Free Shipping Above AED {settings?.free_shipping_min ?? 200} &nbsp;&nbsp;• Crafted With Love In UAE &nbsp;&nbsp;• Track Your Order
           </div>
           <div className="lg:hidden overflow-hidden">
             <motion.div
@@ -129,7 +139,14 @@ export function Header() {
               animate={{ x: ["0%", "-50%"] }}
               transition={{ duration: 18, ease: "linear", repeat: Infinity }}
             >
-              {[...marqueeItems, ...marqueeItems, ...marqueeItems, ...marqueeItems].map((item, index) => (
+              {(() => {
+                const items = [
+                  `• Free Shipping Above AED ${settings?.free_shipping_min ?? 200}`,
+                  "• Crafted With Love In UAE",
+                  "• Track Your Order",
+                ];
+                return [...items, ...items, ...items, ...items];
+              })().map((item, index) => (
                 <span key={index} className="shrink-0">{item}</span>
               ))}
             </motion.div>
@@ -144,14 +161,12 @@ export function Header() {
               <img
                 src="/images/logo/logo.png"
                 alt="The Scarlet Thread Logo"
-                className="h-10 w-10 lg:h-9 lg:w-9 object-contain"
-                style={{ filter: "hue-rotate(23deg) saturate(138%) brightness(70%) contrast(335%)" }}
+                className="h-9 w-9 lg:h-10 lg:w-10 object-contain"
               />
               <img
                 src="/images/logo/name.png"
                 alt="The Scarlet Thread"
-                className="h-10 lg:h-9 w-28 object-contain ml-1.5"
-                style={{ filter: "hue-rotate(12deg) saturate(76%) brightness(76%) contrast(315%)" }}
+                className="h-9 lg:h-9 w-auto object-contain"
               />
             </Link>
           </div>
@@ -167,7 +182,7 @@ export function Header() {
                 }`}
               >
                 {link.name}
-              
+
               </Link>
             ))}
           </nav>
@@ -195,8 +210,8 @@ export function Header() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                     e.preventDefault()
-                     handleSearch(e)
+                    e.preventDefault()
+                    handleSearch(e)
                   }
                 }}
                 placeholder="Search products..."
@@ -206,12 +221,19 @@ export function Header() {
 
             {user ? (
               <div className="relative group hidden lg:block">
-                <Link href="/account" className="flex items-center justify-center w-10 h-10 rounded-full border border-border/60 bg-white hover:bg-muted/50 transition-colors text-foreground">
-                  <User className="h-[18px] w-[18px]" />
+                <Link href="/account" className="flex items-center gap-2 px-3 py-1 rounded-full border border-border/60 bg-white hover:bg-muted/50 transition-all text-left text-foreground select-none">
+                  <User className="h-[18px] w-[18px] text-purple-650 shrink-0" />
+                  <div className="flex flex-col leading-none text-xs pr-1">
+                    <span className="text-[9px] text-muted-foreground font-medium">Hi, {firstName}</span>
+                    <span className="font-bold text-slate-800 dark:text-slate-200 mt-0.5 flex items-center gap-0.5 text-[11px]">
+                      Account
+                      <ChevronRight className="w-2.5 h-2.5 rotate-90 text-slate-450 mt-0.5" />
+                    </span>
+                  </div>
                 </Link>
-                
+
                 {/* User Dropdown (Logged In Only) */}
-                <div className="absolute top-full right-0 mt-1 w-52 bg-white border border-border shadow-xl rounded-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div className="absolute top-full right-0 mt-1.5 w-52 bg-white border border-border shadow-xl rounded-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                   <div className="px-4 py-2 border-b border-border/50 mb-1">
                     <p className="text-sm font-bold text-foreground truncate">Hi, {firstName}</p>
                     <p className="text-[10px] text-muted-foreground truncate">{user.email}</p>
@@ -238,8 +260,12 @@ export function Header() {
                 </div>
               </div>
             ) : (
-              <Link href="/login" className="hidden lg:flex items-center justify-center w-10 h-10 rounded-full border border-border/60 bg-white hover:bg-muted/50 transition-colors text-foreground">
-                <User className="h-[18px] w-[18px]" />
+              <Link href="/login" className="hidden lg:flex items-center gap-2 px-3 py-1 rounded-full border border-border/60 bg-white hover:bg-muted/50 transition-all text-left text-foreground select-none">
+                <User className="h-[18px] w-[18px] text-slate-450 shrink-0" />
+                <div className="flex flex-col leading-none text-xs pr-1">
+                  <span className="text-[9px] text-muted-foreground font-medium">Hello, Sign in</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-200 mt-0.5 text-[11px]">Account</span>
+                </div>
               </Link>
             )}
 
@@ -249,7 +275,7 @@ export function Header() {
                 {wishlistCount}
               </span>
             </Link>
-            
+
             <Link href="/cart" className="relative flex items-center justify-center w-10 h-10 rounded-full bg-primary/5 hover:bg-primary/10 transition-colors text-foreground">
               <ShoppingBag className="h-[18px] w-[18px]" />
               <span className="absolute -top-1 -right-1 h-[18px] w-[18px] rounded-full bg-[#31006E] text-[10px] font-bold text-white flex items-center justify-center shadow-sm border border-white">
@@ -331,9 +357,8 @@ export function Header() {
                       key={link.path}
                       href={link.path}
                       onClick={() => setMenuOpen(false)}
-                      className={`flex items-center justify-between px-5 py-3.5 text-[13px] font-semibold uppercase tracking-wide transition-colors border-b border-border/40 last:border-0 ${
-                        active ? 'text-primary bg-primary/5' : 'text-muted-foreground hover:text-primary hover:bg-muted/40'
-                      }`}
+                      className={`flex items-center justify-between px-5 py-3.5 text-[13px] font-semibold uppercase tracking-wide transition-colors border-b border-border/40 last:border-0 ${active ? 'text-primary bg-primary/5' : 'text-muted-foreground hover:text-primary hover:bg-muted/40'
+                        }`}
                     >
                       <div className="flex items-center gap-3">
                         <Icon className="h-4 w-4" />
@@ -377,14 +402,13 @@ export function Header() {
             className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-border shadow-[0_-2px_10px_rgba(0,0,0,0.08)]"
           >
             <div className="flex items-center justify-around h-16 relative w-full max-w-md mx-auto px-1">
-              
+
               {/* Home */}
               <Link
                 href="/"
                 onClick={() => setMenuOpen(false)}
-                className={`flex flex-col items-center justify-center gap-1 transition-colors relative w-14 ${
-                  isActive('/') ? 'text-primary' : 'text-muted-foreground'
-                }`}
+                className={`flex flex-col items-center justify-center gap-1 transition-colors relative w-14 ${isActive('/') ? 'text-primary' : 'text-muted-foreground'
+                  }`}
               >
                 <Home className="h-5 w-5" />
                 <span className="text-[10px] font-medium leading-none">Home</span>
@@ -394,9 +418,8 @@ export function Header() {
               <Link
                 href="/gifts-for-him"
                 onClick={() => setMenuOpen(false)}
-                className={`flex flex-col items-center justify-center gap-1 transition-colors relative w-14 ${
-                  isActive('/gifts-for-him') ? 'text-primary' : 'text-muted-foreground'
-                }`}
+                className={`flex flex-col items-center justify-center gap-1 transition-colors relative w-14 ${isActive('/gifts-for-him') ? 'text-primary' : 'text-muted-foreground'
+                  }`}
               >
                 <Gift className="h-5 w-5" />
                 <span className="text-[10px] font-medium leading-none">Him</span>
@@ -405,8 +428,8 @@ export function Header() {
               {/* Central Cart Button */}
               <div className="relative flex flex-col items-center justify-center w-14">
                 <div className="absolute -top-10">
-                  <Link 
-                    href="/cart" 
+                  <Link
+                    href="/cart"
                     onClick={() => setMenuOpen(false)}
                     className="flex flex-col items-center justify-center w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-xl border-[3px] border-white hover:scale-105 transition-transform"
                   >
@@ -424,9 +447,8 @@ export function Header() {
               <Link
                 href="/gifts-for-her"
                 onClick={() => setMenuOpen(false)}
-                className={`flex flex-col items-center justify-center gap-1 transition-colors relative w-14 ${
-                  isActive('/gifts-for-her') ? 'text-primary' : 'text-muted-foreground'
-                }`}
+                className={`flex flex-col items-center justify-center gap-1 transition-colors relative w-14 ${isActive('/gifts-for-her') ? 'text-primary' : 'text-muted-foreground'
+                  }`}
               >
                 <Heart className="h-5 w-5" />
                 <span className="text-[10px] font-medium leading-none">Her</span>
@@ -436,9 +458,8 @@ export function Header() {
               <Link
                 href="/kids-babies"
                 onClick={() => setMenuOpen(false)}
-                className={`flex flex-col items-center justify-center gap-1 transition-colors relative w-14 ${
-                  isActive('/kids-babies') ? 'text-primary' : 'text-muted-foreground'
-                }`}
+                className={`flex flex-col items-center justify-center gap-1 transition-colors relative w-14 ${isActive('/kids-babies') ? 'text-primary' : 'text-muted-foreground'
+                  }`}
               >
                 <Baby className="h-5 w-5" />
                 <span className="text-[10px] font-medium leading-none">Kids</span>
