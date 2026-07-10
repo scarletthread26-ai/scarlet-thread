@@ -21,7 +21,7 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50/50 dark:bg-slate-950 transition-colors duration-250 text-slate-800 dark:text-slate-100">
+    <div className="admin-layout flex min-h-screen bg-slate-50/50 dark:bg-slate-950 transition-colors duration-250 text-slate-800 dark:text-slate-100">
       {/* 1. Desktop Sidebar */}
       <div className="hidden md:block">
         <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />

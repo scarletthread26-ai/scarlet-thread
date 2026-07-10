@@ -196,7 +196,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed, onMobileClose }: SidebarP
           {menuGroups.map((group) => (
             <div key={group.title} className="space-y-1.5">
               {!isCollapsed && (
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 block">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest px-3 block">
                   {group.title}
                 </span>
               )}
@@ -210,9 +210,10 @@ export function Sidebar({ isCollapsed, setIsCollapsed, onMobileClose }: SidebarP
                       key={item.href}
                       href={item.href}
                       onClick={onMobileClose}
-                      className={`relative flex items-center gap-3 px-3 py-2 rounded-xl transition font-semibold text-sm cursor-pointer ${isActive
-                        ? "bg-purple-600 text-white shadow-md shadow-purple-600/10"
-                        : "text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-black hover:bg-slate-200 dark:hover:purple-600"
+                      className={`relative flex items-center gap-3 px-3 py-2 rounded-[10px] transition font-semibold text-sm cursor-pointer ${
+                        isActive
+                          ? "bg-purple-600 text-white shadow-md shadow-purple-600/20"
+                          : "text-black dark:text-slate-300 hover:text-black hover:bg-purple-100 dark:hover:bg-slate-800/80"
                         }`}
                       title={isCollapsed ? item.label : undefined}
                     >
