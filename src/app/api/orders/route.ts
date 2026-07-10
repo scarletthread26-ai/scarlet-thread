@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { sendEmail } from "@/lib/brevo";
 
 export async function GET() {
   try {
@@ -175,6 +176,43 @@ export async function POST(request: Request) {
       .single();
 
     if (reloadError) throw reloadError;
+
+    // 6. Send order confirmation email
+    const customerEmail = user?.email || guest_email;
+    const customerName = shippingAddress.full_name || "Customer";
+
+    if (customerEmail) {
+      const emailHtml = `
+        <div style="font-family: sans-serif; max-width: 600px; color: #333;">
+          <h1 style="color: #c026d3;">Order Confirmation</h1>
+          <p>Dear ${customerName},</p>
+          <p>Thank you for shopping with Scarlet Thread! Your order <strong>#${finalOrder.order_number || finalOrder.id.substring(0, 8)}</strong> has been successfully placed.</p>
+          <div style="background-color: #f9fafb; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0;">Order Summary</h3>
+            <p><strong>Total Amount:</strong> AED ${total_amount}</p>
+            <p><strong>Payment Method:</strong> ${payment_method}</p>
+          </div>
+          <p>We'll notify you once it's on the way.</p>
+          
+          <div>
+            <p style="margin-bottom: 10px; font-size: 14px; color: #555;">Have a question about your order?</p>
+            <a href="https://wa.me/971501872337?text=Hello!%20I%20would%20like%20to%20make%20an%20inquiry%20regarding%20my%20order%20%23${finalOrder.order_number || finalOrder.id.substring(0, 8)}" 
+               style="background-color: #25D366; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
+              Chat with us on WhatsApp
+            </a>
+          </div>
+
+          <p>Warm regards,<br>The Scarlet Thread Team</p>
+        </div>
+      `;
+
+      // We don't await this so it doesn't block the API response
+      sendEmail({
+        to: [{ email: customerEmail, name: customerName }],
+        subject: `Order Confirmation - Scarlet Thread (Order #${finalOrder.order_number || 'New'})`,
+        htmlContent: emailHtml,
+      });
+    }
 
     return NextResponse.json(finalOrder);
   } catch (error: any) {

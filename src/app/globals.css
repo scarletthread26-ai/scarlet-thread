@@ -177,3 +177,194 @@ input[type="number"] {
     display: none !important;
   }
 }
+
+/* ─── Admin Panel: enforce 10px border-radius on all inputs & containers ─── */
+.admin-layout input,
+.admin-layout textarea,
+.admin-layout select,
+.admin-layout [cmdk-input],
+.admin-layout [data-slot="input"],
+.admin-layout [data-slot="select-trigger"],
+.admin-layout [data-slot="textarea"] {
+  border-radius: 10px !important;
+}
+
+/* Buttons */
+.admin-layout button,
+.admin-layout [data-slot="button"] {
+  border-radius: 10px !important;
+}
+
+/* Card and container surfaces */
+.admin-layout [data-slot="card"],
+.admin-layout .card,
+.admin-layout [data-slot="dialog-content"],
+.admin-layout [data-slot="popover-content"],
+.admin-layout [data-slot="dropdown-menu-content"],
+.admin-layout [data-slot="select-content"],
+.admin-layout [data-slot="command"],
+.admin-layout [data-radix-popper-content-wrapper] > *,
+.admin-layout [role="listbox"],
+.admin-layout [data-radix-select-content] {
+  border-radius: 10px !important;
+}
+
+/* Select dropdown items */
+.admin-layout [data-slot="select-item"],
+.admin-layout [role="option"],
+.admin-layout [data-radix-select-item] {
+  border-radius: 8px !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Admin Panel — High Contrast Theme (Dark Mode Only)
+   All rules scoped to .dark .admin-layout to allow white mode to work.
+   ───────────────────────────────────────────────────────────────── */
+
+/* Main body background */
+.dark .admin-layout {
+  background-color: #0a0d14 !important;
+  color: #f1f5f9 !important;
+}
+
+/* Sidebar */
+.dark .admin-layout aside {
+  background-color: #0d1117 !important;
+  border-color: #1e2530 !important;
+}
+
+/* Top header */
+.dark .admin-layout header {
+  background-color: #0d1117 !important;
+  border-color: #1e2530 !important;
+}
+
+/* Main content area */
+.dark .admin-layout main {
+  background-color: #0a0d14 !important;
+}
+
+/* Cards */
+.dark .admin-layout [data-slot="card"],
+.dark .admin-layout .card {
+  background-color: #111827 !important;
+  border-color: #1e2a3a !important;
+  color: #f1f5f9 !important;
+}
+
+/* Card header accent rows */
+.dark .admin-layout [data-slot="card"] > div:first-child,
+.dark .admin-layout .card > div:first-child {
+  background-color: #0f1623 !important;
+  border-color: #1e2a3a !important;
+}
+
+/* Inputs, textareas, selects */
+.dark .admin-layout input:not([type="checkbox"]):not([type="radio"]),
+.dark .admin-layout textarea,
+.dark .admin-layout select,
+.dark .admin-layout [data-slot="input"],
+.dark .admin-layout [data-slot="select-trigger"],
+.dark .admin-layout [data-slot="textarea"] {
+  background-color: #0d1117 !important;
+  border-color: #2a3347 !important;
+  color: #f1f5f9 !important;
+}
+
+.dark .admin-layout input::placeholder,
+.dark .admin-layout textarea::placeholder {
+  color: #4b5a72 !important;
+}
+
+/* Select dropdown content */
+.dark .admin-layout [data-slot="select-content"],
+.dark .admin-layout [role="listbox"],
+.dark .admin-layout [data-radix-select-content],
+.dark .admin-layout [data-radix-popper-content-wrapper] > * {
+  background-color: #111827 !important;
+  border-color: #1e2a3a !important;
+  color: #f1f5f9 !important;
+}
+
+/* Table rows */
+.dark .admin-layout table {
+  background-color: #111827 !important;
+  color: #f1f5f9 !important;
+}
+.dark .admin-layout thead {
+  background-color: #0f1623 !important;
+}
+.dark .admin-layout th {
+  color: #94a3b8 !important;
+  border-color: #1e2a3a !important;
+}
+.dark .admin-layout td {
+  border-color: #1e2a3a !important;
+  color: #e2e8f0 !important;
+}
+.dark .admin-layout tbody tr:hover {
+  background-color: #1a2333 !important;
+}
+
+/* Muted / secondary text */
+.dark .admin-layout .text-muted-foreground,
+.dark .admin-layout .text-slate-400,
+.dark .admin-layout .text-slate-500 {
+  color: #64748b !important;
+}
+
+/* Strong text */
+.dark .admin-layout .text-slate-700,
+.dark .admin-layout .text-slate-800,
+.dark .admin-layout .text-slate-900 {
+  color: #f1f5f9 !important;
+}
+
+.dark .admin-layout .text-slate-600 {
+  color: #cbd5e1 !important;
+}
+
+/* Borders */
+.dark .admin-layout .border,
+.dark .admin-layout .border-b,
+.dark .admin-layout .border-t,
+.dark .admin-layout [class*="border-slate-200"],
+.dark .admin-layout [class*="dark:border-slate-800"] {
+  border-color: #1e2a3a !important;
+}
+
+/* Section divider backgrounds */
+.dark .admin-layout [class*="bg-slate-50"],
+.dark .admin-layout [class*="dark:bg-slate-950"] {
+  background-color: #0f1623 !important;
+}
+
+.dark .admin-layout [class*="bg-white"],
+.dark .admin-layout [class*="dark:bg-slate-900"] {
+  background-color: #111827 !important;
+}
+
+/* Popover / dialog */
+.dark .admin-layout [data-slot="dialog-content"],
+.dark .admin-layout [data-slot="popover-content"],
+.dark .admin-layout [data-slot="dropdown-menu-content"] {
+  background-color: #111827 !important;
+  border-color: #1e2a3a !important;
+  color: #f1f5f9 !important;
+}
+
+/* Scrollbar for admin (subtle dark) */
+.dark .admin-layout ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.dark .admin-layout ::-webkit-scrollbar-track {
+  background: #0a0d14;
+}
+.dark .admin-layout ::-webkit-scrollbar-thumb {
+  background: #1e2a3a;
+  border-radius: 99px;
+}
+.dark .admin-layout ::-webkit-scrollbar-thumb:hover {
+  background: #2a3a52;
+}

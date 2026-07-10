@@ -63,7 +63,7 @@ export function Header({ onMobileMenuOpen }: HeaderProps) {
   };
 
   return (
-    <header className="h-16 bg-white dark:bg-slate-900 border-b border-slate-200/60 dark:border-slate-800/80 flex items-center justify-between px-6 sticky top-0 z-20 shadow-sm">
+    <header className="h-16 bg-white dark:bg-slate-900 border-b border-slate-200/60 dark:border-slate-800/80 flex items-center justify-between px-6 sticky top-0 z-20">
       {/* Left side: Hamburger (Mobile) & Breadcrumbs */}
       <div className="flex items-center gap-4">
         {/* Mobile Hamburger Menu trigger */}
