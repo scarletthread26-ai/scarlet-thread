@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
 import { 
   Loader2, 
@@ -19,10 +20,16 @@ import {
   CreditCard, 
   CheckCircle,
   FileText,
-  User
+  User,
+  AlertTriangle,
+  Package
 } from "lucide-react";
 import Link from "next/link";
 import { useRealtime } from "@/hooks/use-realtime";
+import { ORDER_STATUS_LABELS, ORDER_STATUS_TRANSITIONS, OrderStatus } from "@/lib/constants";
+import { TaxInvoice } from "@/components/admin/pdf/TaxInvoice";
+import { PackingSlip } from "@/components/admin/pdf/PackingSlip";
+import { printDocument } from "@/lib/print-document";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -51,6 +58,7 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
   const [trackingNumber, setTrackingNumber] = useState("");
   const [estDeliveryDate, setEstDeliveryDate] = useState("");
   const [internalNotes, setInternalNotes] = useState("");
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
   useEffect(() => {
     if (order) {
@@ -64,6 +72,11 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
 
   const handleUpdateStatus = async (e: React.FormEvent) => {
     e.preventDefault();
+    // If cancelling, require confirmation first
+    if (status === "cancelled" && !showCancelConfirm) {
+      setShowCancelConfirm(true);
+      return;
+    }
     try {
       await updateStatusMutation.mutateAsync({
         id,
@@ -73,14 +86,44 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
         estimated_delivery_date: estDeliveryDate ? new Date(estDeliveryDate).toISOString() : undefined,
         notes: internalNotes || undefined,
       });
+      setShowCancelConfirm(false);
       refetch();
     } catch (err) {
       // toast alert handled by mutation hook
     }
   };
 
-  const handlePrintInvoice = () => {
-    window.print();
+  const handleCancelConfirmed = async () => {
+    try {
+      await updateStatusMutation.mutateAsync({
+        id,
+        status: "cancelled",
+        carrier: carrier || undefined,
+        tracking_number: trackingNumber || undefined,
+        estimated_delivery_date: estDeliveryDate ? new Date(estDeliveryDate).toISOString() : undefined,
+        notes: internalNotes || undefined,
+      });
+      setShowCancelConfirm(false);
+      refetch();
+    } catch (err) {
+      // toast alert handled by mutation hook
+    }
+  };
+
+  const handlePrintTaxInvoice = () => {
+    setTimeout(() => printDocument("scarlet-tax-invoice", `Tax Invoice - ${order?.order_number}`), 100);
+  };
+
+  const handlePrintPackingSlip = () => {
+    setTimeout(() => printDocument("scarlet-packing-slip", `Packing Slip - ${order?.order_number}`), 100);
+  };
+
+  const handlePrintBoth = () => {
+    setTimeout(() => {
+      printDocument("scarlet-tax-invoice", `Tax Invoice - ${order?.order_number}`);
+      // Small delay so the first window can open before the second
+      setTimeout(() => printDocument("scarlet-packing-slip", `Packing Slip - ${order?.order_number}`), 600);
+    }, 100);
   };
 
   if (isLoading) {
@@ -113,6 +156,7 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
   )}`;
 
   return (
+    <>
     <div className="space-y-6">
       {/* Top action bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
@@ -139,9 +183,37 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={handlePrintInvoice} className="rounded-lg h-9">
-            <Printer className="w-4 h-4 mr-1.5" /> Print Invoice
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Print Tax Invoice */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handlePrintTaxInvoice}
+            className="rounded-lg h-9 gap-1.5"
+          >
+            <FileText className="w-4 h-4" />
+            Tax Invoice
+          </Button>
+
+          {/* Print Packing Slip */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handlePrintPackingSlip}
+            className="rounded-lg h-9 gap-1.5"
+          >
+            <Package className="w-4 h-4" />
+            Packing Slip
+          </Button>
+
+          {/* Print Both at once */}
+          <Button
+            size="sm"
+            onClick={handlePrintBoth}
+            className="rounded-lg h-9 gap-1.5 bg-primary hover:bg-primary/90 text-white"
+          >
+            <Printer className="w-4 h-4" />
+            Print Both
           </Button>
           {cleanedPhone && (
             <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
@@ -260,18 +332,35 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
               <form onSubmit={handleUpdateStatus} className="space-y-4">
                 <div className="space-y-1.5">
                   <Label htmlFor="orderStatus" className="font-semibold text-xs">Order Status *</Label>
-                  <select
-                    id="orderStatus"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-sm text-slate-800 dark:text-slate-200 outline-none h-10"
-                  >
-                    <option value="pending">Pending</option>
-                    <option value="processing">Processing</option>
-                    <option value="shipped">Shipped</option>
-                    <option value="delivered">Delivered</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
+                  <Select value={status} onValueChange={(e) => e && setStatus(e)}>
+                    <SelectTrigger 
+                      id="orderStatus" 
+                      className="w-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-lg text-sm text-slate-800 dark:text-slate-200 outline-none h-10 focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary focus-visible:ring-offset-0"
+                    >
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent className="border-slate-200 dark:border-slate-800 rounded-[10px] shadow-lg">
+                      <SelectItem 
+                        value={order.status} 
+                        className="cursor-pointer focus:bg-primary focus:text-white data-[highlighted]:bg-primary data-[highlighted]:text-white rounded-md py-2 px-3 transition-colors"
+                      >
+                        {ORDER_STATUS_LABELS[order.status as OrderStatus] || order.status} (Current)
+                      </SelectItem>
+                      {ORDER_STATUS_TRANSITIONS[order.status as OrderStatus]?.map((allowedStatus) => (
+                        <SelectItem 
+                          key={allowedStatus} 
+                          value={allowedStatus} 
+                          className={
+                            allowedStatus === "cancelled"
+                              ? "cursor-pointer focus:bg-rose-600 focus:text-white data-[highlighted]:bg-rose-600 data-[highlighted]:text-white rounded-md py-2 px-3 transition-colors text-rose-600 dark:text-rose-400 font-semibold"
+                              : "cursor-pointer focus:bg-primary focus:text-white data-[highlighted]:bg-primary data-[highlighted]:text-white rounded-md py-2 px-3 transition-colors"
+                          }
+                        >
+                          {allowedStatus === "cancelled" && "⚠ "}{ORDER_STATUS_LABELS[allowedStatus]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-1.5">
@@ -318,15 +407,58 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
                   />
                 </div>
 
+                {/* Cancel Order — 2-step confirmation banner */}
+                {showCancelConfirm && status === "cancelled" && (
+                  <div className="rounded-[10px] border border-rose-200 bg-rose-50 dark:bg-rose-950/30 dark:border-rose-800/60 p-4 space-y-3">
+                    <div className="flex items-start gap-2.5">
+                      <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-sm font-bold text-rose-700 dark:text-rose-300">Cancel this order?</p>
+                        <p className="text-xs text-rose-600/80 dark:text-rose-400/80 mt-0.5">
+                          This action cannot be undone. The order will be marked as <strong>Cancelled</strong> and the customer will be notified.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        onClick={handleCancelConfirmed}
+                        disabled={updateStatusMutation.isPending}
+                        className="flex-1 h-9 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs gap-1.5"
+                      >
+                        {updateStatusMutation.isPending ? (
+                          <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Cancelling...</>
+                        ) : (
+                          "Yes, Cancel Order"
+                        )}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => { setShowCancelConfirm(false); setStatus(order.status); }}
+                        className="flex-1 h-9 text-xs font-semibold"
+                      >
+                        Dismiss
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
                 <Button 
                   type="submit" 
-                  disabled={updateStatusMutation.isPending}
-                  className="w-full rounded-lg font-bold shadow bg-primary hover:bg-primary/95 text-white gap-2 h-10"
+                  disabled={updateStatusMutation.isPending || (status === order.status)}
+                  className={
+                    status === "cancelled"
+                      ? "w-full rounded-lg font-bold shadow bg-rose-600 hover:bg-rose-700 text-white gap-2 h-10"
+                      : "w-full rounded-lg font-bold shadow bg-primary hover:bg-primary/95 text-white gap-2 h-10"
+                  }
                 >
                   {updateStatusMutation.isPending ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" /> Saving...
                     </>
+                  ) : status === "cancelled" ? (
+                    <><AlertTriangle className="w-4 h-4" /> Cancel Order</>
                   ) : (
                     "Update fulfillment details"
                   )}
@@ -393,5 +525,14 @@ export default function AdminOrderDetailPage({ params }: PageProps) {
         </div>
       </div>
     </div>
+
+      {/* Hidden PDF Templates — only visible when printed via printDocument() */}
+      {order && (
+        <>
+          <TaxInvoice order={order} />
+          <PackingSlip order={order} />
+        </>
+      )}
+    </>
   );
 }

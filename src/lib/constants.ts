@@ -20,10 +20,19 @@ export type OrderStatus = typeof ORDER_STATUS[keyof typeof ORDER_STATUS];
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   [ORDER_STATUS.PENDING]: 'Pending Payment / Confirmation',
-  [ORDER_STATUS.PROCESSING]: 'In Production',
+  [ORDER_STATUS.PROCESSING]: 'In Production / Processing',
   [ORDER_STATUS.SHIPPED]: 'Shipped / Out for Delivery',
   [ORDER_STATUS.DELIVERED]: 'Delivered',
   [ORDER_STATUS.CANCELLED]: 'Cancelled',
+};
+
+// State Machine transitions based on user diagram:
+export const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
+  [ORDER_STATUS.PENDING]: [ORDER_STATUS.PROCESSING, ORDER_STATUS.CANCELLED],
+  [ORDER_STATUS.PROCESSING]: [ORDER_STATUS.SHIPPED, ORDER_STATUS.CANCELLED],
+  [ORDER_STATUS.SHIPPED]: [ORDER_STATUS.DELIVERED, ORDER_STATUS.CANCELLED],
+  [ORDER_STATUS.DELIVERED]: [],
+  [ORDER_STATUS.CANCELLED]: [],
 };
 
 // Payment Statuses

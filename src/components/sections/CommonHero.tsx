@@ -120,22 +120,17 @@ export function CommonHero({
 
   return (
     <section
-      className="relative md:py-6 mb-6 md:mb-20"
+      className="relative md:py-6 md:mb-20"
       style={{ backgroundColor: bgColor }}
     >
       {/* ── Mobile background image (static to set section height) ── */}
-      <motion.div
-        initial={{ scale: 1.15 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 2.5, ease: "easeOut" }}
-        className="w-full md:hidden"
-      >
+      <div className="w-full md:hidden">
         <img
           src={mobileImage}
           alt={imageAlt}
           className="w-full h-auto object-cover"
         />
-      </motion.div>
+      </div>
 
       {/* ── Background Wrapper (clips scaled images and blobs) ── */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

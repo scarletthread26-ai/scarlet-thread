@@ -165,7 +165,7 @@ export function ProductGrid() {
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.55, ease: "easeOut" }}
         >
-          <h2 className="text-3xl font-bold flex items-center justify-start md:justify-center gap-2">
+          <h2 className="text-[22px] md:text-3xl font-bold flex items-center justify-start md:justify-center gap-2">
             {formatLovedGiftsTitle(title)}
           </h2>
           <p className="text-muted-foreground text-sm mt-2 max-w-xl md:mx-auto">
