@@ -271,3 +271,27 @@ export function CommonHero({
     </section>
   )
 }
+
+// ---------------------------------------------------------------------------
+// CommonHeroSkeleton
+// ---------------------------------------------------------------------------
+export function CommonHeroSkeleton() {
+  return (
+    <section className="relative md:py-6 md:mb-20 bg-slate-100/50 dark:bg-slate-900 animate-pulse h-[80vh] md:min-h-[500px]">
+      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 lg:px-16 relative z-10 h-full">
+        <div className="flex flex-col md:flex-row items-end md:items-center gap-12 md:h-auto md:min-h-[500px]">
+          <div className="hidden md:flex flex-1 text-left md:pb-0 md:py-0 flex-col md:justify-center h-full pt-20">
+            <div className="w-24 h-4 bg-slate-200 dark:bg-slate-800 rounded mb-4" />
+            <div className="w-3/4 md:w-full max-w-lg h-10 md:h-14 bg-slate-200 dark:bg-slate-800 rounded mb-4" />
+            <div className="w-2/3 md:w-3/4 max-w-sm h-4 bg-slate-200 dark:bg-slate-800 rounded mb-8" />
+            <div className="flex gap-4">
+              <div className="w-36 h-11 bg-slate-200 dark:bg-slate-800 rounded-full" />
+              <div className="w-40 h-11 bg-slate-200 dark:bg-slate-800 rounded-full hidden md:block" />
+            </div>
+          </div>
+          <div className="flex-1 hidden md:block" />
+        </div>
+      </div>
+    </section>
+  )
+}
