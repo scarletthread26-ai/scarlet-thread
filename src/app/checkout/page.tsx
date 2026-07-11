@@ -457,7 +457,7 @@ export default function CheckoutPage() {
                           className="h-12 rounded-lg border-slate-300"
                         />
                       </div>
-                      <div className="space-y-1.5 md:col-span-2">
+                      <div className="space-y-1.5  md:col-span-2">
                         <Label htmlFor="state" className="font-semibold text-slate-700 dark:text-slate-300">Delivery Emirate *</Label>
                         <Select
                           value={state}
@@ -466,7 +466,7 @@ export default function CheckoutPage() {
                             setCity(val || "");
                           }}
                         >
-                          <SelectTrigger id="state" className="w-full h-12 rounded-lg border border-slate-300 bg-white pr-3 text-slate-800">
+                          <SelectTrigger id="state" className="w-full !h-12 rounded-lg border border-slate-300 bg-white pr-3 text-slate-800">
                             <SelectValue placeholder="Please Select Delivery Emirate" />
                           </SelectTrigger>
                           <SelectContent className="bg-white border border-slate-200 shadow-xl rounded-xl">
@@ -495,7 +495,7 @@ export default function CheckoutPage() {
                     type="submit"
                     size="lg"
                     disabled={isCreatingIntent}
-                    className="h-13 rounded-full w-full font-bold shadow-md bg-primary hover:bg-primary/95 text-white gap-2"
+                    className="h-13 rounded-[10px] w-full font-bold shadow-md bg-primary hover:bg-primary/95 text-white gap-2"
                   >
                     {isCreatingIntent ? (
                       <>
@@ -589,7 +589,7 @@ export default function CheckoutPage() {
                               setBillingCity(val || "");
                             }}
                           >
-                            <SelectTrigger id="bState" className="w-full h-10 rounded-lg border border-slate-300 bg-white pr-3 text-slate-800">
+                            <SelectTrigger id="bState" className="w-full !h-12 rounded-lg border border-slate-300 bg-white pr-3 text-slate-800">
                               <SelectValue placeholder="Please Select Delivery Emirate" />
                             </SelectTrigger>
                             <SelectContent className="bg-white border border-slate-200 shadow-xl rounded-xl">

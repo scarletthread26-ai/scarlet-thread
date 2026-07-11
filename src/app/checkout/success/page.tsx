@@ -126,7 +126,7 @@ function SuccessContent() {
             rel="noopener noreferrer"
             className={cn(
               buttonVariants({ variant: "default" }),
-              "bg-purple-600 hover:bg-purple-700 text-white rounded-full w-full justify-center shadow-md font-semibold text-xs md:text-sm gap-2"
+              "bg-purple-600 hover:bg-purple-700 text-white rounded-[10px] h-12 w-full justify-center shadow-md font-semibold text-xs md:text-sm gap-2"
             )}
           >
             Share Preferences on WhatsApp
@@ -180,13 +180,13 @@ function SuccessContent() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/"
-            className={cn(buttonVariants({ variant: "outline", size: "lg" }), "rounded-full px-8")}
+            className={cn(buttonVariants({ variant: "outline", size: "lg" }), "rounded-[10px] h-12 px-8")}
           >
             Continue Shopping
           </Link>
           <Link
             href="/products"
-            className={cn(buttonVariants({ variant: "default", size: "lg" }), "rounded-full px-8 gap-2")}
+            className={cn(buttonVariants({ variant: "default", size: "lg" }), "rounded-[10px] h-12 px-8 gap-2")}
           >
             <ShoppingBag className="w-4 h-4" /> Shop Custom Gifts
           </Link>
