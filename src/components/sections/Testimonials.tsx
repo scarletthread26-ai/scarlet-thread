@@ -111,7 +111,7 @@ export function Testimonials() {
               {reviews.map((review) => (
                 <CarouselItem key={review.id} className="pl-6 md:basis-1/2 lg:basis-1/3">
                   <motion.div
-                    className="h-full transition-transform duration-300 md:hover:-translate-y-3 md:hover:scale-[1.02]"
+                    className="h-full mx-2 md:mx-0 transition-transform duration-300 md:hover:-translate-y-3 md:hover:scale-[1.02]"
                   >
                     <Card className="rounded-[10px]  shadow-sm bg-background/50 h-full transition-shadow duration-500 backdrop-blur-sm relative group overflow-hidden">
                       <CardContent className="p-8 h-full flex flex-col justify-between">
@@ -123,8 +123,8 @@ export function Testimonials() {
                               <Star
                                 key={i}
                                 className={`w-3.5 h-3.5 ${i < review.rating
-                                    ? "fill-yellow-400 text-yellow-400"
-                                    : "text-slate-200 dark:text-slate-800"
+                                  ? "fill-yellow-400 text-yellow-400"
+                                  : "text-slate-200 dark:text-slate-800"
                                   }`}
                               />
                             ))}
@@ -174,8 +174,8 @@ export function Testimonials() {
                 key={index}
                 onClick={() => api?.scrollTo(index)}
                 className={`transition-all duration-500 rounded-full ${current === index + 1
-                    ? "w-5 h-2 bg-gradient-to-r from-primary to-primary/80 shadow-md"
-                    : "w-2.5 h-2.5 bg-primary/20 hover:bg-primary/40"
+                  ? "w-5 h-2 bg-gradient-to-r from-primary to-primary/80 shadow-md"
+                  : "w-2.5 h-2.5 bg-primary/20 hover:bg-primary/40"
                   }`}
                 aria-label={`Go to slide ${index + 1}`}
               />
