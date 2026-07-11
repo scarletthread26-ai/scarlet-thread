@@ -158,7 +158,7 @@ export default function StripeCheckoutForm({
       <Button
         type="submit"
         disabled={isBusy || !stripe || !elements}
-        className="rounded-full w-full font-bold shadow-md bg-primary hover:bg-primary/95 text-white gap-2 h-12 text-base"
+        className="rounded-[10px] w-full font-bold shadow-md bg-primary hover:bg-primary/95 text-white gap-2 h-12 text-base"
       >
         {isBusy ? (
           <>
