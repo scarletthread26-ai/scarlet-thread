@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -32,6 +32,18 @@ export function ProductCatalog() {
 
   const queryClient = useQueryClient();
 
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      const activeElement = scrollContainerRef.current.querySelector('[data-active="true"]') as HTMLElement;
+      if (activeElement) {
+        const container = scrollContainerRef.current;
+        const scrollLeft = activeElement.offsetLeft - container.offsetLeft - (container.clientWidth / 2) + (activeElement.clientWidth / 2);
+        container.scrollTo({ left: scrollLeft, behavior: "smooth" });
+      }
+    }
+  }, [selectedCategoryId]);
   // Listen to realtime changes on products table
   useRealtime({
     table: "products",
@@ -222,9 +234,13 @@ export function ProductCatalog() {
           </div>
 
           {/* MOBILE CATEGORY LIST */}
-          <div className="flex lg:hidden overflow-x-auto gap-2 pb-2 scrollbar-hide -mx-4 px-4">
+          <div 
+            ref={scrollContainerRef}
+            className="flex lg:hidden overflow-x-auto gap-2 pb-2 scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] -mx-4 px-4 scroll-smooth"
+          >
             <button
               onClick={() => setSelectedCategoryId("All")}
+              data-active={selectedCategoryId === "All"}
               className={`shrink-0 text-xs px-4 py-2 rounded-full font-bold transition ${
                 selectedCategoryId === "All"
                   ? "bg-purple-600 text-white"
@@ -239,6 +255,7 @@ export function ProductCatalog() {
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategoryId(cat.id)}
+                  data-active={isActive}
                   className={`shrink-0 text-xs px-4 py-2 rounded-full font-bold transition ${
                     isActive
                       ? "bg-purple-600 text-white"

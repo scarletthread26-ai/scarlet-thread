@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react"
 import { Heart } from "lucide-react"
-import { CommonHero } from "@/components/sections/CommonHero"
+import { CommonHero, CommonHeroSkeleton } from "@/components/sections/CommonHero"
 
 const ACCENT = "#4b0082"
 const ACCENT_PINK = "#FF69B4"
 
 export function HeroKids() {
   const [sectionData, setSectionData] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     async function loadData() {
@@ -20,10 +21,16 @@ export function HeroKids() {
         }
       } catch (err) {
         console.warn("Failed to load kids-babies hero settings:", err)
+      } finally {
+        setIsLoading(false)
       }
     }
     loadData()
   }, [])
+
+  if (isLoading) {
+    return <CommonHeroSkeleton />
+  }
 
   const title = sectionData?.title || "Little Moments, Made Personal"
   const subtitle =
