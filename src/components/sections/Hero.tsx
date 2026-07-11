@@ -217,39 +217,42 @@ export function Hero() {
 
   return (
     <section
-      className="relative w-full h-[100svh] lg:min-h-[640px] lg:h-[80vh] lg:max-h-[850px] flex flex-col lg:flex-row lg:items-center"
+      className="relative w-full h-[600px] lg:min-h-[640px] lg:h-[80vh] lg:max-h-[850px] flex flex-col lg:flex-row lg:items-center"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
       {/* ── Desktop background — cross-fades per slide ── */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none hidden lg:block">
         {slides.map((s, idx) => (
-          <div
+          <img
             key={`desktop-bg-${s.id}`}
-            className={`absolute inset-0 bg-cover bg-right transition-opacity duration-700 ease-in-out ${idx === current ? "opacity-100" : "opacity-0"
+            src={s.desktopBg}
+            alt="Hero Background"
+            className={`absolute inset-0 w-full h-full object-cover object-right transition-opacity duration-700 ease-in-out ${idx === current ? "opacity-100" : "opacity-0"
               }`}
-            style={{ backgroundImage: `url('${s.desktopBg}')` }}
           />
         ))}
       </div>
 
-      <div className="lg:hidden relative w-full h-[100svh] overflow-hidden">
+      <div className="lg:hidden relative w-full h-[600px] overflow-hidden">
 
         {/* Background images — cross-fade, sit behind everything */}
         {slides.map((s, idx) => (
-          <div
+          <img
             key={`mobile-bg-${s.id}`}
-            className={`absolute inset-0 z-0 bg-cover bg-center transition-opacity duration-500 ease-in-out sm:hidden ${idx === current ? "opacity-100" : "opacity-0"
+            src={s.mobileImg}
+            alt="Hero Background Mobile"
+            className={`absolute inset-0 z-0 w-full h-full object-cover object-center transition-opacity duration-500 ease-in-out sm:hidden ${idx === current ? "opacity-100" : "opacity-0"
               }`}
-            style={{ backgroundImage: `url('${s.mobileImg}')` }}
           />
         ))}
         {slides.map((s, idx) => (
-          <div
+          <img
             key={`tablet-bg-${s.id}`}
-            className={`absolute inset-0 z-0 bg-cover bg-center transition-opacity duration-700 ease-in-out hidden sm:block ${idx === current ? "opacity-100" : "opacity-0"
+            src={s.tabletImg}
+            alt="Hero Background Tablet"
+            className={`absolute inset-0 z-0 w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out hidden sm:block ${idx === current ? "opacity-100" : "opacity-0"
               }`}
-            style={{ backgroundImage: `url('${s.tabletImg}')` }}
           />
         ))}
 
