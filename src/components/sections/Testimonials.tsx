@@ -107,7 +107,7 @@ export function Testimonials() {
             }}
             className="w-full"
           >
-            <CarouselContent className="-ml-6 py-6">
+            <CarouselContent className="-ml-6 py-6 md:mx-1">
               {reviews.map((review) => (
                 <CarouselItem key={review.id} className="pl-6 md:basis-1/2 lg:basis-1/3">
                   <motion.div

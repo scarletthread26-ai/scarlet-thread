@@ -182,11 +182,18 @@ export async function POST(request: Request) {
     const customerName = shippingAddress.full_name || "Customer";
 
     if (customerEmail) {
+      const logoUrl = "https://res.cloudinary.com/drfklf0je/image/upload/v1783778363/ibhfukxnrdfurjhxwdyc.png";
+      const nameUrl = "https://res.cloudinary.com/drfklf0je/image/upload/v1783779041/tevdupbjfcknxzde7q6g.png";
+
       const emailHtml = `
         <div style="font-family: sans-serif; max-width: 600px; color: #333;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <img src="${logoUrl}" alt="Scarlet Thread Logo" style="height: 50px; width: auto; vertical-align: middle; margin-right: 15px;" />
+            <img src="${nameUrl}" alt="The Scarlet Thread" style="height: 35px; width: auto; vertical-align: middle;" />
+          </div>
           <h1 style="color: #c026d3;">Order Confirmation</h1>
           <p>Dear ${customerName},</p>
-          <p>Thank you for shopping with Scarlet Thread! Your order <strong>#${finalOrder.order_number || finalOrder.id.substring(0, 8)}</strong> has been successfully placed.</p>
+          <p>Thank you for shopping with Scarlet Thread! Your order <strong>${finalOrder.order_number || finalOrder.id.substring(0, 8)}</strong> has been successfully placed.</p>
           <div style="background-color: #f9fafb; padding: 15px; border-radius: 8px; margin: 20px 0;">
             <h3 style="margin-top: 0;">Order Summary</h3>
             <p><strong>Total Amount:</strong> AED ${total_amount}</p>
@@ -213,6 +220,39 @@ export async function POST(request: Request) {
         htmlContent: emailHtml,
       });
     }
+
+    // 7. Send order notification email to admin
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+    const adminOrderUrl = `${appUrl}/admin/orders/${finalOrder.id}`;
+    const adminEmail = process.env.MAIL_FROM_EMAIL || "mrithulmridhu05@gmail.com";
+    const adminEmailHtml = `
+      <div style="font-family: sans-serif; max-width: 600px; color: #333;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <img src="https://res.cloudinary.com/drfklf0je/image/upload/v1783778363/ibhfukxnrdfurjhxwdyc.png" alt="Scarlet Thread Logo" style="height: 50px; width: auto; vertical-align: middle; margin-right: 15px;" />
+          <img src="https://res.cloudinary.com/drfklf0je/image/upload/v1783779041/tevdupbjfcknxzde7q6g.png" alt="The Scarlet Thread" style="height: 35px; width: auto; vertical-align: middle;" />
+        </div>
+        <h1 style="color: #c026d3;">New Order Received!</h1>
+        <p>A new order <strong>#${finalOrder.order_number || finalOrder.id.substring(0, 8)}</strong> has been placed by ${customerName} (${customerEmail || 'Guest'}).</p>
+        <div style="background-color: #f9fafb; padding: 15px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0;">Order Summary</h3>
+          <p><strong>Total Amount:</strong> AED ${total_amount}</p>
+          <p><strong>Payment Method:</strong> ${payment_method}</p>
+        </div>
+        <p>Please check the admin dashboard for full order details.</p>
+        <div style="margin: 30px 0; text-align: center;">
+          <a href="${adminOrderUrl}" 
+             style="background-color: #000000; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
+            View Order in Dashboard
+          </a>
+        </div>
+      </div>
+    `;
+
+    sendEmail({
+      to: [{ email: adminEmail, name: "Scarlet Thread Admin" }],
+      subject: `New Order Received - Order #${finalOrder.order_number || 'New'}`,
+      htmlContent: adminEmailHtml,
+    }).catch(err => console.error("Failed to send admin order notification:", err));
 
     return NextResponse.json(finalOrder);
   } catch (error: any) {

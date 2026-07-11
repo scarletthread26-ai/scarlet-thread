@@ -117,13 +117,22 @@ export async function PATCH(
         let emailHtml = "";
         let emailSubject = "";
 
+        // Use a permanent, publicly hosted URL (Cloudinary) for the email image so it always resolves 
+        // properly in email clients like Gmail/Outlook, even when testing locally.
+        const logoUrl = "https://res.cloudinary.com/drfklf0je/image/upload/v1783778363/ibhfukxnrdfurjhxwdyc.png";
+        const nameUrl = "https://res.cloudinary.com/drfklf0je/image/upload/v1783779041/tevdupbjfcknxzde7q6g.png";
+
         if (status === "delivered") {
           emailSubject = `Your Scarlet Thread Order #${orderNumber} has been delivered!`;
           emailHtml = `
             <div style="font-family: sans-serif; max-width: 600px; color: #333;">
+              <div style="text-align: center; margin-bottom: 20px;">
+                <img src="${logoUrl}" alt="Scarlet Thread Logo" style="height: 50px; width: auto; vertical-align: middle; margin-right: 15px;" />
+                <img src="${nameUrl}" alt="The Scarlet Thread" style="height: 35px; width: auto; vertical-align: middle;" />
+              </div>
               <h1 style="color: #22c55e;">Order Delivered!</h1>
               <p>Dear ${customerName},</p>
-              <p>Great news! Your Scarlet Thread order <strong>#${orderNumber}</strong> has been successfully delivered.</p>
+              <p>Great news! Your Scarlet Thread order <strong>${orderNumber}</strong> has been successfully delivered.</p>
               <p>We hope you love your new purchase! If you have any feedback or issues, please don't hesitate to reach out to us.</p>
               
               <div style="margin: 30px 0; text-align: center;">
@@ -151,9 +160,13 @@ export async function PATCH(
           emailSubject = `Your Scarlet Thread Order #${orderNumber} has been shipped!`;
           emailHtml = `
             <div style="font-family: sans-serif; max-width: 600px; color: #333;">
+              <div style="text-align: center; margin-bottom: 20px;">
+                <img src="${logoUrl}" alt="Scarlet Thread Logo" style="height: 50px; width: auto; vertical-align: middle; margin-right: 15px;" />
+                <img src="${nameUrl}" alt="The Scarlet Thread" style="height: 35px; width: auto; vertical-align: middle;" />
+              </div>
               <h1 style="color: #3b82f6;">Order Shipped!</h1>
               <p>Dear ${customerName},</p>
-              <p>Exciting news! Your Scarlet Thread order <strong>#${orderNumber}</strong> has just been shipped and is on its way to you.</p>
+              <p>Exciting news! Your Scarlet Thread order <strong>${orderNumber}</strong> has just been shipped and is on its way to you.</p>
               ${estimatedDateHtml}
               <p>Keep an eye out for your delivery soon.</p>
               

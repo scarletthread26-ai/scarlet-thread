@@ -126,8 +126,8 @@ export function ProductCatalog() {
     <section className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 lg:px-16 py-8 md:py-12">
       {/* Page Header */}
       <div className="mb-8 md:mb-12">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">
-          All <span className="text-purple-600">Gifts</span>
+        <h1 className="text-[22px] md:text-3xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">
+          All <span className="text-primary">Gifts</span>
         </h1>
         <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 max-w-xl">
           Browse our complete collection of beautiful, custom embroidered gifts crafted to order.
@@ -137,8 +137,8 @@ export function ProductCatalog() {
       <div className="flex flex-col lg:flex-row gap-8">
         {/* DESKTOP FILTER SIDEBAR */}
         <aside className="hidden lg:block w-64 shrink-0">
-          <div className="sticky top-24">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-5">
+          <div className="sticky top-28">
+            <div className="bg-white dark:bg-slate-900 rounded-[10px] border border-slate-100 dark:border-slate-800 shadow-sm p-5">
               <h3 className="font-bold text-slate-800 dark:text-slate-200 text-sm mb-4 flex items-center gap-2">
                 <SlidersHorizontal className="w-4 h-4 text-purple-600" />
                 Filter by Category
@@ -146,10 +146,10 @@ export function ProductCatalog() {
               <div className="flex flex-col gap-1">
                 <button
                   onClick={() => setSelectedCategoryId("All")}
-                  className={`text-left text-xs px-3 py-2.5 rounded-xl font-bold transition-all duration-200 block cursor-pointer ${
+                  className={`text-left text-xs px-3 py-2.5 rounded-[10px] font-bold transition-all duration-200 block cursor-pointer ${
                     selectedCategoryId === "All"
-                      ? "bg-purple-600 text-white shadow-md shadow-purple-600/10"
-                      : "text-slate-600 dark:text-slate-400 hover:bg-purple-50 dark:hover:bg-purple-950/20 hover:text-purple-600"
+                      ? "bg-purple-700 text-white shadow-md shadow-purple-600/10"
+                      : "text-slate-600 dark:text-slate-400 hover:bg-purple-50 dark:hover:bg-purple-950/20 hover:text-purple-700"
                   }`}
                 >
                   All Products
@@ -160,10 +160,10 @@ export function ProductCatalog() {
                     <button
                       key={cat.id}
                       onClick={() => setSelectedCategoryId(cat.id)}
-                      className={`text-left text-xs px-3 py-2.5 rounded-xl font-bold transition-all duration-200 block cursor-pointer ${
+                      className={`text-left text-xs px-3 py-2.5 rounded-[10px] font-bold transition-all h-12 duration-200 block cursor-pointer ${
                         isActive
-                          ? "bg-purple-600 text-white shadow-md shadow-purple-600/10"
-                          : "text-slate-600 dark:text-slate-400 hover:bg-purple-50 dark:hover:bg-purple-950/20 hover:text-purple-600"
+                          ? "bg-primary text-white shadow-md shadow-purple-600/10"
+                          : "text-slate-600 dark:text-slate-400 hover:bg-purple-50 dark:hover:bg-purple-950/20 hover:text-purple-700"
                       }`}
                     >
                       {cat.name}
@@ -178,7 +178,7 @@ export function ProductCatalog() {
         {/* MAIN PRODUCT AREA */}
         <div className="flex-1 space-y-6">
           {/* Controls row */}
-          <div className="flex flex-row justify-between items-center bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+          <div className="flex flex-row justify-between items-center bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[10px] p-4 shadow-sm">
             <span className="text-xs font-bold text-slate-500">
               Showing {filteredProducts.length} results
             </span>
