@@ -72,35 +72,31 @@ export function Testimonials() {
   }
 
   return (
-    <section className="py-16 bg-secondary/20 overflow-hidden perspective-1000">
+    <section className="py-5 bg-secondary/60 overflow-hidden perspective-1000">
       <div className="container mx-auto px-4 max-w-7xl">
-        
+
         {/* Header Widget */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 30, filter: "blur(5px)" }}
           whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.9, ease: "easeOut" }}
-          className="text-center mb-10 flex flex-col items-center justify-center space-y-3"
+          className="text-center mb-2 md:mb-10 flex flex-col items-center justify-center space-y-3"
         >
-          <div className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 rounded-full shadow-sm">
-            <span className="text-[10px] font-bold text-slate-700 dark:text-slate-200 tracking-wider uppercase">
-              Customer Testimonials
-            </span>
-          </div>
 
-          <h2 className="text-3xl md:text-4xl font-heading font-bold flex items-center justify-center gap-2">
-            <span>Loved By Our Customers</span>
+
+          <h2 className="text-[22px] md:text-3xl font-heading font-bold flex items-center justify-center gap-2">
+            <span>Loved By Our <span className="text-primary">Customers</span></span>
           </h2>
         </motion.div>
 
         {/* Carousel */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 40, rotateX: 10 }}
           whileInView={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1, delay: 0.1, type: "spring", stiffness: 60, damping: 15 }}
-          className="relative px-4 md:px-12"
+          className="relative md:px-12"
           style={{ transformStyle: "preserve-3d" }}
         >
           <Carousel
@@ -114,25 +110,22 @@ export function Testimonials() {
             <CarouselContent className="-ml-6 py-6">
               {reviews.map((review) => (
                 <CarouselItem key={review.id} className="pl-6 md:basis-1/2 lg:basis-1/3">
-                  <motion.div 
-                    whileHover={{ y: -12, scale: 1.02 }} 
-                    transition={{ type: "spring", stiffness: 400, damping: 17 }} 
-                    className="h-full"
+                  <motion.div
+                    className="h-full transition-transform duration-300 md:hover:-translate-y-3 md:hover:scale-[1.02]"
                   >
-                    <Card className="rounded-[2rem] border border-primary/10 shadow-sm bg-background/50 h-full hover:shadow-[0_20px_40px_-15px_rgba(var(--primary),0.15)] transition-shadow duration-500 backdrop-blur-sm relative group overflow-hidden">
+                    <Card className="rounded-[10px]  shadow-sm bg-background/50 h-full transition-shadow duration-500 backdrop-blur-sm relative group overflow-hidden">
                       <CardContent className="p-8 h-full flex flex-col justify-between">
-                        
+
                         <div>
                           {/* Stars */}
                           <div className="flex gap-1 mb-6 relative z-10">
                             {[...Array(5)].map((_, i) => (
                               <Star
                                 key={i}
-                                className={`w-3.5 h-3.5 ${
-                                  i < review.rating
+                                className={`w-3.5 h-3.5 ${i < review.rating
                                     ? "fill-yellow-400 text-yellow-400"
                                     : "text-slate-200 dark:text-slate-800"
-                                }`}
+                                  }`}
                               />
                             ))}
                           </div>
@@ -167,24 +160,23 @@ export function Testimonials() {
               ))}
             </CarouselContent>
             <div className="hidden md:block">
-              <CarouselPrevious className="border-primary/20 hover:bg-primary/5 hover:text-primary hover:scale-110 transition-transform duration-300 -left-12 w-10 h-10 shadow-sm" />
-              <CarouselNext className="border-primary/20 hover:bg-primary/5 hover:text-primary hover:scale-110 transition-transform duration-300 -right-12 w-10 h-10 shadow-sm" />
+              <CarouselPrevious className=" hover:bg-primary/5 hover:text-primary hover:scale-110 transition-transform duration-300 -left-12 w-10 h-10 shadow-sm" />
+              <CarouselNext className=" hover:bg-primary/5 hover:text-primary hover:scale-110 transition-transform duration-300 -right-12 w-10 h-10 shadow-sm" />
             </div>
           </Carousel>
         </motion.div>
 
         {/* Dynamic Dots */}
         {count > 0 && (
-          <div className="flex justify-center items-center gap-3 mt-10">
+          <div className="hidden md:flex justify-center items-center gap-1 mt-2 md:mt-5">
             {Array.from({ length: count }).map((_, index) => (
               <button
                 key={index}
                 onClick={() => api?.scrollTo(index)}
-                className={`transition-all duration-500 rounded-full ${
-                  current === index + 1 
-                    ? "w-10 h-2.5 bg-gradient-to-r from-primary to-primary/80 shadow-md" 
+                className={`transition-all duration-500 rounded-full ${current === index + 1
+                    ? "w-5 h-2 bg-gradient-to-r from-primary to-primary/80 shadow-md"
                     : "w-2.5 h-2.5 bg-primary/20 hover:bg-primary/40"
-                }`}
+                  }`}
                 aria-label={`Go to slide ${index + 1}`}
               />
             ))}

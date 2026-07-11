@@ -264,7 +264,7 @@ export function FeaturedBanner() {
     <section className="py-6 md:py-16 bg-[#faf8fc] border-y border-border/40">
       <div className="container mx-auto px-3 md:px-4">
         <div className="text-left md:text-center mb-6 md:mb-14">
-          <h2 className="text-3xl md:text-4xl font-heading font-bold flex items-center justify-start md:justify-center gap-3">
+          <h2 className="text-[22px] md:text-3xl font-heading font-bold flex items-center justify-start md:justify-center gap-3">
             Best <span className="text-[#4a0b70]">Sellers</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl md:mx-auto">
