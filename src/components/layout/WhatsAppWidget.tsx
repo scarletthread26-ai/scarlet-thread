@@ -142,7 +142,7 @@ export function WhatsAppWidget() {
       {/* Floating Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-24 lg:bottom-6 right-6 z-50 h-14 w-14 rounded-full flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer bg-[#25D366] text-white"
+        className="fixed bottom-16 right-2 z-50 h-14 w-14 rounded-full flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer bg-[#25D366] text-white"
         aria-label="Toggle WhatsApp chat support"
       >
         <AnimatePresence mode="wait">
