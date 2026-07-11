@@ -165,10 +165,9 @@ export function Discover() {
               <HeartIcon className="w-4 h-4 fill-primary/20" />
               {subtitle}
             </div>
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground leading-tight">
-              {formatDiscoverTitle(title, false)}
-            </h2>
-            <p className="text-sm text-muted-foreground leading-relaxed ">
+            <h2 className="text-[22px] md:text-4xl font-heading font-bold text-foreground leading-tight">
+              {formatDiscoverTitle(title, false)}            </h2>
+            <p className="text-sm text-muted-foreground  ">
               {description}
             </p>
           </div>

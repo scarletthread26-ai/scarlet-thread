@@ -89,23 +89,34 @@ export function NewHowItWorks() {
   }, [])
 
   const title = section?.title || "Creating Your Perfect Custom Gift"
+  const formattedTitle = typeof title === 'string'
+    ? title.split(/(Custom Gift)/i).map((part: string, i: number) =>
+        part.toLowerCase() === "custom gift" ? (
+          <span key={i} className="text-primary">
+            {part}
+          </span>
+        ) : (
+          part
+        )
+      )
+    : title;
   const steps = section?.content?.steps || defaultSteps
 
   return (
-    <section className="py-5 md:py-16 bg-white">
+    <section className="py-5 md:py-10 bg-white">
       <div className="max-w-[1420px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
         {/* ── Lavender outer rounded container ── */}
         <div className="rounded-[28px] py-8 sm:px-2 md:px-4 lg:px-6 md:py-12">
           {/* Heading */}
           <div className="text-start sm:text-center mb-12 md:mb-16">
             <motion.h2
-              className="text-3xl sm:text-3xl md:text-4xl font-bold text-[#1A1530] tracking-wide"
+              className="text-[20px] md:text-3xl font-bold text-[#1A1530] tracking-wide"
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
               variants={headingVariants}
             >
-              {title}
+              {formattedTitle}
             </motion.h2>
             <motion.p
               className="text-[13px] md:text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed mt-0"

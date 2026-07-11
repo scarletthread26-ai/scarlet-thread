@@ -99,7 +99,7 @@ export function CraftedGallerySection({
     scrollRef.current?.scrollBy({ left: 320, behavior: "smooth" })
 
   return (
-    <section className={`pt-2 pb-10 sm:py-16 overflow-hidden`}>
+    <section className={`pt-10 pb-10 sm:py-16 overflow-hidden`}>
       <motion.div
         variants={scaleUp(1.02, 0)}
         initial="hidden"
@@ -113,7 +113,7 @@ export function CraftedGallerySection({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="md:text-center  text-start mb-8 sm:mb-10"
+          className="text-center mb-8 sm:mb-10"
         >
           <h2 className="text-2xl md:text-3xl font-heading font-bold inline-flex items-center md:justify-center gap-2">
             {heading}
@@ -167,7 +167,7 @@ export function CraftedGallerySection({
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-30px" }}
-            className="flex overflow-x-auto gap-3 sm:gap-4 pb-4 hide-scrollbar scroll-smooth snap-x snap-mandatory"
+            className="flex overflow-x-auto gap-3 sm:gap-4 pt-4 -mt-4 pb-4 hide-scrollbar scroll-smooth snap-x snap-mandatory px-1"
           >
             {displayImages.map((img, index) => (
               <motion.div
@@ -179,7 +179,7 @@ export function CraftedGallerySection({
                  * md+  : fixed 220-240 px
                  */
                 className={`relative shrink-0 snap-start rounded-2xl overflow-hidden
-                  shadow-sm hover:shadow-md transition-all duration-300 group ${cardBg}
+                  shadow-sm hover:shadow-md hover:-translate-y-2 transition-all duration-300 group ${cardBg}
                   w-[calc((100vw-2rem-0.75rem)/2.4)]
                   md:w-[220px] lg:w-[240px]
                   aspect-square`}

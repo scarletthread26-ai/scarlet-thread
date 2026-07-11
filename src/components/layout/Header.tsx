@@ -167,7 +167,7 @@ export function Header() {
               <img
                 src="/images/logo/name.png"
                 alt="The Scarlet Thread"
-                className="h-9 lg:h-9 w-auto object-contain"
+                className="h-9 lg:h-9 w-34 object-contain"
               />
             </Link>
           </div>
