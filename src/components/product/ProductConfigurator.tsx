@@ -16,12 +16,12 @@ import { cn } from "@/lib/utils";
 
 const COLORS = [
   { name: "Navy Blue", hex: "#1A237E" },
-  { name: "Black",     hex: "#212121" },
-  { name: "Grey",      hex: "#9E9E9E" },
-  { name: "White",     hex: "#FFFFFF" },
-  { name: "Maroon",    hex: "#880E4F" },
-  { name: "Beige",     hex: "#D7CCC8" },
-  { name: "Olive",     hex: "#33691E" },
+  { name: "Black", hex: "#212121" },
+  { name: "Grey", hex: "#9E9E9E" },
+  { name: "White", hex: "#FFFFFF" },
+  { name: "Maroon", hex: "#880E4F" },
+  { name: "Beige", hex: "#D7CCC8" },
+  { name: "Olive", hex: "#33691E" },
 ];
 
 const SIZES = ["S", "M", "L", "XL", "XXL", "3XL"];
@@ -41,7 +41,7 @@ interface ProductConfiguratorProps {
 
 export function ProductConfigurator({ product }: ProductConfiguratorProps) {
   const router = useRouter();
-  
+
   // Standard product info fallbacks
   const prodId = product?.id || "f3a0e660-31e0-4966-9e1f-7b0028ed2cd4";
   const { data: reviews = [] } = useProductReviews(String(prodId));
@@ -103,7 +103,7 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
   const handleWhatsAppChat = () => {
     const rawPhone = settings?.whatsapp_number || "971501872337";
     const cleanedPhone = rawPhone.replace(/\D/g, "");
-    
+
     let text = `Hello! I would like to inquire about personalizing and ordering the product: *${name}* (Price: AED ${price}).`;
     if (customName) text += `\n- Name/Initials: ${customName}`;
     if (customText) text += `\n- Text/Date: ${customText}`;
@@ -111,7 +111,7 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
     text += `\n- Size: ${activeSize}`;
     text += `\n- Font Style: ${fontStyle}`;
     text += `\n- Thread Color: ${fontColor}`;
-    
+
     const url = `https://wa.me/${cleanedPhone}?text=${encodeURIComponent(text)}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
@@ -144,7 +144,7 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
       };
 
       await addItem(cartItem, isAuthenticated);
-      
+
       // Toast notification
       toast.success(`✓ ${name} added to your cart.`);
 
@@ -189,39 +189,38 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
     await toggleItem(wishlistItem, true);
   };
 
-  const discountPercent = compareAtPrice > price 
-    ? Math.round(((compareAtPrice - price) / compareAtPrice) * 100) 
+  const discountPercent = compareAtPrice > price
+    ? Math.round(((compareAtPrice - price) / compareAtPrice) * 100)
     : 0;
 
   return (
-    <div className="flex flex-col pt-4 space-y-8">
+    <div className="flex flex-col space-y-3">
       {/* Header */}
       <div>
         <div className="flex justify-between items-start">
-          <h1 className="text-3xl font-heading font-extrabold text-slate-800 dark:text-slate-100">{name}</h1>
+          <h1 className="text-[22px] md:text-3xl font-heading font-bold text-black">{name}</h1>
           <button
             onClick={handleWishlistToggle}
             className="text-purple-600 hover:scale-110 transition-transform p-1 bg-purple-50 dark:bg-purple-950/30 rounded-full border border-purple-100 dark:border-purple-900/50"
             title="Toggle Wishlist"
           >
-            <Heart className={`w-5.5 h-5.5 transition-all ${isWishlisted ? "fill-purple-600" : ""}`} />
           </button>
         </div>
 
         {/* Ratings */}
         {totalReviewsCount > 0 ? (
-          <div className="flex items-center gap-3 text-sm mt-3">
+          <div className="flex items-center gap-3 text-sm ">
             <div className="flex text-amber-500">
               {[...Array(5)].map((_, i) => {
                 const starVal = i + 1;
                 const isFilled = starVal <= Math.round(averageRating);
                 return (
-                  <Star 
-                    key={i} 
+                  <Star
+                    key={i}
                     className={cn(
                       "w-4 h-4 fill-current",
                       isFilled ? "text-amber-500" : "text-slate-300 dark:text-slate-750 fill-none"
-                    )} 
+                    )}
                   />
                 );
               })}
@@ -233,7 +232,7 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
       </div>
 
       {/* Price */}
-      <div className="flex items-end gap-3 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800/60 max-w-sm">
+      <div className="flex items-end gap-3 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-[10px] border border-slate-100 dark:border-slate-800/60 w-full">
         <div className="flex flex-col">
           <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">Price</span>
           <span className="text-3xl font-extrabold text-purple-600">
@@ -264,7 +263,7 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
 
       {/* Options Row */}
       {(productColors.length > 0 || productSizes.length > 0) && (
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-5">
           {/* Color Selection */}
           {productColors.length > 0 && (
             <div>
@@ -340,7 +339,7 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
           onClick={handleAddToCart}
           variant="outline"
           disabled={isAdding || isAdded}
-          className="flex-1 h-14 text-sm font-bold text-purple-700 border-2 border-purple-200 bg-purple-50/50 hover:bg-purple-50 hover:border-purple-300 hover:text-purple-800 rounded-2xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-85 disabled:cursor-not-allowed"
+          className="flex-1 min-h-[48px] sm:min-h-[56px] text-sm font-bold text-purple-700 border-2 border-purple-200 bg-purple-50/50 hover:bg-purple-50 hover:border-purple-300 hover:text-purple-800 rounded-[10px] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-85 disabled:cursor-not-allowed"
         >
           {isAdding ? (
             <>
@@ -358,7 +357,7 @@ export function ProductConfigurator({ product }: ProductConfiguratorProps) {
         </Button>
         <Button
           onClick={handleBuyNow}
-          className="flex-1 h-14 text-sm font-bold bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 active:scale-[0.98] text-white rounded-2xl shadow-lg hover:shadow-purple-500/25 transition-all flex items-center justify-center gap-1.5 cursor-pointer border-0"
+          className="flex-1 min-h-[48px] sm:min-h-[56px] text-sm font-bold bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 active:scale-[0.98] text-white rounded-[10px] shadow-lg hover:shadow-purple-500/25 transition-all flex items-center justify-center gap-1.5 cursor-pointer border-0"
         >
           Buy It Now
           <ArrowRight className="w-5 h-5" />

@@ -7,48 +7,6 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 import { FloatingFeatureBar } from "./FloatingFeatureBar"
 
-const STATIC_SLIDES = [
-  {
-    id: 0,
-    desktopBg: "/images/heropage/scarlet-couple1.png",
-    tabletImg: "/images/heropage/scarlet-couple1.png",
-    mobileImg: "/images/heropage/scarlet-mobile.png",
-    ctaLink: "/products",
-    title: "",
-    subtitle: "",
-    buttonText: "Shop Collection",
-  },
-  {
-    id: 1,
-    desktopBg: "/images/heropage/scarlet-baby1.png",
-    tabletImg: "/images/heropage/scarlet-baby1.png",
-    mobileImg: "/images/heropage/scarlet-mobilebaby.png",
-    ctaLink: "/products",
-    title: "",
-    subtitle: "",
-    buttonText: "Shop Collection",
-  },
-  {
-    id: 2,
-    desktopBg: "/images/heropage/scarlet-couple2.png",
-    tabletImg: "/images/heropage/scarlet-couple2.png",
-    mobileImg: "/images/heropage/scarlet-mobilecouple.png",
-    ctaLink: "/products",
-    title: "",
-    subtitle: "",
-    buttonText: "Shop Collection",
-  },
-  {
-    id: 3,
-    desktopBg: "/images/heropage/scarlet-lady2.png",
-    tabletImg: "/images/heropage/scarlet-lady2.png",
-    mobileImg: "/images/heropage/scarlet-mobilelady.png",
-    ctaLink: "/products",
-    title: "",
-    subtitle: "",
-    buttonText: "Shop Collection",
-  },
-]
 
 // ---------------------------------------------------------------------------
 // Animation variants
@@ -156,7 +114,7 @@ function formatDescription(text: string) {
 // Hero
 // ---------------------------------------------------------------------------
 export function Hero() {
-  const [slides, setSlides] = useState<any[]>(STATIC_SLIDES)
+  const [slides, setSlides] = useState<any[]>([])
   const [current, setCurrent] = useState(0)
   const [paused, setPaused] = useState(false)
   const [delay, setDelay] = useState(5000)
@@ -192,22 +150,33 @@ export function Hero() {
           }
         }
       } catch (err) {
-        console.warn("Failed to load slides from Supabase CMS, using static fallback:", err);
+        console.warn("Failed to load slides from Supabase CMS:", err);
       }
     }
     loadSlides();
   }, []);
 
-  const next = useCallback(() => setCurrent((c) => (c + 1) % slides.length), [slides.length])
+  const next = useCallback(() => {
+    if (slides.length === 0) return;
+    setCurrent((c) => (c + 1) % slides.length);
+  }, [slides.length])
 
   // Auto-advance
   useEffect(() => {
-    if (paused) return
+    if (paused || slides.length === 0) return
     const id = setInterval(next, delay)
     return () => clearInterval(id)
-  }, [paused, next, delay])
+  }, [paused, next, delay, slides.length])
 
-  const slide = slides[current] || STATIC_SLIDES[0]
+  if (slides.length === 0) {
+    return (
+      <section className="relative w-full h-[600px] lg:min-h-[640px] lg:h-[80vh] lg:max-h-[850px] bg-muted/20 animate-pulse flex items-center justify-center">
+        {/* Loading skeleton */}
+      </section>
+    );
+  }
+
+  const slide = slides[current]
 
   const firstWithTitle = slides.find(s => s.title);
   const heroTitle = firstWithTitle?.title || "More Than a Gift. A Memory in the Making";

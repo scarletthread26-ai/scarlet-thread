@@ -33,7 +33,7 @@ export default function ProductDetailPage({ params }: PageProps) {
         <ProductBreadcrumbs product={product} />
         
         {/* Top Split Layout */}
-        <div className="flex flex-col lg:flex-row gap-12 mt-4 mb-16">
+        <div className="flex flex-col lg:flex-row gap-5 md:gap-12 mt-4 mb-16">
           
           {/* Left: Gallery */}
           <div className="flex-1 lg:w-1/2">
