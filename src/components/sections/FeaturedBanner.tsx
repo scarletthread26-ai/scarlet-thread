@@ -74,7 +74,7 @@ export function MobileProductCard({ product }: { product: any }) {
   const { isWishlisted, hasDiscount, discountPercent, handleWishlistToggle } = useProductCard(product)
 
   return (
-    <Link href={href} className="group flex flex-col h-full bg-white rounded-xl overflow-hidden shadow-[0_1px_6px_rgba(0,0,0,0.08)]">
+    <Link href={href} className="group flex flex-col h-full bg-white rounded-xl overflow-hidden ">
       {/* ── Image ── */}
       <div className="relative w-full aspect-square bg-[#F7F7F7]">
         {product.image ? (
@@ -261,7 +261,7 @@ export function FeaturedBanner() {
   }))
 
   return (
-    <section className="py-6 md:py-16 bg-[#faf8fc] border-y border-border/40">
+    <section className="py-6 md:py-16 bg-white">
       <div className="container mx-auto px-3 md:px-4">
         <div className="text-left md:text-center mb-6 md:mb-14">
           <h2 className="text-[22px] md:text-3xl font-heading font-bold flex items-center justify-start md:justify-center gap-3">

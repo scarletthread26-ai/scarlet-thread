@@ -155,7 +155,7 @@ export function Discover() {
     : activeImages;
 
   return (
-    <section className="pt-28 pb-8 md:py-24 bg-[#fffff]">
+    <section className="pt-5  pb-8 bg-white  ">
       <div className="w-full max-w-[1400px] mx-auto  px-4 sm:px-6 md:px-12 lg:px-16">
         {/* MOBILE & TABLET VIEW */}
         <div className="flex flex-col gap-6 md:gap-8 lg:hidden">

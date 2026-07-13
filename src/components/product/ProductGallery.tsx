@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { Star, ChevronUp, ChevronDown, X, ChevronLeft, ChevronRight, ZoomIn } from "lucide-react"
+import { Star, ChevronUp, ChevronDown, X, ChevronLeft, ChevronRight } from "lucide-react"
 
 const thumbImages = [
   "/images/forhimpage/scarlet-kinghoodie.png",
@@ -16,9 +16,7 @@ export function ProductGallery({ product }: { product?: any }) {
   const [activeIdx, setActiveIdx] = useState(0)
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
   
-  // Hover Zoom state
-  const [zoomPos, setZoomPos] = useState({ x: 0, y: 0 })
-  const [isHovered, setIsHovered] = useState(false)
+
 
   // Mobile Swipe state
   const [touchStart, setTouchStart] = useState<number | null>(null)
@@ -29,13 +27,7 @@ export function ProductGallery({ product }: { product?: any }) {
     ? images.map((img: any) => img.url)
     : thumbImages
 
-  // Hover Zoom handlers
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const { left, top, width, height } = e.currentTarget.getBoundingClientRect()
-    const x = ((e.clientX - left) / width) * 100
-    const y = ((e.clientY - top) / height) * 100
-    setZoomPos({ x, y })
-  }
+
 
   // Mobile Swipe handlers
   const minSwipeDistance = 50
@@ -89,7 +81,7 @@ export function ProductGallery({ product }: { product?: any }) {
               <button
                 key={idx}
                 onClick={() => setActiveIdx(idx)}
-                className={`w-[72px] h-20 rounded-xl overflow-hidden border-2 cursor-pointer transition-all flex-shrink-0 bg-[#F5F0EA] ${
+                className={`w-[72px] h-20 rounded-[10px] overflow-hidden border-2 cursor-pointer transition-all flex-shrink-0 bg-[#F5F0EA] ${
                   idx === activeIdx
                     ? "border-purple-600 shadow-md scale-[1.04]"
                     : "border-transparent hover:border-purple-400/50"
@@ -119,10 +111,7 @@ export function ProductGallery({ product }: { product?: any }) {
 
         {/* Main Image Container */}
         <div 
-          className="flex-1 relative h-[500px] rounded-3xl overflow-hidden border border-black/5 shadow-sm bg-[#F5F0EA] group cursor-zoom-in select-none"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          onMouseMove={handleMouseMove}
+          className="flex-1 relative h-[500px] rounded-[10px] overflow-hidden border border-black/5 shadow-sm bg-[#F5F0EA] group cursor-pointer select-none"
           onClick={() => setIsLightboxOpen(true)}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
@@ -133,18 +122,9 @@ export function ProductGallery({ product }: { product?: any }) {
             alt={product?.name || "Product Image"}
             fill
             unoptimized
-            style={isHovered ? {
-              transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
-              transform: "scale(1.5)"
-            } : undefined}
-            className="object-cover object-center transition-transform duration-100 ease-out"
+            className="object-cover object-center"
             priority
           />
-
-          {/* Hover Zoom Indicator */}
-          <div className="absolute top-4 left-4 p-2 bg-black/40 backdrop-blur-sm rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-            <ZoomIn className="w-4 h-4" />
-          </div>
 
           {/* Bestseller Badge */}
           {product?.featured && (
@@ -155,14 +135,14 @@ export function ProductGallery({ product }: { product?: any }) {
           )}
 
           {/* Image Counter Badge */}
-          {displayImages.length > 0 && (
+          {/* {displayImages.length > 0 && (
             <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-bold font-mono">
               {activeIdx + 1} / {displayImages.length}
             </div>
-          )}
+          )} */}
 
           {/* Mobile Swipe indicators (dots) */}
-          {displayImages.length > 1 && (
+          {/* {displayImages.length > 1 && (
             <div className="md:hidden absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/20 px-3 py-1.5 rounded-full backdrop-blur-xs">
               {displayImages.map((_: string, idx: number) => (
                 <button
@@ -178,9 +158,36 @@ export function ProductGallery({ product }: { product?: any }) {
                 />
               ))}
             </div>
-          )}
+          )} */}
         </div>
       </div>
+
+      {/* Mobile Thumbnails */}
+      {displayImages.length > 1 && (
+        <div className="flex md:hidden gap-3 overflow-x-auto pb-2 snap-x no-scrollbar">
+          {displayImages.map((src: string, idx: number) => (
+            <button
+              key={idx}
+              onClick={() => setActiveIdx(idx)}
+              className={`w-20 h-20 rounded-[10px] overflow-hidden border-2 cursor-pointer transition-all flex-shrink-0 bg-[#F5F0EA] snap-start ${
+                idx === activeIdx
+                  ? "border-purple-600 shadow-md scale-[1.04]"
+                  : "border-transparent hover:border-purple-400/50"
+              }`}
+            >
+              <div className="relative w-full h-full">
+                <Image
+                  src={src}
+                  alt={`Product view ${idx + 1}`}
+                  fill
+                  unoptimized
+                  className="object-cover"
+                />
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Fullscreen Lightbox Modal */}
       {isLightboxOpen && (

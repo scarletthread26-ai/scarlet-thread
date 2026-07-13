@@ -18,7 +18,7 @@ export function CraftedGalleryHer() {
       category="her"
       galleryHref="/gallery?category=her#gallery-grid"
       fallbackImages={fallbackImages}
-      bgColor="bg-[#F9F5FF]"
+      bgColor="bg-white"
       cardBg="bg-white"
       minImages={6}
     />

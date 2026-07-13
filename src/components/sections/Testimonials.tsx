@@ -72,7 +72,7 @@ export function Testimonials() {
   }
 
   return (
-    <section className="py-5 bg-secondary/60 overflow-hidden perspective-1000">
+    <section className="py-5 bg-white overflow-hidden perspective-1000">
       <div className="container mx-auto px-4 max-w-7xl">
 
         {/* Header Widget */}

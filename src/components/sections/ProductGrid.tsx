@@ -154,12 +154,12 @@ export function ProductGrid() {
   if (!showSkeleton && displayProducts.length === 0) return null
 
   return (
-    <section className="py-5 md:pb-24 bg-[#F9F5FF]">
+    <section className="py-5 md:py-10 bg-white">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 lg:px-16">
 
         {/* Heading */}
         <motion.div
-          className="text-left md:text-center mb-10 md:mb-12"
+          className="text-left md:text-center mb-10 md:mb-5"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
