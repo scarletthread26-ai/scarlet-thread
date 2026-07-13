@@ -78,15 +78,15 @@ export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSpl
   });
 
   return (
-    <section className="py-16 bg-slate-50/30 dark:bg-slate-950/20 border-t border-slate-100 dark:border-slate-800">
+    <section className="py-5 md:py-16 bg-[#ffff] border-t border-slate-100 dark:border-slate-800">
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="flex flex-col lg:flex-row gap-12">
 
           {/* Left: Specs Panel */}
           {specs.length > 0 && (
             <div className="flex-1 lg:w-1/3">
-              <h3 className="font-heading font-extrabold text-xl mb-6 text-slate-800 dark:text-slate-100">Product Specifications</h3>
-              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm">
+              <h3 className="font-heading font-bold text-xl mb-6 text-black">Product Specifications</h3>
+              <div className="bg-white dark:bg-slate-900 rounded-[10px] border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm">
                 <div className="flex flex-col gap-4">
                   {specs.map((spec: any, index: number) => (
                     <div key={index} className="flex gap-4 items-start pb-4 border-b border-slate-100 dark:border-slate-800/80 last:border-0 last:pb-0">
@@ -102,8 +102,8 @@ export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSpl
           {/* Right: Reviews Panel */}
           <div className={`${specs.length > 0 ? "flex-[1.5] lg:w-2/3" : "w-full"} space-y-6`}>
             <div className="flex justify-between items-center">
-              <h3 className="font-heading font-extrabold text-xl text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                <MessageSquare className="w-5.5 h-5.5 text-purple-600" />
+              <h3 className="font-heading font-bold text-xl text-black flex items-center gap-2">
+                {/* <MessageSquare className="w-5.5 h-5.5 text-purple-600" /> */}
                 Customer Reviews
               </h3>
               {user ? (
@@ -114,7 +114,7 @@ export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSpl
                   <Plus className="w-4 h-4" /> Write a Review
                 </Button>
               ) : (
-                <span className="text-xs text-slate-400 font-medium bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200/30">
+                <span className="text-xs text-slate-900 font-medium bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-[10px] border border-slate-200/30">
                   Log in to write a review
                 </span>
               )}
@@ -122,7 +122,7 @@ export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSpl
 
             {/* Write Review Form */}
             {showReviewForm && (
-              <div className="bg-white dark:bg-slate-900 border border-purple-100 dark:border-purple-950/50 rounded-2xl p-6 shadow-md transition-all">
+              <div className="bg-white dark:bg-slate-900 border border-purple-100 dark:border-purple-950/50 rounded-[10px] p-6 shadow-md transition-all">
                 <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100 mb-4">
                   Share your experience
                 </h4>
@@ -181,7 +181,7 @@ export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSpl
             )}
 
             {/* Ratings Overview Card */}
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm">
+            <div className="bg-white dark:bg-slate-900 rounded-[10px] border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm">
               <div className="flex flex-col md:flex-row gap-8">
 
                 {/* Score */}
@@ -198,7 +198,7 @@ export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSpl
                       />
                     ))}
                   </div>
-                  <span className="text-xs font-bold text-slate-400">
+                  <span className="text-xs font-bold text-black">
                     Based on {totalReviewsCount} {totalReviewsCount === 1 ? "feedback review" : "feedback reviews"}
                   </span>
                 </div>
@@ -206,13 +206,13 @@ export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSpl
                 {/* Rating Distribution Bars */}
                 <div className="flex-1 space-y-2.5">
                   {distribution.map((bar) => (
-                    <div key={bar.stars} className="flex items-center gap-3 text-xs font-bold text-slate-500">
+                    <div key={bar.stars} className="flex items-center gap-3 text-xs font-bold text-black dark:text-white">
                       <span className="w-2.5">{bar.stars}</span>
                       <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
                       <div className="flex-1 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                         <div className="h-full bg-purple-600 rounded-full" style={{ width: `${bar.percentage}%` }}></div>
                       </div>
-                      <span className="w-8 text-right text-slate-400">{bar.percentage}%</span>
+                      <span className="w-8 text-right text-black dark:text-white">{bar.percentage}%</span>
                     </div>
                   ))}
                 </div>
@@ -225,7 +225,7 @@ export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSpl
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
               </div>
             ) : reviews.length === 0 ? (
-              <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-2xl p-10 text-center shadow-sm">
+              <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-[10px] p-10 text-center shadow-sm">
                 <AlertCircle className="w-8 h-8 text-slate-400 mx-auto mb-2" />
                 <h4 className="font-bold text-slate-700 dark:text-slate-300">No reviews yet</h4>
                 <p className="text-slate-400 text-xs mt-1">
@@ -233,48 +233,55 @@ export function ProductDetailsReviewsSplit({ product }: ProductDetailsReviewsSpl
                 </p>
               </div>
             ) : (
-              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm space-y-6">
+              <div className="bg-white dark:bg-slate-900 rounded-[10px] border border-slate-200/60 dark:border-slate-800/80 p-6 shadow-sm space-y-6">
                 {reviews.map((review) => (
                   <div key={review.id} className="border-b border-slate-100 dark:border-slate-800/80 pb-6 last:border-0 last:pb-0">
-                    <div className="flex justify-between items-start mb-2.5">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-purple-50 dark:bg-purple-950/40 text-purple-600 border border-purple-100 dark:border-purple-900/50 flex items-center justify-center font-bold text-xs shrink-0">
-                          {(review.users?.full_name || "Customer").charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                          <div className="font-bold text-slate-800 dark:text-slate-200 text-sm flex items-center gap-2">
-                            {review.users?.full_name || "Anonymous Customer"}
-                            <div className="flex text-amber-500">
-                              {Array.from({ length: review.rating }).map((_, i) => (
-                                <Star key={i} className="w-2.5 h-2.5 fill-current" />
-                              ))}
+                    <div className="flex items-start gap-3">
+                      {/* Logo / Avatar (Left Side) */}
+                      <div className="w-8 h-8 rounded-full bg-purple-50 dark:bg-purple-950/40 text-purple-600 border border-purple-100 dark:border-purple-900/50 flex items-center justify-center font-bold text-xs shrink-0">
+                        {(review.users?.full_name || "Customer").charAt(0).toUpperCase()}
+                      </div>
+                      
+                      {/* Others and Feedback (Right Side) */}
+                      <div className="flex-1">
+                        <div className="flex justify-between items-start mb-1">
+                          <div>
+                            <div className="font-bold text-slate-800 dark:text-slate-200 text-sm flex items-center gap-2 flex-wrap">
+                              {review.users?.full_name || "Anonymous Customer"}
+                              <div className="flex text-amber-500">
+                                {Array.from({ length: review.rating }).map((_, i) => (
+                                  <Star key={i} className="w-2.5 h-2.5 fill-current" />
+                                ))}
+                              </div>
                             </div>
+                            <span className="text-[10px] text-slate-400">Verified Buyer</span>
                           </div>
-                          <span className="text-[10px] text-slate-400">Verified Buyer</span>
+                          <span className="text-[10px] text-slate-400 font-bold shrink-0 mt-0.5">
+                            {format(new Date(review.created_at), "dd MMM yyyy")}
+                          </span>
                         </div>
-                      </div>
-                      <span className="text-[10px] text-slate-400 font-bold">
-                        {format(new Date(review.created_at), "dd MMM yyyy")}
-                      </span>
-                    </div>
-                    {review.title && (
-                      <h5 className="font-bold text-xs text-slate-800 dark:text-slate-200 mb-1">
-                        "{review.title}"
-                      </h5>
-                    )}
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                      {review.comment}
-                    </p>
-                    {review.admin_reply && (
-                      <div className="mt-3 ml-4 bg-purple-50/50 dark:bg-purple-950/20 border-l-2 border-purple-500 rounded-r-xl p-3.5 space-y-1">
-                        <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 block">
-                          Scarlet Thread Response
-                        </span>
-                        <p className="text-xs text-slate-650 dark:text-slate-350 leading-relaxed font-medium">
-                          {review.admin_reply}
+
+                        {review.title && (
+                          <h5 className="font-bold text-xs text-slate-800 dark:text-slate-200 mb-1 mt-2">
+                            "{review.title}"
+                          </h5>
+                        )}
+                        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mt-2">
+                          {review.comment}
                         </p>
+                        
+                        {review.admin_reply && (
+                          <div className="mt-3 bg-purple-50/50 dark:bg-purple-950/20 border-l-2 border-purple-500 rounded-r-xl p-3.5 space-y-1">
+                            <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 block">
+                              Scarlet Thread Response
+                            </span>
+                            <p className="text-xs text-slate-650 dark:text-slate-350 leading-relaxed font-medium">
+                              {review.admin_reply}
+                            </p>
+                          </div>
+                        )}
                       </div>
-                    )}
+                    </div>
                   </div>
                 ))}
               </div>

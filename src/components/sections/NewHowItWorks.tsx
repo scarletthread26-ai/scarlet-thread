@@ -103,14 +103,14 @@ export function NewHowItWorks() {
   const steps = section?.content?.steps || defaultSteps
 
   return (
-    <section className="py-5 md:py-10 bg-white">
+    <section className="py-5 md:py-2 bg-white">
       <div className="max-w-[1420px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
         {/* ── Lavender outer rounded container ── */}
         <div className="rounded-[28px] py-8 sm:px-2 md:px-4 lg:px-6 md:py-12">
           {/* Heading */}
           <div className="text-start sm:text-center mb-12 md:mb-16">
             <motion.h2
-              className="text-[20px] md:text-3xl font-bold text-[#1A1530] tracking-wide"
+              className="text-[20px] md:text-3xl font-bold text-[#1A1530]"
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
@@ -125,14 +125,14 @@ export function NewHowItWorks() {
               viewport={{ once: true, amount: 0.3 }}
               variants={headingVariants}
             >
-              Thoughtfully personalized gifts, crafted to celebrate every special moment.
+              Our simple 4-step process makes creating your perfect custom gift quick and effortless
             </motion.p>
           </div>
         
 
           {/* ── Steps row ── */}
           <motion.div
-            className="grid grid-cols-2 md:flex md:flex-row items-stretch gap-4 md:gap-3"
+            className="grid grid-cols-1 md:flex md:flex-row items-stretch gap-4 md:gap-3"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
@@ -202,10 +202,10 @@ function StepCard({
         {number}
       </div>
 
-      {/* Stacked layout on all viewports */}
-      <div className="flex flex-col items-center flex-1 w-full gap-4">
-        {/* Image container on top, full size in a clean modern frame */}
-        <div className="relative w-full h-[110px] sm:h-[130px] md:h-[160px] bg-[#FAF8FF] rounded-[10px] overflow-hidden flex items-center justify-center p-3 border border-[#F2EBFC]/60 shrink-0">
+      {/* Responsive layout: row on mobile, stacked on desktop */}
+      <div className="flex flex-row md:flex-col items-center justify-center flex-1 w-full gap-3 md:gap-4">
+        {/* Image container on left for mobile, top for desktop */}
+        <div className="relative flex-1 aspect-square md:flex-none md:w-full md:aspect-auto md:h-[150px] rounded-[10px] overflow-hidden flex items-center justify-center p-2 md:p-3 shrink-0">
           {image && (
             <Image
               src={image}
@@ -217,11 +217,11 @@ function StepCard({
         </div>
 
         {/* Content Section */}
-        <div className="flex flex-col items-center text-center w-full px-1">
-          <h3 className="text-sm md:text-base font-extrabold text-primary mb-2 leading-snug tracking-tight">
+        <div className="flex flex-col justify-center md:justify-start items-center text-center flex-1 aspect-square md:flex-none md:aspect-auto w-full p-3 md:px-1 md:py-0 bg-[#F9F5FF] md:bg-transparent rounded-[10px] md:rounded-none">
+          <h3 className="text-sm md:text-base font-bold text-primary mb-1 md:mb-2  tracking-tight">
             {title}
           </h3>
-          <p className="text-[11px] md:text-xs text-[#736880] leading-relaxed line-clamp-2 md:line-clamp-none">
+          <p className="text-[10px] md:text-[12px] text-black/80">
             {desc}
           </p>
         </div>
@@ -266,28 +266,3 @@ function ArrowRightIcon() {
   )
 }
 
-function ArrowDownIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 48"
-      fill="none"
-      className="w-4 h-8"
-    >
-      <path
-        d="M12 4V42"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeDasharray="4 4"
-      />
-      <path
-        d="M6 36L12 42L18 36"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
