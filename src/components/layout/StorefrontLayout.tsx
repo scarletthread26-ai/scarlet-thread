@@ -26,7 +26,7 @@ export function StorefrontLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Header />
-      <main className="flex-1 sm:pb-16 lg:pb-0">
+      <main className="flex-1 pt-[104px] sm:pb-16 lg:pb-0">
         {children}
       </main>
       <Footer />
