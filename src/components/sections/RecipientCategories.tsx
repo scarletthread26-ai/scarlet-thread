@@ -52,7 +52,7 @@ export function RecipientCategories() {
         </div>
 
         {/* MOBILE: Single-column stacked cards */}
-        <div className="flex flex-col gap-14 sm:hidden mt-6">
+        <div className="flex flex-col gap-5 sm:hidden mt-6">
           {categories.map((cat, index) => (
             <motion.div
               key={cat.id}
@@ -61,14 +61,14 @@ export function RecipientCategories() {
               viewport={{ once: true }}
               transition={{ duration: 0.45, delay: index * 0.1 }}
             >
-              <Link href={cat.href} className="block group relative h-[150px]">
+              <Link href={cat.href} className="block relative h-[150px]">
                 {/* Background Card */}
                 <div
-                  className={`absolute inset-0 rounded-2xl ${cat.bgColor} shadow-sm group-hover:shadow-md group-hover:scale-[1.02] transition-all duration-300`}
+                  className={`absolute inset-0 rounded-2xl ${cat.bgColor} shadow-sm`}
                 />
 
                 {/* Text — bottom-left */}
-                <div className="absolute left-5 bottom-5 z-20 pointer-events-none group-hover:translate-x-1 transition-transform duration-300">
+                <div className="absolute left-5 bottom-5 z-20 pointer-events-none">
                   <span
                     className={`block text-[36px] font-black tracking-wide leading-none ${cat.textColor} drop-shadow-sm`}
                   >
@@ -76,22 +76,21 @@ export function RecipientCategories() {
                   </span>
                   {/* Underline accent */}
                   <span
-                    className={`block mt-1.5 h-[3px] w-8 rounded-full ${cat.accentColor} transition-all duration-300 group-hover:w-12`}
+                    className={`block mt-1.5 h-[3px] w-8 rounded-full ${cat.accentColor}`}
                   />
                 </div>
 
-                {/* Person image — right side, peeking out */}
+                {/* Person image — right side, inside the box */}
                 <div 
-                  className="absolute inset-0 z-10 pointer-events-none"
-                  style={{ clipPath: "inset(-100% 0 0 0 round 0 0 16px 16px)" }}
+                  className="absolute inset-0 z-10 pointer-events-none overflow-hidden rounded-2xl"
                 >
-                  <div className="absolute right-0 bottom-0 h-[175%] w-[55%] origin-bottom">
+                  <div className="absolute right-0 bottom-0 h-full w-[55%] origin-bottom">
                     <Image
                       src={cat.image}
                       alt={cat.title}
                       fill
                       sizes="55vw"
-                      className="object-contain object-bottom drop-shadow-md"
+                      className="object-contain object-right-bottom drop-shadow-md"
                     />
                   </div>
                 </div>
