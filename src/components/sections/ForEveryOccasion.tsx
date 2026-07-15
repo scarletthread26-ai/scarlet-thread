@@ -7,32 +7,34 @@ import Link from "next/link";
 const occasions = [
   {
     id: "anniversary",
-    cursiveText: "Seasonal",
-    mainText: "Favorites",
+    cursiveText: "Anniversary",
+    mainText: "gifts",
     image: "/images/anu/anniversarry.png", // Using a fallback image if specific ones don't exist
     href: "/products?category=anniversary",
   },
   {
     id: "birthday",
-    cursiveText: "For",
-    mainText: "Kids",
+    cursiveText: "Birthday",
+    mainText: "Gifts",
     image: "/images/anu/kidsgift.png",
     href: "/products?category=birthday",
   },
   {
-    id: "Couple",
-    cursiveText: "Hoodie",
-    mainText: "Gifts",
-    image: "/images/anu/hooodie.png",
-    href: "/products?category=wedding",
-  },
-  {
-    id: "romance",
+    id: "seasonal",
     cursiveText: "Seasonal",
-    mainText: "Favorites",
+    mainText: "Gifts",
     image: "/images/anu/seasonal.png",
     href: "/products?category=seasonal",
   },
+    {
+    id: "hoodie",
+    cursiveText: "Hoodie",
+    mainText: "Gifts",
+    image: "/images/anu/hooodie.png",
+    href: "/products?category=hoodie",
+  },
+  
+
 ];
 
 export function ForEveryOccasion() {
@@ -47,13 +49,16 @@ export function ForEveryOccasion() {
           transition={{ duration: 0.55 }}
           className="mb-5 sm:mb-10 text-center"
         >
-          <h2 className="text-[22px] md:text-2xl lg:text-3xl font-heading font-bold text-foreground text-center">
+          <h2 className="text-[28px] md:text-2xl lg:text-3xl font-heading font-bold text-foreground text-center mb-2 sm:mb-3">
             For Every <span className="text-primary">Occasion</span>
           </h2>
+          <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
+            Discover thoughtfully curated gifts perfect for every celebration and milestone, making your special moments even more memorable.
+          </p>
         </motion.div>
 
         {/* Grid */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
           {occasions.map((occ, index) => (
             <motion.div
               key={occ.id}
@@ -63,15 +68,24 @@ export function ForEveryOccasion() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
               <Link href={occ.href} className="block group">
-                <div className="relative w-full h-[130px] sm:h-[240px] md:h-[200px] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300">
+                <div className="relative w-full h-[160px] sm:h-[240px] md:h-[200px] rounded-2xl overflow-hidden duration-300">
                   {/* Background Image */}
                   <Image
                     src={occ.image}
                     alt={`${occ.cursiveText} ${occ.mainText}`}
                     fill
-                    className="object-cover object-left md:object-top group-hover:scale-105 transition-transform duration-700 ease-in-out"
+                    className="object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
                     sizes="(max-width: 768px) 50vw, 50vw"
                   />
+                  {/* Text Overlay */}
+                  <div className="absolute bottom-3 left-4 sm:bottom-6 sm:left-8 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:left-[10%] flex flex-col text-left pointer-events-none z-10">
+                    <span className="font-cursive text-2xl sm:text-3xl md:text-4xl text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] leading-[0.5] sm:leading-[0.5] md:leading-[0.5] -mb-2 sm:-mb-3 md:-mb-4 -ml-1">
+                      {occ.cursiveText}
+                    </span>
+                    <span className="font-bold text-2xl sm:text-2xl md:text-3xl text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] leading-none capitalize pl-1 sm:pl-2 pt-4">
+                      {occ.mainText}
+                    </span>
+                  </div>
                 </div>
               </Link>
             </motion.div>
