@@ -110,13 +110,13 @@ export function NewHowItWorks() {
           {/* ── Heading ── */}
           <div className="text-center mb-10 md:mb-16">
             <motion.h2
-              className="text-[26px] md:text-3xl font-bold text-[#1A1530] leading-tight"
+              className="text-[26px] md:text-3xl font-bold text-[#1A1530] "
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
               variants={headingVariants}
             >
-             Thoughtful Gifts for <br className="md:hidden" /> <span className="text-primary ">Every Smile</span> 
+            Creating your perfect <br className="md:hidden" /> <span className="text-primary ">Custom Gift</span> 
             </motion.h2>
             <motion.p
               className="text-[13px] md:text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed mt-2"
@@ -289,9 +289,9 @@ function DesktopStepCard({
 }) {
   const content = (
     <motion.div
-      className={`relative flex-1 rounded-[10px] px-2 pt-6 pb-2 md:px-3 md:pt-8 md:pb-3
-                 shadow-[0_4px_20px_rgba(107,70,193,0.08)] border border-[#EDE6F8]
-                 flex flex-col overflow-visible ${link ? "cursor-pointer select-none" : ""}`}
+      className={`relative flex-1 rounded-[30px] px-2 pt-6 pb-2 md:px-3 md:pt-8 md:pb-3 
+                 shadow-[0_4px_20px_rgba(107,70,193,0.08)] md:hover:shadow-[0_12px_32px_rgba(107,70,193,0.15)] transition-shadow duration-300
+                 border border-[#EDE6F8] flex flex-col overflow-visible ${link ? "cursor-pointer select-none" : ""}`}
       style={{ backgroundColor: bgColor }}
       variants={stepVariants}
       initial="hidden"

@@ -14,16 +14,11 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <Hero />
       <Discover />
-      <ForEveryOccasion />
+      <RecipientCategories />
       <CraftedGalleryHer />
-     
-
-
       {/* <ProductGrid /> */}
-
       <NewHowItWorks />
-       <RecipientCategories />
-
+      <ForEveryOccasion />
       {/* <FeaturedBanner /> */}
       <Testimonials />
       {/* <SmileCTA /> */}
