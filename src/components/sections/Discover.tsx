@@ -155,32 +155,28 @@ export function Discover() {
     : activeImages;
 
   return (
-    <section className="pt-5  pb-8 bg-white  ">
-      <div className="w-full max-w-[1400px] mx-auto  px-4 sm:px-6 md:px-12 lg:px-16">
-        {/* MOBILE & TABLET VIEW */}
-        <div className="flex flex-col gap-6 md:gap-8 lg:hidden">
-          {/* 1. Heading & Description */}
-          <div className="space-y-4">
-            <div className="hidden lg:flex text-primary font-medium tracking-wide items-center gap-2">
-              <HeartIcon className="w-4 h-4 fill-primary/20" />
-              {subtitle}
-            </div>
-            <h2 className="text-[22px] md:text-4xl font-heading font-bold text-foreground leading-tight">
-              {formatDiscoverTitle(title, false)}            </h2>
-            <p className="text-sm text-muted-foreground  ">
-              {description}
-            </p>
+    <section className="pt-24  pb-8 bg-white  ">
+      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 lg:px-16">
+        {/* MOBILE VIEW (up to lg) */}
+        <div className="flex flex-col gap-6 lg:hidden">
+          {/* 1. Subtitle badge */}
+          <div className="flex text-primary font-medium text-sm tracking-wide items-center gap-2">
+            <HeartIcon className="w-4 h-4 fill-primary/20" />
+            {subtitle}
           </div>
 
-          {/* 2. Image */}
-          <div className="flex gap-2 sm:gap-3 overflow-hidden">
-            <ImageColumn images={col1Images} direction="up" duration={28} />
-            <ImageColumn images={col2Images} direction="down" duration={22} />
-            <ImageColumn images={col3Images} direction="up" duration={32} />
-          </div>
+          {/* 2. Heading */}
+          <h2 className="text-[32px] sm:text-4xl font-heading font-bold text-foreground leading-tight -mt-3">
+            {formatDiscoverTitle(title, true)}
+          </h2>
 
-          {/* 3. Button */}
-          <div className="flex justify-center md:justify-start pt-2">
+          {/* 3. Description */}
+          <p className="text-sm text-muted-foreground leading-relaxed -mt-2">
+            {description}
+          </p>
+
+          {/* 4. Button */}
+          <div className="flex justify-start">
             <Button
               nativeButton={false}
               render={<Link href={buttonLink} />}
@@ -189,6 +185,19 @@ export function Discover() {
             >
               {buttonText}
             </Button>
+          </div>
+
+          {/* 5. 2-column image grid */}
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            {activeImages.slice(0, 8).map((src, i) => (
+              <div key={i} className="rounded-xl overflow-hidden shadow-sm aspect-[4/3]">
+                <img
+                  src={src}
+                  alt="Scarlet gift"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
           </div>
         </div>
 

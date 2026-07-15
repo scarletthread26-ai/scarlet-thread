@@ -88,6 +88,9 @@ export function Testimonials() {
           <h2 className="text-[22px] md:text-3xl font-heading font-bold flex items-center justify-center gap-2">
             <span>Loved By Our <span className="text-primary">Customers</span></span>
           </h2>
+          <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto px-4 mt-2 sm:mt-3">
+            Read what our wonderful customers have to say about their experiences and our personalized gifts.
+          </p>
         </motion.div>
 
         {/* Carousel */}

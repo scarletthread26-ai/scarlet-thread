@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { fontSans, fontHeading } from "@/lib/fonts";
+import { fontSans, fontHeading, fontCursive } from "@/lib/fonts";
 import "./globals.css";
 import QueryProvider from "@/providers/query-provider";
 import ThemeProvider from "@/providers/theme-provider";
@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${fontSans.variable} ${fontHeading.variable} font-sans antialiased bg-background text-foreground min-h-screen flex flex-col overflow-x-hidden`}
+        className={`${fontSans.variable} ${fontHeading.variable} ${fontCursive.variable} font-sans antialiased bg-background text-foreground min-h-screen flex flex-col overflow-x-hidden`}
         suppressHydrationWarning
       >
         <QueryProvider>

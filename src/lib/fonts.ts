@@ -1,4 +1,4 @@
-import { Outfit } from 'next/font/google';
+import { Outfit, Great_Vibes } from 'next/font/google';
 
 export const fontHeading = Outfit({
   subsets: ['latin'],
@@ -9,5 +9,12 @@ export const fontHeading = Outfit({
 export const fontSans = Outfit({
   subsets: ['latin'],
   variable: '--font-sans',
+  display: 'swap',
+});
+
+export const fontCursive = Great_Vibes({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-cursive-custom',
   display: 'swap',
 });
