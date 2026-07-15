@@ -82,7 +82,7 @@ export function ForEveryOccasion() {
                     <span className="font-cursive text-2xl sm:text-3xl md:text-4xl text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] leading-[0.5] sm:leading-[0.5] md:leading-[0.5] -mb-2 sm:-mb-3 md:-mb-4 -ml-1">
                       {occ.cursiveText}
                     </span>
-                    <span className="font-bold text-2xl sm:text-2xl md:text-3xl text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] leading-none capitalize pl-1 sm:pl-2 pt-4">
+                    <span className="font-bold text-2xl sm:text-2xl md:text-3xl text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] leading-none capitalize pl-1 sm:pl-2 pt-6">
                       {occ.mainText}
                     </span>
                   </div>

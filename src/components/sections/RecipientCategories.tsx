@@ -52,7 +52,7 @@ export function RecipientCategories() {
         </div>
 
         {/* MOBILE: Single-column stacked cards */}
-        <div className="flex flex-col gap-3 sm:hidden">
+        <div className="flex flex-col gap-14 sm:hidden mt-6">
           {categories.map((cat, index) => (
             <motion.div
               key={cat.id}
@@ -61,25 +61,31 @@ export function RecipientCategories() {
               viewport={{ once: true }}
               transition={{ duration: 0.45, delay: index * 0.1 }}
             >
-              <Link href={cat.href} className="block group">
+              <Link href={cat.href} className="block group relative h-[150px]">
+                {/* Background Card */}
                 <div
-                  className={`relative w-full h-[150px] rounded-2xl overflow-hidden ${cat.bgColor} shadow-sm group-hover:shadow-md transition-shadow duration-300`}
-                >
-                  {/* Text — bottom-left */}
-                  <div className="absolute left-5 bottom-5 z-20 pointer-events-none">
-                    <span
-                      className={`block text-[36px] font-black tracking-wide leading-none ${cat.textColor} drop-shadow-sm`}
-                    >
-                      {cat.title}
-                    </span>
-                    {/* Underline accent */}
-                    <span
-                      className={`block mt-1.5 h-[3px] w-8 rounded-full ${cat.accentColor}`}
-                    />
-                  </div>
+                  className={`absolute inset-0 rounded-2xl ${cat.bgColor} shadow-sm group-hover:shadow-md group-hover:scale-[1.02] transition-all duration-300`}
+                />
 
-                  {/* Person image — right side, peeking out */}
-                  <div className="absolute right-0 bottom-0 h-[175%] w-[55%] pointer-events-none z-10">
+                {/* Text — bottom-left */}
+                <div className="absolute left-5 bottom-5 z-20 pointer-events-none group-hover:translate-x-1 transition-transform duration-300">
+                  <span
+                    className={`block text-[36px] font-black tracking-wide leading-none ${cat.textColor} drop-shadow-sm`}
+                  >
+                    {cat.title}
+                  </span>
+                  {/* Underline accent */}
+                  <span
+                    className={`block mt-1.5 h-[3px] w-8 rounded-full ${cat.accentColor} transition-all duration-300 group-hover:w-12`}
+                  />
+                </div>
+
+                {/* Person image — right side, peeking out */}
+                <div 
+                  className="absolute inset-0 z-10 pointer-events-none"
+                  style={{ clipPath: "inset(-100% 0 0 0 round 0 0 16px 16px)" }}
+                >
+                  <div className="absolute right-0 bottom-0 h-[175%] w-[55%] origin-bottom">
                     <Image
                       src={cat.image}
                       alt={cat.title}
@@ -108,15 +114,15 @@ export function RecipientCategories() {
               <Link href={cat.href} className="relative block h-[160px] sm:h-[200px] md:h-[240px] group">
                 {/* Background Card */}
                 <div
-                  className={`absolute inset-0 rounded-[32px] md:rounded-[40px] ${cat.bgColor} shadow-sm group-hover:shadow-md transition-shadow duration-300`}
+                  className={`absolute inset-0 rounded-[32px] md:rounded-[40px] ${cat.bgColor} shadow-sm group-hover:shadow-xl group-hover:scale-[1.03] transition-all duration-300`}
                 />
 
                 {/* Title */}
-                <div className="relative h-full flex flex-col justify-end px-8 md:px-10 lg:px-12 pb-8 z-30 pointer-events-none">
+                <div className="relative h-full flex flex-col justify-end px-8 md:px-10 lg:px-12 pb-8 z-30 pointer-events-none group-hover:-translate-y-1 transition-transform duration-300">
                   <span className={`text-[22px] md:text-3xl lg:text-4xl font-sans font-black tracking-wide ${cat.textColor} drop-shadow-sm leading-none`}>
                     {cat.title}
                   </span>
-                  <span className={`block mt-1.5 h-[3px] w-8 rounded-full ${cat.accentColor}`} />
+                  <span className={`block mt-1.5 h-[3px] w-8 rounded-full ${cat.accentColor} transition-all duration-300 group-hover:w-12`} />
                 </div>
 
                 {/* Overlapping Image */}
