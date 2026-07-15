@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import Link from "next/link"
 import { scaleUp, staggerContainer, fadeUp } from "@/lib/animations"
+import { useProducts } from "@/hooks/use-products"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -14,6 +15,7 @@ import { scaleUp, staggerContainer, fadeUp } from "@/lib/animations"
 export interface GalleryImage {
   image: string
   alt?: string
+  id?: string
 }
 
 export interface CraftedGallerySectionProps {
@@ -31,6 +33,8 @@ export interface CraftedGallerySectionProps {
   cardBg?: string
   /** Minimum images before mixing in fallbacks (default 5) */
   minImages?: number
+  /** Optional description text displayed below the heading */
+  description?: React.ReactNode
 }
 
 // ---------------------------------------------------------------------------
@@ -44,33 +48,34 @@ export function CraftedGallerySection({
   bgColor = "bg-white",
   cardBg = "bg-white",
   minImages = 5,
+  description,
 }: CraftedGallerySectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
-  const [images, setImages] = useState<{ id: string; media_url: string; title?: string }[]>([])
-  const [canScrollLeft, setCanScrollLeft] = useState(false)
-  const [canScrollRight, setCanScrollRight] = useState(true)
-
-  // ── Fetch gallery images ─────────────────────────────────────────────────
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch(`/api/gallery?category=${category}`)
-        if (res.ok) {
-          const data = await res.json()
-          setImages(data)
-        }
-      } catch (err) {
-        console.error(`Error loading ${category} gallery images:`, err)
-      }
-    }
-    load()
-  }, [category])
+  const { data: dbProducts = [], isLoading } = useProducts()
 
   // ── Build display list (merge with fallback when sparse) ─────────────────
   const displayImages: GalleryImage[] = (() => {
-    const fromApi = images
-      .filter((img) => img.media_url)
-      .map((img) => ({ image: img.media_url, alt: img.title ?? "Gallery image" }))
+    if (isLoading) return fallbackImages;
+
+    const filteredProducts = dbProducts.filter((p: any) => {
+      if (category === "all") return true;
+      if (!p.categories?.name) return false;
+      const catName = p.categories.name.toLowerCase();
+      if (category === "her" && catName.includes("her")) return true;
+      if (category === "him" && catName.includes("him")) return true;
+      if (category === "kids" && (catName.includes("kid") || catName.includes("bab"))) return true;
+      if (category === "occasions" && catName.includes("occasion")) return true;
+      return false;
+    });
+
+    const fromApi = filteredProducts
+      .filter((p: any) => p.images && p.images.length > 0)
+      .map((p: any) => ({
+        image: p.images[0].url,
+        alt: p.name,
+        id: p.slug || p.id
+      }))
+      .slice(0, 5)
 
     if (fromApi.length === 0) return fallbackImages
     if (fromApi.length < minImages) {
@@ -83,20 +88,6 @@ export function CraftedGallerySection({
     }
     return fromApi
   })()
-
-  // ── Scroll helpers ───────────────────────────────────────────────────────
-  const updateScrollState = () => {
-    const el = scrollRef.current
-    if (!el) return
-    setCanScrollLeft(el.scrollLeft > 8)
-    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 8)
-  }
-
-  const scrollLeft = () =>
-    scrollRef.current?.scrollBy({ left: -320, behavior: "smooth" })
-
-  const scrollRight = () =>
-    scrollRef.current?.scrollBy({ left: 320, behavior: "smooth" })
 
   return (
     <section className={`pt-10 pb-10 sm:py-16 overflow-hidden`}>
@@ -117,52 +108,18 @@ export function CraftedGallerySection({
         >
           <h2 className="text-2xl md:text-3xl font-heading font-bold inline-flex items-center md:justify-center gap-2">
             {heading}
-            {/* <motion.span
-              animate={{ scale: [1, 1.3, 1], rotate: [0, 6, -6, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              className="inline-block"
-            >
-              <Heart className="w-5 h-5 text-primary fill-transparent" />
-            </motion.span> */}
           </h2>
+          {description && (
+            <div className="mt-2 sm:mt-3 text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
+              {description}
+            </div>
+          )}
         </motion.div>
 
         {/* ── Carousel ────────────────────────────────────────────────────── */}
-        <div className="relative">
-          {/* Prev button — desktop only */}
-          <button
-            onClick={scrollLeft}
-            aria-label="Scroll left"
-            disabled={!canScrollLeft}
-            className="hidden md:flex absolute left-[-22px] top-1/2 -translate-y-1/2 z-20
-              w-10 h-10 rounded-full bg-white shadow-md items-center justify-center
-              hover:shadow-lg hover:scale-110 active:scale-95 transition-all duration-200
-              disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            <ChevronLeft className="w-5 h-5 text-foreground" />
-          </button>
-
-          {/* Next button — desktop only */}
-          <button
-            onClick={scrollRight}
-            aria-label="Scroll right"
-            disabled={!canScrollRight}
-            className="hidden md:flex absolute right-[-22px] top-1/2 -translate-y-1/2 z-20
-              w-10 h-10 rounded-full bg-white shadow-md items-center justify-center
-              hover:shadow-lg hover:scale-110 active:scale-95 transition-all duration-200
-              disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            <ChevronRight className="w-5 h-5 text-foreground" />
-          </button>
-
-          {/*
-           * Scroll track
-           * Mobile : finger-scroll, no buttons, peek of ~half the 3rd card via card width
-           * Desktop: arrow-button driven, cards at fixed width
-           */}
+        <div className="relative ">
           <motion.div
             ref={scrollRef}
-            onScroll={updateScrollState}
             variants={staggerContainer(0.08, 0.1)}
             initial="hidden"
             whileInView="show"
@@ -178,19 +135,21 @@ export function CraftedGallerySection({
                  *   → ~2 full cards + half a third card visible → peek effect
                  * md+  : fixed 220-240 px
                  */
-                className={`relative shrink-0 snap-start rounded-2xl overflow-hidden
+                className={`relative shrink-0 snap-start rounded-tr-3xl rounded-bl-3xl  overflow-hidden 
                   shadow-sm hover:shadow-md hover:-translate-y-2 transition-all duration-300 group ${cardBg}
                   w-[calc((100vw-2rem-0.75rem)/2.4)]
-                  md:w-[220px] lg:w-[240px]
+                  md:w-[240px] lg:w-[260px]
                   aspect-square`}
               >
-                <Image
-                  src={img.image}
-                  alt={img.alt ?? "Gallery image"}
-                  fill
-                  sizes="(max-width: 640px) 45vw, (max-width: 1024px) 220px, 240px"
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                <Link href={img.id ? `/product/${img.id}` : "#"} className="block w-full h-full">
+                  <Image
+                    src={img.image}
+                    alt={img.alt ?? "Gallery image"}
+                    fill
+                    sizes="(max-width: 640px) 45vw, (max-width: 1024px) 240px, 260px"
+                    className="object-cover"
+                  />
+                </Link>
               </motion.div>
             ))}
           </motion.div>
@@ -204,12 +163,12 @@ export function CraftedGallerySection({
           transition={{ duration: 0.45, delay: 0.15 }}
           className="text-center mt-6"
         >
-          <Link href={galleryHref}>
+          <Link href={`/products?category=${category}`}>
             <Button
               size="sm"
               className="rounded-[10px] h-13 px-5 bg-primary text-white hover:bg-primary/90"
             >
-              View More Creations
+              View More Collection
               <ArrowRight className="w-3 h-3 ml-2" />
             </Button>
           </Link>

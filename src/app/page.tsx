@@ -13,15 +13,18 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <Hero />
-          <RecipientCategories/>
-           <Discover />
-      <ForEveryOccasion/>
-  
-     
-      <ProductGrid />
-      <NewHowItWorks />
-      {/* <FeaturedBanner /> */}
+      <Discover />
+      <ForEveryOccasion />
       <CraftedGalleryHer />
+     
+
+
+      {/* <ProductGrid /> */}
+
+      <NewHowItWorks />
+       <RecipientCategories />
+
+      {/* <FeaturedBanner /> */}
       <Testimonials />
       {/* <SmileCTA /> */}
     </div>
