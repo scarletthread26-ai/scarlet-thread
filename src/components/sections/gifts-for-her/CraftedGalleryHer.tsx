@@ -17,7 +17,7 @@ export function CraftedGalleryHer() {
       heading={<>Our Most Loved <span className="text-primary">Gifts</span></>}
       description={<p>Explore our most cherished gifts, carefully selected to bring joy to your loved ones.</p>}
       category="all"
-      galleryHref="/gallery?category=all#gallery-grid"
+      galleryHref="/gallery?category=gifts-for-her#gallery-grid"
       fallbackImages={fallbackImages}
       bgColor="bg-white"
       cardBg="bg-white"

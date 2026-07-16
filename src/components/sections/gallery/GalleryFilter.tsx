@@ -14,9 +14,14 @@ interface GalleryFilterProps {
 
 const ICON_MAP: Record<string, React.ReactNode> = {
   all: <Grip className="w-4 h-4" />,
+  "gifts-for-him": <UserRound className="w-4 h-4" />,
   him: <UserRound className="w-4 h-4" />,
+  "gifts-for-her": <Sparkles className="w-4 h-4" />,
   her: <Sparkles className="w-4 h-4" />,
+  "kids-babies": <Baby className="w-4 h-4" />,
   kids: <Baby className="w-4 h-4" />,
+  anniversary: <Gift className="w-4 h-4" />,
+  couple: <UserRound className="w-4 h-4" />,
   occasions: <Gift className="w-4 h-4" />,
   hampers: <Package className="w-4 h-4" />,
   home: <Home className="w-4 h-4" />,

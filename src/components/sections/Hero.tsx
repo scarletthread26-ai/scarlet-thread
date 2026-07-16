@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, Fragment } from "react"
 import { Button } from "@/components/ui/button"
-import { GiftIcon, HeartIcon, StarIcon, ShieldCheck } from "lucide-react"
+import {  HeartIcon } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { FloatingFeatureBar } from "./FloatingFeatureBar"
@@ -53,7 +53,7 @@ function Dots({ total, active, onChange }: { total: number; active: number; onCh
   )
 }
 
-function formatHeroTitle(titleStr: string, isMobile: boolean) {
+function formatHeroTitle(titleStr: string) {
   if (!titleStr) return "";
 
   const lower = titleStr.toLowerCase();
@@ -78,7 +78,7 @@ function formatHeroTitle(titleStr: string, isMobile: boolean) {
       const remainingWords = words.slice(0, -1).join(" ");
       return (
         <>
-          {firstPart}{isMobile ? <br className="block sm:hidden" /> : <br />}
+          {firstPart}<br />
           {remainingWords} <span className="text-primary italic">{lastWord}</span>
         </>
       );
@@ -100,15 +100,7 @@ function formatHeroTitle(titleStr: string, isMobile: boolean) {
   return titleStr;
 }
 
-function formatDescription(text: string) {
-  if (!text) return null;
-  return text.split("\n").map((line, i, arr) => (
-    <span key={i}>
-      {line}
-      {i < arr.length - 1 && <br />}
-    </span>
-  ));
-}
+
 
 // ---------------------------------------------------------------------------
 // Hero
@@ -137,7 +129,7 @@ export function Hero() {
           if (activeSlides.length > 0) {
             setSlides(
               activeSlides.map((slide: any, index: number) => ({
-                id: index,
+                id: slide.id ?? index,
                 desktopBg: slide.image_desktop,
                 tabletImg: slide.image_desktop,
                 mobileImg: slide.image_mobile || slide.image_desktop,
@@ -178,11 +170,8 @@ export function Hero() {
 
   const slide = slides[current]
 
-  const firstWithTitle = slides.find(s => s.title);
-  const heroTitle = firstWithTitle?.title || "More Than a Gift. A Memory in the Making";
-
-  const heroSubtitle =
-    "Whether you're celebrating someone special or treating yourself, make it uniquely personal.";
+  const heroTitle = slide.title;
+  const heroSubtitle = slide.subtitle;
 
   return (
     <section
@@ -206,24 +195,23 @@ export function Hero() {
       <div className="lg:hidden relative w-full h-[600px] overflow-hidden">
 
         {/* Background images — cross-fade, sit behind everything */}
-        {slides.map((s, idx) => (
-          <img
-            key={`mobile-bg-${s.id}`}
-            src={s.mobileImg}
-            alt="Hero Background Mobile"
-            className={`absolute inset-0 z-0 w-full h-full object-cover object-center transition-opacity duration-500 ease-in-out sm:hidden ${idx === current ? "opacity-100" : "opacity-0"
-              }`}
-          />
-        ))}
-        {slides.map((s, idx) => (
-          <img
-            key={`tablet-bg-${s.id}`}
-            src={s.tabletImg}
-            alt="Hero Background Tablet"
-            className={`absolute inset-0 z-0 w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out hidden sm:block ${idx === current ? "opacity-100" : "opacity-0"
-              }`}
-          />
-        ))}
+        {slides.map((s, idx) => {
+          const isCurrent = idx === current ? "opacity-100" : "opacity-0";
+          return (
+            <Fragment key={`mobile-tablet-bg-${s.id}`}>
+              <img
+                src={s.mobileImg}
+                alt="Hero Background Mobile"
+                className={`absolute inset-0 z-0 w-full h-full object-cover object-center transition-opacity duration-500 ease-in-out sm:hidden ${isCurrent}`}
+              />
+              <img
+                src={s.tabletImg}
+                alt="Hero Background Tablet"
+                className={`absolute inset-0 z-0 w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out hidden sm:block ${isCurrent}`}
+              />
+            </Fragment>
+          );
+        })}
 
         {/* Content — overlaid directly on the background image, pinned near the top-left */}
         <div className="relative z-20 w-full h-full flex flex-col justify-start pt-32 px-5 sm:px-10 sm:pt-40">
@@ -234,10 +222,9 @@ export function Hero() {
             animate="visible"
           >
             <motion.div
-              className="flex items-center gap-2 text-xs font-semibold text-primary "
+              className="flex items-center gap-2 text-xs font-semibold text-primary"
               variants={headingVariants}
             >
-
               <span>For Every Moment That Matters</span>
             </motion.div>
 
@@ -245,23 +232,24 @@ export function Hero() {
               className="text-3xl sm:text-4xl font-bold text-foreground text-left leading-tight tracking-tight max-w-full"
               variants={headingVariants}
             >
-              {formatHeroTitle(heroTitle, false)}
+              {formatHeroTitle(heroTitle)}
             </motion.h1>
 
             <motion.p
-              className="text-[13px] text-muted-foreground text-left max-w-xs "
+              className="text-[13px] text-muted-foreground text-left max-w-xs whitespace-pre-line"
               variants={descVariants}
             >
-              {formatDescription(heroSubtitle)}
+              {heroSubtitle}
             </motion.p>
 
             <motion.div className="pt-1 flex flex-col items-start gap-3 w-full" variants={btnVariants}>
-              <Link href="/products">
-                <Button size="lg" className="text-base h-12 px-8 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[10px] shadow-md transition-all">
-                  Shop Now
-
-                </Button>
-              </Link>
+              {slide.buttonText && slide.ctaLink && (
+                <Link href={slide.ctaLink}>
+                  <Button size="lg" className="text-base h-12 px-8 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[10px] shadow-md transition-all">
+                    {slide.buttonText}
+                  </Button>
+                </Link>
+              )}
             </motion.div>
           </motion.div>
 
@@ -303,7 +291,7 @@ export function Hero() {
                 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground"
                 variants={headingVariants}
               >
-                {formatHeroTitle(heroTitle, false)}
+                {formatHeroTitle(heroTitle)}
               </motion.h1>
 
               <div className="w-12 h-[2px] bg-primary/50" />
@@ -312,29 +300,22 @@ export function Hero() {
                 className="text-sm text-muted-foreground max-w-md whitespace-pre-line"
                 variants={descVariants}
               >
-                {formatDescription(heroSubtitle)}
+                {heroSubtitle}
               </motion.p>
 
               <motion.div
                 className="flex items-center gap-6 pt-2"
                 variants={btnVariants}
               >
-                <Link href="/products">
-                  <Button size="lg" className="text-base h-12 px-8 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[5px] shadow-md transition-all">
-                    Shop Now
-                  </Button>
-                </Link>
                 {slide.buttonText && slide.ctaLink && (
                   <Link href={slide.ctaLink}>
-                    <span className="text-primary font-semibold flex items-center gap-2 text-base py-2 cursor-pointer transition-all">
-                      {slide.buttonText} <span className="text-lg">→</span>
-                    </span>
+                    <Button size="lg" className="text-base h-12 px-8 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[5px] shadow-md transition-all">
+                      {slide.buttonText}
+                    </Button>
                   </Link>
                 )}
               </motion.div>
             </motion.div>
-
-            {/* Badge strip — static, removed to replace with floating bar */}
 
             {/* Dots */}
             <div className="pt-1">
