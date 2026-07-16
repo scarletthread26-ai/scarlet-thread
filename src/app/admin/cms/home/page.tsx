@@ -46,7 +46,7 @@ export default function HomePageSettings() {
       </div>
 
       {/* Tabs navigation */}
-      <div className="flex border-b border-slate-200 dark:border-slate-800 overflow-x-auto whitespace-nowrap gap-1">
+      <div className="flex border-b border-slate-200 dark:border-slate-800 overflow-x-auto whitespace-nowrap gap-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;

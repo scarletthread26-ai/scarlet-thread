@@ -5,45 +5,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useHomepageSection } from "@/hooks/use-cms";
 
-const occasions = [
-  {
-    id: "anniversary",
-    cursiveText: "Anniversary",
-    mainText: "gifts",
-    image: "/images/anu/anniversarry.png", // Using a fallback image if specific ones don't exist
-    href: "/products?category=anniversary",
-  },
-  {
-    id: "birthday",
-    cursiveText: "Birthday",
-    mainText: "Gifts",
-    image: "/images/anu/kidsgift.png",
-    href: "/products?category=birthday",
-  },
-  {
-    id: "seasonal",
-    cursiveText: "Seasonal",
-    mainText: "Gifts",
-    image: "/images/anu/seasonal.png",
-    href: "/products?category=seasonal",
-  },
-    {
-    id: "hoodie",
-    cursiveText: "Hoodie",
-    mainText: "Gifts",
-    image: "/images/anu/hooodie.png",
-    href: "/products?category=hoodie",
-  },
-  
 
-];
 
 export function ForEveryOccasion() {
   const { data: section } = useHomepageSection("occasions");
   
   const headingStr = section?.content?.heading || "For Every Occasion";
   const description = section?.content?.description || "Discover thoughtfully curated gifts perfect for every celebration and milestone, making your special moments even more memorable.";
-  const cards = section?.content?.cards || occasions;
+  const cards = section?.content?.cards || [];
 
   // Split heading to color the last word
   const words = headingStr.split(" ");

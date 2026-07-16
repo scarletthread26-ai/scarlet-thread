@@ -7,7 +7,7 @@ import Link from "next/link";
 const categories = [
   {
     id: "him",
-    title: "HIM",
+    title: "FOR HIM",
     image: "/images/newsection/man.png",
     bgColor: "bg-[#bf99d9]",
     textColor: "text-white",
@@ -16,7 +16,7 @@ const categories = [
   },
   {
     id: "her",
-    title: "HER",
+    title: "FOR HER",
     image: "/images/newsection/lady.png",
     bgColor: "bg-[#fadcdd]",
     textColor: "text-white",
@@ -25,10 +25,10 @@ const categories = [
   },
   {
     id: "kids",
-    title: "KIDS",
+    title: " FOR KIDS & BABIES",
     image: "/images/newsection/kids.png",
     bgColor: "bg-[#fad2ad]",
-    textColor: "text-[#E5485A]",
+    textColor: "text-white",
     accentColor: "bg-[#E5485A]/70",
     href: "/kids-babies",
   },
@@ -118,7 +118,7 @@ export function RecipientCategories() {
 
                 {/* Title */}
                 <div className="relative h-full flex flex-col justify-end px-8 md:px-10 lg:px-12 pb-8 z-30 pointer-events-none group-hover:-translate-y-1 transition-transform duration-300">
-                  <span className={`text-[22px] md:text-3xl lg:text-4xl font-sans font-black tracking-wide ${cat.textColor} drop-shadow-sm leading-none`}>
+                  <span className={`text-[22px] text-nowrap md:text-3xl lg:text-2xl font-sans font-black tracking-wide ${cat.textColor} drop-shadow-sm leading-none`}>
                     {cat.title}
                   </span>
                   <span className={`block mt-1.5 h-[3px] w-8 rounded-full ${cat.accentColor} transition-all duration-300 group-hover:w-12`} />

@@ -118,7 +118,7 @@ export function ProductGallery({ product }: { product?: any }) {
           onTouchEnd={handleTouchEnd}
         >
           <Image
-            src={displayImages[activeIdx] || "/images/scarlet-lovedgift1.png"}
+            src={displayImages[activeIdx] || ""}
             alt={product?.name || "Product Image"}
             fill
             unoptimized
