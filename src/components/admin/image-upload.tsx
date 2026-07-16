@@ -13,6 +13,8 @@ interface ImageUploadProps {
   maxFiles?: number;
   disabled?: boolean;
   bucket?: string;
+  gridClassName?: string;
+  previewClassName?: string;
 }
 
 export function ImageUpload({
@@ -22,6 +24,8 @@ export function ImageUpload({
   maxFiles = 5,
   disabled = false,
   bucket = "products",
+  gridClassName = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3",
+  previewClassName = "aspect-square",
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
 
@@ -67,11 +71,11 @@ export function ImageUpload({
     <div className="space-y-3 w-full">
       {/* Uploaded Image Previews — displayed ABOVE the dropzone */}
       {value.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        <div className={gridClassName}>
           {value.map((url) => (
             <div
               key={url}
-              className="relative aspect-square rounded-xl overflow-hidden group border border-slate-200/60 dark:border-slate-800/80 bg-slate-100 dark:bg-slate-950 flex items-center justify-center shadow-sm"
+              className={`relative rounded-xl overflow-hidden group border border-slate-200/60 dark:border-slate-800/80 bg-slate-100 dark:bg-slate-950 flex items-center justify-center shadow-sm ${previewClassName}`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img

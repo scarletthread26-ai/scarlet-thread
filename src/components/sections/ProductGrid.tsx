@@ -101,13 +101,13 @@ export function ProductGrid() {
         return selectedProds.map((p: any) => ({
           id: p.id,
           name: p.name,
-          category: p.categories?.name || "Apparel",
+          category: p.categories?.name || "",
           price: p.price,
           compare_at_price: p.compare_at_price,
           rating: p.rating || 0,
           reviews: p.reviews || 0,
           imagePlaceholder: p.name ? p.name.split(" ")[0] : "Custom",
-          image: p.images?.[0]?.url || "/images/scarlet-lovedgift1.png",
+          image: p.images?.[0]?.url || "",
           slug: p.slug
         }))
       }
@@ -118,13 +118,13 @@ export function ProductGrid() {
       return activeProducts.map((p: any) => ({
         id: p.id,
         name: p.name,
-        category: p.categories?.name || "Apparel",
+        category: p.categories?.name || "",
         price: p.price,
         compare_at_price: p.compare_at_price,
         rating: p.rating || 0,
         reviews: p.reviews || 0,
         imagePlaceholder: p.name ? p.name.split(" ")[0] : "Custom",
-        image: p.images?.[0]?.url || "/images/scarlet-lovedgift1.png",
+        image: p.images?.[0]?.url || "",
         slug: p.slug
       }))
     }

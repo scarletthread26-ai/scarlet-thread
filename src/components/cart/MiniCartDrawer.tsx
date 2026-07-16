@@ -194,7 +194,7 @@ export function MiniCartDrawer() {
                     {/* Product Image */}
                     <div className="w-18 h-18 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shrink-0 relative">
                       <img
-                        src={item.image || "/images/scarlet-lovedgift1.png"}
+                        src={item.image || ""}
                         alt={item.name}
                         className="w-full h-full object-cover"
                       />

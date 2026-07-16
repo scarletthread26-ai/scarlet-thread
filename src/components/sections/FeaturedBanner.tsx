@@ -40,7 +40,7 @@ export function useProductCard(product: any) {
       name: product.name,
       price: product.price,
       compareAtPrice: product.compare_at_price || null,
-      image: product.image || "/images/scarlet-lovedgift1.png",
+      image: product.image || "",
       slug: product.slug || String(product.id),
       stockStatus: "in_stock"
     }, true)
@@ -51,7 +51,7 @@ export function useProductCard(product: any) {
     e.stopPropagation()
     if (!product.id) return
     try {
-      await addItem({ productId: String(product.id), name: product.name, price: product.price, quantity: 1, image: product.image || "/images/scarlet-lovedgift1.png", personalization: null }, false)
+      await addItem({ productId: String(product.id), name: product.name, price: product.price, quantity: 1, image: product.image || "", personalization: null }, false)
       const shortName = product.name.length > 25 ? product.name.substring(0, 25) + "..." : product.name
       toast.success(`${shortName} added to cart!`)
       
@@ -117,9 +117,8 @@ export function MobileProductCard({ product }: { product: any }) {
 
       {/* ── Details ── */}
       <div className="px-2.5 pt-2 pb-3 flex flex-col flex-1 gap-[5px]">
-        {/* Category */}
         <span className="text-[9px] text-slate-400 font-semibold uppercase tracking-widest truncate leading-none">
-          {product.category || "CATEGORY"}
+          {product.category || ""}
         </span>
 
         {/* Product name — uppercase like in screenshot */}
@@ -128,13 +127,15 @@ export function MobileProductCard({ product }: { product: any }) {
         </h3>
 
         {/* Stars */}
-        <div className="flex items-center gap-[2px]">
-          {[...Array(5)].map((_, i) => (
-            <Star key={i} className="w-2.5 h-2.5 fill-[#fbbf24] text-[#fbbf24]" />
-          ))}
-          <span className="text-[9px] text-slate-500 ml-1 font-semibold">{product.rating || "4.9"}</span>
-          <span className="text-[9px] text-slate-400">({product.reviews || 100})</span>
-        </div>
+        {product.reviews && product.reviews > 0 ? (
+          <div className="flex items-center gap-[2px]">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} className="w-2.5 h-2.5 fill-[#fbbf24] text-[#fbbf24]" />
+            ))}
+            <span className="text-[9px] text-slate-500 ml-1 font-semibold">{(product.rating || 0).toFixed(1)}</span>
+            <span className="text-[9px] text-slate-400">({product.reviews})</span>
+          </div>
+        ) : null}
 
         {/* Price + strikethrough on SAME line */}
         <div className="flex items-baseline gap-1.5 flex-wrap mt-auto">
@@ -187,7 +188,7 @@ function HorizontalProductCard({ product }: { product: any }) {
       <div className="flex-1 flex flex-col pt-0.5">
         <div className="flex justify-between items-start h-6 mb-2">
           <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider truncate pt-1">
-            {product.category || "CATEGORY"}
+            {product.category || ""}
           </span>
           <button
             onClick={handleWishlistToggle}
@@ -201,15 +202,17 @@ function HorizontalProductCard({ product }: { product: any }) {
           <h3 className="font-bold text-[15px] text-[#1e293b] line-clamp-2 leading-snug group-hover:text-[#4a0b70] transition-colors">
             {product.name}
           </h3>
-          <div className="flex items-center gap-1 mt-1.5 text-[11px] text-slate-500">
-            <div className="flex text-[#fbbf24]">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-3.5 h-3.5 fill-current" />
-              ))}
+          {product.reviews && product.reviews > 0 ? (
+            <div className="flex items-center gap-1 mt-1.5 text-[11px] text-slate-500">
+              <div className="flex text-[#fbbf24]">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-3.5 h-3.5 fill-current" />
+                ))}
+              </div>
+              <span className="font-semibold text-slate-700 ml-0.5">{(product.rating || 0).toFixed(1)}</span>
+              <span className="opacity-60">({product.reviews})</span>
             </div>
-            <span className="font-semibold text-slate-700 ml-0.5">{product.rating || "4.9"}</span>
-            <span className="opacity-60">({product.reviews || 100})</span>
-          </div>
+          ) : null}
         </div>
 
         <div className="mt-auto flex items-end justify-between pt-3">
@@ -247,13 +250,15 @@ export function FeaturedBanner() {
 
   if (isLoading) return null
 
+  if (!dbProducts || dbProducts.length === 0) return null
+
   const products = bestSellers.map((product) => ({
     id: product.id,
     name: product.name,
     price: product.price,
     compare_at_price: product.compare_at_price,
     image: product.images?.[0]?.url || "",
-    category: product.categories?.name || "Gifts For Him",
+    category: product.categories?.name || "",
     slug: product.slug,
     bestSeller: product.best_seller,
     rating: product.rating || 0,

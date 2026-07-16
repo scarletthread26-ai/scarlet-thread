@@ -44,7 +44,7 @@ export const useWishlistStore = create<WishlistState>()(
               name: item.products?.name || "Product",
               price: item.products?.price || 0,
               compareAtPrice: item.products?.compare_at_price || null,
-              image: item.products?.images?.[0]?.url || item.products?.image_url || "/images/scarlet-lovedgift1.png",
+              image: item.products?.images?.[0]?.url || item.products?.image_url || "",
               slug: item.products?.slug || "",
               stockStatus: item.products?.stock_status || "in_stock"
             }));

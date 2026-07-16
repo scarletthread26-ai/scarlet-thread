@@ -32,12 +32,16 @@ export default function ProductsPage() {
       cell: ({ row }) => {
         const images = row.original.images || [];
         const primaryImage = images.find((img: any) => img.is_primary) || images[0];
-        const imageUrl = primaryImage?.url || "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=100&q=80";
+        const imageUrl = primaryImage?.url || null;
 
         return (
-          <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-50 dark:bg-slate-950 border border-slate-200/40 dark:border-slate-800/40">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={imageUrl} alt={row.original.name} className="w-full h-full object-cover" />
+          <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-50 dark:bg-slate-950 border border-slate-200/40 dark:border-slate-800/40 flex items-center justify-center">
+            {imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={imageUrl} alt={row.original.name} className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-slate-300 dark:text-slate-700 text-[9px] font-bold text-center leading-tight px-0.5">NO IMG</span>
+            )}
           </div>
         );
       },
@@ -92,7 +96,7 @@ export default function ProductsPage() {
       accessorKey: "categories.name",
       header: "Category",
       cell: ({ row }) => (
-        <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full">
+        <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full whitespace-nowrap">
           {row.original.categories?.name || "Uncategorized"}
         </span>
       ),
