@@ -203,6 +203,7 @@ export function Hero() {
         {/* Content — overlaid directly on the background image, pinned near the top-left */}
         <div className="relative z-20 w-full h-full flex flex-col justify-start pt-32 px-5 sm:px-10 sm:pt-40">
           <motion.div
+            key={current}
             className="flex flex-col items-start space-y-2 w-full max-w-md"
             variants={contentVariants}
             initial="hidden"
@@ -269,6 +270,7 @@ export function Hero() {
 
             {/* Animated content block */}
             <motion.div
+              key={current}
               className="space-y-5"
               variants={contentVariants}
               initial="hidden"
