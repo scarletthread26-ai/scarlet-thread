@@ -10,6 +10,7 @@ import FeaturedProductsEditorPage from "../featured-products/page";
 import TestimonialsPage from "../testimonials/page";
 import CTASectionEditorPage from "../cta/page";
 import HowItWorksEditorPage from "../how-it-works/page";
+import OccasionsEditorPage from "../occasions/page";
 
 export default function HomePageSettings() {
   const [activeTab, setActiveTab] = useState("hero");
@@ -21,6 +22,7 @@ export default function HomePageSettings() {
     { id: "featured", label: "Featured Products", icon: ShoppingBag, component: <FeaturedProductsEditorPage isTabbed={true} /> },
     { id: "how-it-works", label: "How It Works", icon: Workflow, component: <HowItWorksEditorPage isTabbed={true} /> },
     { id: "cta", label: "CTA Section", icon: Heart, component: <CTASectionEditorPage isTabbed={true} /> },
+    { id: "occasions", label: "Occasions", icon: Heart, component: <OccasionsEditorPage isTabbed={true} /> },
   ];
 
   return (

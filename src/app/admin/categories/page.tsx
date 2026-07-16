@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from "@/hooks/use-categories";
 import { FolderTree, Plus, Edit, Trash2, Check, X, Loader2 } from "lucide-react";
-import { ImageUpload } from "@/components/admin/image-upload";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,7 +13,6 @@ const categorySchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   slug: z.string().min(2, "Slug must be at least 2 characters"),
   description: z.string().optional(),
-  image_url: z.string().optional(),
   is_active: z.boolean().default(true),
 });
 
@@ -42,12 +40,9 @@ export default function CategoriesPage() {
       name: "",
       slug: "",
       description: "",
-      image_url: "",
       is_active: true,
     },
   });
-
-  const imageUrl = watch("image_url");
 
   const onSubmit = async (values: CategoryFormValues) => {
     if (editingId) {
@@ -65,7 +60,6 @@ export default function CategoriesPage() {
       name: category.name,
       slug: category.slug,
       description: category.description || "",
-      image_url: category.image_url || "",
       is_active: category.is_active,
     });
   };
@@ -161,31 +155,6 @@ export default function CategoriesPage() {
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Banner / Thumbnail Image
-              </label>
-              <ImageUpload
-                bucket="categories"
-                value={imageUrl ? [imageUrl] : []}
-                onChange={(urls) => setValue("image_url", urls[0] || "")}
-                onRemove={() => setValue("image_url", "")}
-                maxFiles={1}
-              />
-            </div>
-
-            <div className="flex items-center gap-2 py-2">
-              <input
-                type="checkbox"
-                id="is_active"
-                {...register("is_active")}
-                className="w-4 h-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
-              />
-              <label htmlFor="is_active" className="text-sm font-semibold text-slate-700 dark:text-slate-300 cursor-pointer select-none">
-                Visible in storefront catalog
-              </label>
-            </div>
-
             <div className="flex gap-2.5 pt-2">
               <button
                 type="submit"
@@ -233,27 +202,12 @@ export default function CategoriesPage() {
                   animate={{ opacity: 1, scale: 1 }}
                   className="p-4 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-2xl shadow-sm hover:shadow-md transition duration-200 flex flex-col relative group"
                 >
-                  <div className="flex gap-4">
-                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-950 border border-slate-200/40 dark:border-slate-800/40 shrink-0">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={category.image_url || "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=150&q=80"}
-                      alt={category.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
                   <div className="flex-1 min-w-0 pr-12 flex flex-col justify-between">
                     <div>
                       <div className="flex items-center gap-1.5">
                         <h3 className="font-bold text-slate-800 dark:text-slate-100 truncate text-sm">
                           {category.name}
                         </h3>
-                        <span
-                          className={`w-2 h-2 rounded-full ${
-                            category.is_active ? "bg-emerald-500" : "bg-slate-350 dark:bg-slate-650"
-                          }`}
-                          title={category.is_active ? "Active" : "Inactive"}
-                        />
                       </div>
                       <p className="text-slate-450 dark:text-slate-500 text-[10px] font-mono mt-0.5">
                         /{category.slug}
@@ -281,9 +235,6 @@ export default function CategoriesPage() {
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
-                  </div>
-                  
-
                 </motion.div>
               ))}
             </div>
