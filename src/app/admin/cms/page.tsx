@@ -41,6 +41,13 @@ export default function CMSHubPage() {
       icon: Sparkles,
       href: "/admin/cms/kids-babies",
       color: "text-amber-600 bg-amber-50 dark:bg-amber-950/20 border-amber-100/50 dark:border-amber-900/30",
+    },
+    {
+      title: "Occasions Section",
+      description: "Manage heading, description, and the four occasion category cards.",
+      icon: Heart,
+      href: "/admin/cms/occasions",
+      color: "text-pink-600 bg-pink-50 dark:bg-pink-950/20 border-pink-100/50 dark:border-pink-900/30",
     }
   ];
 

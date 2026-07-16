@@ -16,7 +16,7 @@ export function CraftedGalleryKids() {
     <CraftedGallerySection
       heading={<>Loved by Parents,<span className="text-primary"> Made for Kids</span></>}
       category="kids"
-      galleryHref="/gallery?category=kids#gallery-grid"
+      galleryHref="/gallery?category=kids-babies#gallery-grid"
       fallbackImages={fallbackImages}
       bgColor="bg-[#FAFAFA]"
       cardBg="bg-white"

@@ -3,7 +3,7 @@ import { GalleryFilter } from "@/components/sections/gallery/GalleryFilter";
 import { MasonryGrid } from "@/components/sections/gallery/MasonryGrid";
 import { createClient } from "@/lib/supabase/server";
 
-export const revalidate = 60; // Revalidate lookbook cache every 60 seconds
+export const revalidate = 0; // Always fetch fresh data — categories & items update immediately
 
 export default async function GalleryPage({
   searchParams,

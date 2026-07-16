@@ -10,6 +10,7 @@ import FeaturedProductsEditorPage from "../featured-products/page";
 import TestimonialsPage from "../testimonials/page";
 import CTASectionEditorPage from "../cta/page";
 import HowItWorksEditorPage from "../how-it-works/page";
+import OccasionsEditorPage from "../occasions/page";
 
 export default function HomePageSettings() {
   const [activeTab, setActiveTab] = useState("hero");
@@ -21,6 +22,7 @@ export default function HomePageSettings() {
     { id: "featured", label: "Featured Products", icon: ShoppingBag, component: <FeaturedProductsEditorPage isTabbed={true} /> },
     { id: "how-it-works", label: "How It Works", icon: Workflow, component: <HowItWorksEditorPage isTabbed={true} /> },
     { id: "cta", label: "CTA Section", icon: Heart, component: <CTASectionEditorPage isTabbed={true} /> },
+    { id: "occasions", label: "Occasions", icon: Heart, component: <OccasionsEditorPage isTabbed={true} /> },
   ];
 
   return (
@@ -29,15 +31,15 @@ export default function HomePageSettings() {
       <div className="flex items-center gap-3">
         <Link
           href="/admin/cms"
-          className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg outline-none transition"
+          className="p-2 text-white bg-purple-700 hover:text-white dark:text-white dark:hover:text-white hover:bg-purple-500 dark:hover:bg-purple-500 rounded-lg outline-none transition"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-5 h-5 " />
         </Link>
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
             Home Page Settings
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-sm text-slate-700 dark:text-slate-400 mt-0.5">
             Configure Hero sliders, promotional banners, storefront texts, testimonials and featured items.
           </p>
         </div>
@@ -52,10 +54,10 @@ export default function HomePageSettings() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition duration-200 cursor-pointer ${
+              className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition duration-200 cursor-pointer rounded-t-lg ${
                 isActive
-                  ? "border-purple-650 text-purple-650 dark:text-purple-400 dark:border-purple-400"
-                  : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:text-slate-400"
+                  ? "border-purple-650 text-white bg-purple-700 dark:text-purple-400 dark:border-purple-400 dark:bg-purple-950/30"
+                  : "border-transparent text-slate-700 hover:text-slate-700 hover:border-slate-300 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800/40"
               }`}
             >
               <Icon className="w-4 h-4 shrink-0" />

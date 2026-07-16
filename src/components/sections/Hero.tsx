@@ -1,47 +1,49 @@
 "use client"
 
-import React, { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useCallback, Fragment, useMemo } from "react"
 import { Button } from "@/components/ui/button"
-import { HeartIcon } from "lucide-react"
+import {  HeartIcon } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
-import useEmblaCarousel from "embla-carousel-react"
-import Autoplay from "embla-carousel-autoplay"
-import { useHeroSlides } from "@/hooks/use-cms"
+import { motion } from "framer-motion"
 import { FloatingFeatureBar } from "./FloatingFeatureBar"
+import { useHeroSlides } from "@/hooks/use-cms"
 
-// Memoize FloatingFeatureBar to prevent unnecessary repaints on slide transition
-const MemoizedFloatingFeatureBar = React.memo(FloatingFeatureBar)
 
-// Modern CSS-driven fade/slide text variants for slide changes
-const textVariants = {
-  hidden: (prefersReducedMotion: boolean) => ({
-    opacity: 0,
-    y: prefersReducedMotion ? 0 : 15,
-  }),
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4, ease: "easeOut" as const },
-  },
-  exit: (prefersReducedMotion: boolean) => ({
-    opacity: 0,
-    y: prefersReducedMotion ? 0 : -15,
-    transition: { duration: 0.3, ease: "easeIn" as const },
-  }),
+// ---------------------------------------------------------------------------
+// Animation variants
+// ---------------------------------------------------------------------------
+const contentVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.5, ease: "easeOut" as const } },
+  exit: { opacity: 0, transition: { duration: 0.3, ease: "easeIn" as const } },
 }
 
+const headingVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const, delay: 0.05 } },
+}
+
+const descVariants = {
+  hidden: { opacity: 0, x: -32 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.55, ease: "easeOut" as const, delay: 0.3 } },
+}
+
+const btnVariants = {
+  hidden: { opacity: 0, x: -32 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.55, ease: "easeOut" as const, delay: 0.5 } },
+}
+
+// ---------------------------------------------------------------------------
+// Dot indicator
+// ---------------------------------------------------------------------------
 function Dots({ total, active, onChange }: { total: number; active: number; onChange: (i: number) => void }) {
   return (
-    <div className="flex items-center gap-2" role="tablist" aria-label="Slideshow Indicators">
+    <div className="flex items-center gap-2">
       {Array.from({ length: total }).map((_, i) => (
         <button
           key={i}
-          role="tab"
-          aria-selected={i === active}
-          aria-label={`Go to slide ${i + 1}`}
           onClick={() => onChange(i)}
+          aria-label={`Go to slide ${i + 1}`}
           className={`rounded-full transition-all duration-300 ${i === active
             ? "bg-primary w-5 h-2"
             : "bg-primary/30 hover:bg-primary/60 w-2 h-2"
@@ -52,88 +54,77 @@ function Dots({ total, active, onChange }: { total: number; active: number; onCh
   )
 }
 
-function formatHeroTitle(titleStr: string | null) {
-  if (!titleStr) return ""
+function formatHeroTitle(titleStr: string) {
+  if (!titleStr) return "";
 
-  const lower = titleStr.toLowerCase()
+  const lower = titleStr.toLowerCase();
   if (lower.includes("more than a gift") && lower.includes("memory in the making")) {
     return (
       <>
         <span className="block whitespace-nowrap">More Than a Gift.</span>
         <span className="block text-primary">
-          A Memory in the <span>Making</span>.
+          A Memory in the <span >Making</span>.
         </span>
       </>
-    )
+    );
   }
 
-  const parts = titleStr.split(". ")
+  const parts = titleStr.split(". ");
   if (parts.length > 1) {
-    const firstPart = parts[0] + "."
-    const secondPart = parts.slice(1).join(". ")
-    const words = secondPart.split(" ")
+    const firstPart = parts[0] + ".";
+    const secondPart = parts.slice(1).join(". ");
+    const words = secondPart.split(" ");
     if (words.length > 0) {
-      const lastWord = words[words.length - 1]
-      const remainingWords = words.slice(0, -1).join(" ")
+      const lastWord = words[words.length - 1];
+      const remainingWords = words.slice(0, -1).join(" ");
       return (
         <>
-          {firstPart} <br />
+          {firstPart}<br />
           {remainingWords} <span className="text-primary italic">{lastWord}</span>
         </>
-      )
+      );
     }
   }
 
-  const words = titleStr.split(" ")
+  // Fallback for strings without a period (e.g. "CUSTOM BABY HOODED TOWELS")
+  const words = titleStr.split(" ");
   if (words.length > 1) {
-    const lastWord = words[words.length - 1]
-    const remainingWords = words.slice(0, -1).join(" ")
+    const lastWord = words[words.length - 1];
+    const remainingWords = words.slice(0, -1).join(" ");
     return (
       <>
         {remainingWords} <span className="text-primary italic">{lastWord}</span>
       </>
-    )
+    );
   }
 
-  return titleStr
+  return titleStr;
 }
 
-function formatDescription(text: string | null) {
-  if (!text) return null
-  return text.split("\n").map((line, i, arr) => (
-    <span key={i}>
-      {line}
-      {i < arr.length - 1 && <br />}
-    </span>
-  ))
-}
 
-const FALLBACK_SLIDES = [
-  {
-    id: "fallback-0",
-    desktopBg: "/images/forhimpage/scarlet-forhimbanner.png",
-    tabletImg: "/images/forhimpage/scarlet-forhimbanner.png",
-    mobileImg: "/images/forhimpage/forhim-mobile-banner.png",
-    ctaLink: "/products",
-    title: "More Than a Gift. A Memory in the Making",
-    subtitle: "Whether you're celebrating someone special or treating yourself, make it uniquely personal.",
-    buttonText: "Shop Collection",
-  }
-]
 
+// ---------------------------------------------------------------------------
+// Hero
+// ---------------------------------------------------------------------------
 export function Hero() {
-  const prefersReducedMotion = useReducedMotion()
-  const { data: rawSlides, isLoading, isError } = useHeroSlides()
+  const { data: rawSlides } = useHeroSlides()
+  const [current, setCurrent] = useState(0)
+  const [paused, setPaused] = useState(false)
+  const [delay, setDelay] = useState(5000)
 
-  // Map CMS data or fallback dynamically, preventing above-the-fold visual delays
+  // Adjust delay for mobile
+  useEffect(() => {
+    const handleResize = () => setDelay(window.innerWidth < 768 ? 2500 : 3500)
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
   const slides = useMemo(() => {
-    if (isLoading || isError || !rawSlides || rawSlides.length === 0) {
-      return FALLBACK_SLIDES
-    }
-    const active = rawSlides.filter((slide) => slide.is_active)
-    if (active.length === 0) return FALLBACK_SLIDES
-    return active.map((slide) => ({
-      id: slide.id,
+    if (!rawSlides) return [];
+    const activeSlides = rawSlides.filter((slide: any) => slide.is_active);
+    return activeSlides.map((slide: any, index: number) => ({
+      id: slide.id ?? index,
       desktopBg: slide.image_desktop,
       tabletImg: slide.image_desktop,
       mobileImg: slide.image_mobile || slide.image_desktop,
@@ -141,164 +132,130 @@ export function Hero() {
       title: slide.title || "",
       subtitle: slide.subtitle || "",
       buttonText: slide.button_text || "Shop Collection",
-    }))
-  }, [rawSlides, isLoading, isError])
+    }));
+  }, [rawSlides]);
 
-  const [current, setCurrent] = useState(0)
+  const next = useCallback(() => {
+    if (slides.length === 0) return;
+    setCurrent((c) => (c + 1) % slides.length);
+  }, [slides.length])
 
-  // Configure Embla Autoplay options once
-  const autoplayOptions = useMemo(() => ({
-    delay: 4000,
-    stopOnInteraction: false,
-    stopOnMouseEnter: true,
-  }), [])
-
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: true, duration: 35 },
-    [Autoplay(autoplayOptions)]
-  )
-
-  const onSelect = useCallback(() => {
-    if (!emblaApi) return
-    setCurrent(emblaApi.selectedScrollSnap())
-  }, [emblaApi])
-
+  // Auto-advance
   useEffect(() => {
-    if (!emblaApi) return
-    emblaApi.on("select", onSelect)
-    onSelect()
-    return () => {
-      emblaApi.off("select", onSelect)
-    }
-  }, [emblaApi, onSelect])
+    if (paused || slides.length === 0) return
+    const id = setInterval(next, delay)
+    return () => clearInterval(id)
+  }, [paused, next, delay, slides.length])
 
-  const handleDotClick = useCallback((index: number) => {
-    if (!emblaApi) return
-    emblaApi.scrollTo(index)
-  }, [emblaApi])
+  if (slides.length === 0) {
+    return (
+      <section className="relative w-full h-[600px] lg:min-h-[640px] lg:h-[80vh] lg:max-h-[850px] bg-muted/20 animate-pulse flex items-center justify-center">
+        {/* Loading skeleton */}
+      </section>
+    );
+  }
 
-  // Keyboard accessibility arrow controls
-  useEffect(() => {
-    if (!emblaApi) return
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") emblaApi.scrollPrev()
-      if (e.key === "ArrowRight") emblaApi.scrollNext()
-    }
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [emblaApi])
+  const slide = slides[current]
 
-  const slide = slides[current] || FALLBACK_SLIDES[0]
-  const heroTitle = slide.title || "More Than a Gift. A Memory in the Making"
-  const heroSubtitle = slide.subtitle || "Whether you're celebrating someone special or treating yourself, make it uniquely personal."
+  const heroTitle = slide.title;
+  const heroSubtitle = slide.subtitle;
 
   return (
     <section
       className="relative w-full h-[600px] lg:min-h-[640px] lg:h-[80vh] lg:max-h-[850px] flex flex-col lg:flex-row lg:items-center"
-      aria-label="Promotional Hero Showcase"
-      role="region"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
     >
-      {/* ── GPU-Accelerated Embla Background Slider ── */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-auto" ref={emblaRef}>
-        <div className="flex h-full">
-          {slides.map((s, idx) => (
-            <div
-              key={s.id}
-              className="relative flex-none w-full h-full select-none"
-              aria-roledescription="slide"
-              aria-label={`Slide ${idx + 1} of ${slides.length}`}
-            >
-              {/* Desktop background image (lg+) */}
-              <div className="hidden lg:block absolute inset-0">
-                <Image
-                  src={s.desktopBg}
-                  alt={s.title || "Hero Background"}
-                  fill
-                  priority={idx === 0}
-                  loading={idx === 0 ? "eager" : "lazy"}
-                  sizes="100vw"
-                  className="object-cover object-right"
-                  decoding="async"
-                />
-              </div>
-
-              {/* Tablet background image (sm to lg) */}
-              <div className="hidden sm:block lg:hidden absolute inset-0">
-                <Image
-                  src={s.tabletImg}
-                  alt={s.title || "Hero Background"}
-                  fill
-                  priority={idx === 0}
-                  loading={idx === 0 ? "eager" : "lazy"}
-                  sizes="100vw"
-                  className="object-cover object-center"
-                  decoding="async"
-                />
-              </div>
-
-              {/* Mobile background image (< sm) */}
-              <div className="block sm:hidden absolute inset-0">
-                <Image
-                  src={s.mobileImg}
-                  alt={s.title || "Hero Background"}
-                  fill
-                  priority={idx === 0}
-                  loading={idx === 0 ? "eager" : "lazy"}
-                  sizes="100vw"
-                  className="object-cover object-center"
-                  decoding="async"
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+      {/* ── Desktop background — cross-fades per slide ── */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none hidden lg:block">
+        {slides.map((s, idx) => (
+          <img
+            key={`desktop-bg-${s.id}`}
+            src={s.desktopBg}
+            alt="Hero Background"
+            className={`absolute inset-0 w-full h-full object-cover object-right transition-opacity duration-700 ease-in-out ${idx === current ? "opacity-100" : "opacity-0"
+              }`}
+          />
+        ))}
       </div>
 
-      {/* ── Mobile Layout Overlay (≤ lg) ── */}
-      <div className="lg:hidden relative z-20 w-full h-full flex flex-col justify-start pt-32 px-5 sm:px-10 sm:pt-40 pointer-events-none">
-        <AnimatePresence mode="wait" initial={false}>
+      <div className="lg:hidden relative w-full h-[600px] overflow-hidden">
+
+        {/* Background images — cross-fade, sit behind everything */}
+        {slides.map((s, idx) => {
+          const isCurrent = idx === current ? "opacity-100" : "opacity-0";
+          return (
+            <Fragment key={`mobile-tablet-bg-${s.id}`}>
+              <img
+                src={s.mobileImg}
+                alt="Hero Background Mobile"
+                className={`absolute inset-0 z-0 w-full h-full object-cover object-center transition-opacity duration-500 ease-in-out sm:hidden ${isCurrent}`}
+              />
+              <img
+                src={s.tabletImg}
+                alt="Hero Background Tablet"
+                className={`absolute inset-0 z-0 w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out hidden sm:block ${isCurrent}`}
+              />
+            </Fragment>
+          );
+        })}
+
+        {/* Content — overlaid directly on the background image, pinned near the top-left */}
+        <div className="relative z-20 w-full h-full flex flex-col justify-start pt-32 px-5 sm:px-10 sm:pt-40">
           <motion.div
             key={current}
-            custom={prefersReducedMotion}
-            variants={textVariants}
+            className="flex flex-col items-start space-y-2 w-full max-w-md"
+            variants={contentVariants}
             initial="hidden"
             animate="visible"
-            exit="exit"
-            className="flex flex-col items-start space-y-2 w-full max-w-md pointer-events-auto"
           >
-            <div className="flex items-center gap-2 text-xs font-semibold text-primary">
+            <motion.div
+              className="flex items-center gap-2 text-xs font-semibold text-primary"
+              variants={headingVariants}
+            >
               <span>For Every Moment That Matters</span>
-            </div>
+            </motion.div>
 
-            <h1 className="text-3xl sm:text-4xl font-bold text-foreground text-left leading-tight tracking-tight max-w-full">
+            <motion.h1
+              className="text-3xl sm:text-4xl font-bold text-foreground text-left leading-tight tracking-tight max-w-full"
+              variants={headingVariants}
+            >
               {formatHeroTitle(heroTitle)}
-            </h1>
+            </motion.h1>
 
-            <p className="text-[13px] text-muted-foreground text-left max-w-xs">
-              {formatDescription(heroSubtitle)}
-            </p>
+            <motion.p
+              className="text-[13px] text-muted-foreground text-left max-w-xs whitespace-pre-line"
+              variants={descVariants}
+            >
+              {heroSubtitle}
+            </motion.p>
 
-            <div className="pt-1 flex flex-col items-start gap-3 w-full">
-              <Link href="/products">
-                <Button size="lg" className="text-base h-12 px-8 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[5px] shadow-md transition-all">
-                  Shop Now
-                </Button>
-              </Link>
-            </div>
+            <motion.div className="pt-1 flex flex-col items-start gap-3 w-full" variants={btnVariants}>
+              {slide.buttonText && slide.ctaLink && (
+                <Link href={slide.ctaLink}>
+                  <Button size="lg" className="text-base h-12 px-8 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[10px] shadow-md transition-all">
+                    {slide.buttonText}
+                  </Button>
+                </Link>
+              )}
+            </motion.div>
           </motion.div>
-        </AnimatePresence>
 
-        {/* Dots — hidden on mobile, shown on tablet+ */}
-        <div className="hidden sm:flex mt-6 justify-start pointer-events-auto">
-          <Dots total={slides.length} active={current} onChange={handleDotClick} />
+          {/* Dots — hidden on mobile, shown on tablet+ */}
+          <div className="hidden sm:flex mt-6 justify-start">
+            <Dots total={slides.length} active={current} onChange={setCurrent} />
+          </div>
         </div>
       </div>
 
-      {/* ── Desktop Layout Overlay (≥ lg) ── */}
-      <div className="hidden lg:block w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 lg:px-16 relative z-20 pointer-events-none">
+      {/* ══════════════════════════════════════════════
+          Desktop layout  (≥ lg)
+      ══════════════════════════════════════════════ */}
+      <div className="hidden lg:block w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 lg:px-16 relative z-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center w-full">
-          <div className="space-y-5 z-20 relative pointer-events-auto">
-            {/* Decorative hearts */}
+          <div className="space-y-5 z-20 relative">
+
+            {/* Decorative hearts — unchanged */}
             <div className="absolute -top-8 left-[32%] w-5 h-5 text-pink-400 opacity-70 transform rotate-12 animate-pulse hidden md:block">
               <HeartIcon />
             </div>
@@ -306,44 +263,52 @@ export function Hero() {
               <HeartIcon />
             </div>
 
+            {/* Eyebrow tag — matches reference image */}
             <div className="flex items-center gap-2 text-xs font-semibold tracking-wider text-primary uppercase">
               <span>For Every Moment That Matters</span>
             </div>
 
             {/* Animated content block */}
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={current}
-                custom={prefersReducedMotion}
-                variants={textVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                className="space-y-5"
+            <motion.div
+              key={current}
+              className="space-y-5"
+              variants={contentVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              <motion.h1
+                className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground"
+                variants={headingVariants}
               >
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
-                  {formatHeroTitle(heroTitle)}
-                </h1>
+                {formatHeroTitle(heroTitle)}
+              </motion.h1>
 
-                <div className="w-12 h-[2px] bg-primary/50" />
+              <div className="w-12 h-[2px] bg-primary/50" />
 
-                <p className="text-sm text-muted-foreground max-w-md whitespace-pre-line">
-                  {formatDescription(heroSubtitle)}
-                </p>
+              <motion.p
+                className="text-sm text-muted-foreground max-w-md whitespace-pre-line"
+                variants={descVariants}
+              >
+                {heroSubtitle}
+              </motion.p>
 
-                <div className="flex items-center gap-6 pt-2">
-                  <Link href="/products">
+              <motion.div
+                className="flex items-center gap-6 pt-2"
+                variants={btnVariants}
+              >
+                {slide.buttonText && slide.ctaLink && (
+                  <Link href={slide.ctaLink}>
                     <Button size="lg" className="text-base h-12 px-8 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[5px] shadow-md transition-all">
-                      Shop Now
+                      {slide.buttonText}
                     </Button>
                   </Link>
-                </div>
+                )}
               </motion.div>
-            </AnimatePresence>
+            </motion.div>
 
             {/* Dots */}
             <div className="pt-1">
-              <Dots total={slides.length} active={current} onChange={handleDotClick} />
+              <Dots total={slides.length} active={current} onChange={setCurrent} />
             </div>
           </div>
 
@@ -351,7 +316,10 @@ export function Hero() {
         </div>
       </div>
 
-      <MemoizedFloatingFeatureBar />
+      {/* ══════════════════════════════════════════════
+          Floating Feature Bar — hidden on mobile (StoreFeatures handles mobile)
+      ══════════════════════════════════════════════ */}
+      <FloatingFeatureBar />
     </section>
   )
 }

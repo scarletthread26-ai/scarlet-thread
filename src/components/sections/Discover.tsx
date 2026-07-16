@@ -6,14 +6,6 @@ import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { useHomepageSection, useGallery } from "@/hooks/use-cms"
 
-const columnImages = [
-  "/images/scarlet-about5.png",
-  "/images/scarlet-about.png",
-  "/images/scarlet-about1.png",
-  "/images/scarlet-about2.png",
-  "/images/scarlet-about3.png",
-  "/images/scarlet-about4.png",
-]
 
 function ImageColumn({
   images,
@@ -91,8 +83,10 @@ function formatDiscoverTitle(titleStr: string, isDesktop: boolean) {
 }
 
 export function Discover() {
-  const { data: sectionData } = useHomepageSection("about")
-  const { data: galleryJson } = useGallery()
+  const { data: sectionData, isLoading: isSectionLoading } = useHomepageSection("about")
+  const { data: galleryJson, isLoading: isGalleryLoading } = useGallery()
+
+  const isLoading = isSectionLoading || isGalleryLoading;
 
   const galleryImages = React.useMemo(() => {
     if (!galleryJson || !Array.isArray(galleryJson)) return []
@@ -106,30 +100,15 @@ export function Discover() {
   const description = sectionData?.content?.description || "At Scarlet, we create meaningful, personalized gifts made with love—from gifts for him and her to keepsakes for newborns, toddlers, and baby showers.";
   const buttonText = sectionData?.content?.button_text || "Read Our Story";
   const buttonLink = sectionData?.content?.button_link || "/about";
-  const getActiveImages = () => {
-    if (galleryImages.length === 0) {
-      return columnImages;
-    }
-    if (galleryImages.length < 6) {
-      const merged = [...galleryImages];
-      const needed = 6 - galleryImages.length;
-      for (let i = 0; i < needed; i++) {
-        merged.push(columnImages[i % columnImages.length]);
-      }
-      return merged;
-    }
-    return galleryImages;
-  };
+  // Desktop: up to 9 images spread across 3 animated columns (3 each)
+  const desktopImages = galleryImages.slice(0, 9);
+  // Mobile: up to 6 images in a static 2-col grid
+  const mobileImages = galleryImages.slice(0, 6);
 
-  const activeImages = getActiveImages();
-
-  const col1Images = activeImages;
-  const col2Images = activeImages.length >= 3
-    ? [...activeImages.slice(Math.floor(activeImages.length / 3)), ...activeImages.slice(0, Math.floor(activeImages.length / 3))]
-    : activeImages;
-  const col3Images = activeImages.length >= 3
-    ? [...activeImages.slice(Math.floor(activeImages.length * 2 / 3)), ...activeImages.slice(0, Math.floor(activeImages.length * 2 / 3))]
-    : activeImages;
+  const hasDesktopImages = desktopImages.length >= 3;
+  const col1Images = desktopImages.slice(0, 3);
+  const col2Images = desktopImages.slice(3, 6);
+  const col3Images = desktopImages.slice(6, 9);
 
   return (
     <section className="pt-24  pb-8 bg-white  ">
@@ -164,22 +143,24 @@ export function Discover() {
             </Button>
           </div>
 
-          {/* 5. 2-column image grid */}
-          <div className="grid grid-cols-2 gap-2 sm:gap-3">
-            {activeImages.slice(0, 8).map((src, i) => (
-              <div key={i} className="rounded-xl overflow-hidden shadow-sm aspect-[4/3]">
-                <img
-                  src={src}
-                  alt="Scarlet gift"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ))}
-          </div>
+          {/* 5. 2-column image grid — 6 images on mobile, only shown when gallery has data */}
+          {!isLoading && mobileImages.length > 0 && (
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+              {mobileImages.map((src, i) => (
+                <div key={i} className="rounded-xl overflow-hidden shadow-sm aspect-[4/3]">
+                  <img
+                    src={src}
+                    alt="Scarlet gift"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* DESKTOP VIEW */}
-        <div className="hidden lg:grid lg:grid-cols-2 lg:gap-20 lg:items-center">
+        <div className={`hidden lg:grid lg:gap-20 lg:items-center ${hasDesktopImages ? 'lg:grid-cols-2' : ''}`}>
           {/* Content Left */}
           <div className="space-y-6">
             <div className="text-primary font-medium tracking-wide flex items-center gap-2">
@@ -204,12 +185,14 @@ export function Discover() {
             </div>
           </div>
 
-          {/* Image Right */}
-          <div className="flex gap-3 overflow-hidden">
-            <ImageColumn images={col1Images} direction="up" duration={28} />
-            <ImageColumn images={col2Images} direction="down" duration={22} />
-            <ImageColumn images={col3Images} direction="up" duration={32} />
-          </div>
+          {/* Image Right — only shown when gallery has data */}
+          {!isLoading && hasDesktopImages && (
+            <div className="flex gap-3 overflow-hidden">
+              <ImageColumn images={col1Images} direction="up" duration={28} />
+              <ImageColumn images={col2Images} direction="down" duration={22} />
+              <ImageColumn images={col3Images} direction="up" duration={32} />
+            </div>
+          )}
         </div>
       </div>
     </section>

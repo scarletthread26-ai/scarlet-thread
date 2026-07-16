@@ -2,6 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { createClient as createDirectClient } from "@supabase/supabase-js";
 
+export const dynamic = "force-dynamic";
+
 // Helper to get service role client for seeding if needed
 function getServiceRoleClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -18,10 +20,7 @@ function getServiceRoleClient() {
 const DEFAULT_CATEGORIES = [
   { name: "For Him", slug: "him", description: "Embroidery creations and custom gifts crafted for him." },
   { name: "For Her", slug: "her", description: "Elegant customized embroidery and monogrammed gifts for her." },
-  { name: "Kids & Babies", slug: "kids", description: "Bespoke baby hooded towels, onesies, and children keepsakes." },
-  { name: "Special Occasions", slug: "occasions", description: "Bespoke items for weddings, Eid, and special celebrations." },
-  { name: "Hampers & Boxes", slug: "hampers", description: "Curated gift boxes and custom wrapped hampers." },
-  { name: "Home & Living", slug: "home", description: "Personalized cushions, towels, and home accessories." }
+  { name: "Kids & Babies", slug: "kids", description: "Bespoke baby hooded towels, onesies, and children keepsakes." }
 ];
 
 async function ensureCategoriesSeeded() {
