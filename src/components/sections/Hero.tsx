@@ -280,7 +280,7 @@ export function Hero() {
 
             <div className="pt-1 flex flex-col items-start gap-3 w-full">
               <Link href="/products">
-                <Button size="lg" className="text-base h-12 px-8 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[10px] shadow-md transition-all">
+                <Button size="lg" className="text-base h-12 px-8 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[5px] shadow-md transition-all">
                   Shop Now
                 </Button>
               </Link>
@@ -337,13 +337,6 @@ export function Hero() {
                       Shop Now
                     </Button>
                   </Link>
-                  {slide.buttonText && slide.ctaLink && (
-                    <Link href={slide.ctaLink}>
-                      <span className="text-primary font-semibold flex items-center gap-2 text-base py-2 cursor-pointer transition-all hover:underline">
-                        {slide.buttonText} <span className="text-lg">→</span>
-                      </span>
-                    </Link>
-                  )}
                 </div>
               </motion.div>
             </AnimatePresence>
