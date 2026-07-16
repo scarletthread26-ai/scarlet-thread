@@ -1,32 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { Heart } from "lucide-react"
 import { CommonHero, CommonHeroSkeleton } from "@/components/sections/CommonHero"
+import { useHomepageSection } from "@/hooks/use-cms"
 
 const ACCENT = "#4b0082"
 const ACCENT_PINK = "#FF69B4"
 
 export function HeroKids() {
-  const [sectionData, setSectionData] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const res = await fetch("/api/admin/cms/homepage-sections?key=kids-babies")
-        if (res.ok) {
-          const json = await res.json()
-          if (json) setSectionData(json)
-        }
-      } catch (err) {
-        console.warn("Failed to load kids-babies hero settings:", err)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    loadData()
-  }, [])
+  const { data: sectionData, isLoading } = useHomepageSection("kids-babies")
 
   if (isLoading) {
     return <CommonHeroSkeleton />
@@ -51,9 +33,7 @@ export function HeroKids() {
       title={title}
       subtitle={subtitle}
       primaryHref="/products"
-      primaryLabel="Shop Best Sellers"
-      secondaryHref="/products?category=kids-babies"
-      secondaryLabel="Explore Collection"
+      primaryLabel="Shop Now"
 
       desktopImage={desktopImage}
       mobileImage={mobileImage}

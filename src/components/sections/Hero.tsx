@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useEffect, useCallback, Fragment } from "react"
+import { useState, useEffect, useCallback, Fragment, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import {  HeartIcon } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { FloatingFeatureBar } from "./FloatingFeatureBar"
+import { useHeroSlides } from "@/hooks/use-cms"
 
 
 // ---------------------------------------------------------------------------
@@ -106,7 +107,7 @@ function formatHeroTitle(titleStr: string) {
 // Hero
 // ---------------------------------------------------------------------------
 export function Hero() {
-  const [slides, setSlides] = useState<any[]>([])
+  const { data: rawSlides } = useHeroSlides()
   const [current, setCurrent] = useState(0)
   const [paused, setPaused] = useState(false)
   const [delay, setDelay] = useState(5000)
@@ -119,34 +120,20 @@ export function Hero() {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  useEffect(() => {
-    async function loadSlides() {
-      try {
-        const res = await fetch("/api/admin/cms/hero-slides");
-        if (res.ok) {
-          const data = await res.json();
-          const activeSlides = data.filter((slide: any) => slide.is_active);
-          if (activeSlides.length > 0) {
-            setSlides(
-              activeSlides.map((slide: any, index: number) => ({
-                id: slide.id ?? index,
-                desktopBg: slide.image_desktop,
-                tabletImg: slide.image_desktop,
-                mobileImg: slide.image_mobile || slide.image_desktop,
-                ctaLink: slide.button_link || "/products",
-                title: slide.title || "",
-                subtitle: slide.subtitle || "",
-                buttonText: slide.button_text || "Shop Collection",
-              }))
-            );
-          }
-        }
-      } catch (err) {
-        console.warn("Failed to load slides from Supabase CMS:", err);
-      }
-    }
-    loadSlides();
-  }, []);
+  const slides = useMemo(() => {
+    if (!rawSlides) return [];
+    const activeSlides = rawSlides.filter((slide: any) => slide.is_active);
+    return activeSlides.map((slide: any, index: number) => ({
+      id: slide.id ?? index,
+      desktopBg: slide.image_desktop,
+      tabletImg: slide.image_desktop,
+      mobileImg: slide.image_mobile || slide.image_desktop,
+      ctaLink: slide.button_link || "/products",
+      title: slide.title || "",
+      subtitle: slide.subtitle || "",
+      buttonText: slide.button_text || "Shop Collection",
+    }));
+  }, [rawSlides]);
 
   const next = useCallback(() => {
     if (slides.length === 0) return;

@@ -24,7 +24,7 @@ export function HeroGallery() {
       )}
       subtitle="Every gift has a story. and every stitch holds a memory. Here's a glimpse of the love we've helped create."
       primaryHref="/products"
-      primaryLabel="Explore Our Collection"
+      primaryLabel="Shop Now"
       desktopImage="/images/gallery-hero.png"
       mobileImage="/images/galler-mobile-banner.png"
       imageAlt="Personalized gifts for her"

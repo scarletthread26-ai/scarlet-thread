@@ -4,6 +4,7 @@ import React from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
+import { useHomepageSection, useGallery } from "@/hooks/use-cms"
 
 
 function ImageColumn({
@@ -82,42 +83,17 @@ function formatDiscoverTitle(titleStr: string, isDesktop: boolean) {
 }
 
 export function Discover() {
-  const [sectionData, setSectionData] = React.useState<any>(null);
-  const [galleryImages, setGalleryImages] = React.useState<string[]>([]);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const { data: sectionData, isLoading: isSectionLoading } = useHomepageSection("about")
+  const { data: galleryJson, isLoading: isGalleryLoading } = useGallery()
 
-  React.useEffect(() => {
-    async function loadData() {
-      try {
-        const [aboutRes, galleryRes] = await Promise.all([
-          fetch("/api/admin/cms/homepage-sections?key=about"),
-          fetch("/api/gallery")
-        ]);
+  const isLoading = isSectionLoading || isGalleryLoading;
 
-        if (aboutRes.ok) {
-          const aboutJson = await aboutRes.json();
-          if (aboutJson) {
-            setSectionData(aboutJson);
-          }
-        }
-
-        if (galleryRes.ok) {
-          const galleryJson = await galleryRes.json();
-          if (Array.isArray(galleryJson)) {
-            const images = galleryJson
-              .filter((item: any) => item.media_type === "image" && item.media_url)
-              .map((item: any) => item.media_url);
-            setGalleryImages(images);
-          }
-        }
-      } catch (err) {
-        console.warn("Failed to load discover / gallery data:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    loadData();
-  }, []);
+  const galleryImages = React.useMemo(() => {
+    if (!galleryJson || !Array.isArray(galleryJson)) return []
+    return galleryJson
+      .filter((item: any) => item.media_type === "image" && item.media_url)
+      .map((item: any) => item.media_url)
+  }, [galleryJson])
 
   const title = sectionData?.title || "Discover The Scarlet Thread";
   const subtitle = sectionData?.subtitle || "Bringing Your Gift Ideas To Life";
