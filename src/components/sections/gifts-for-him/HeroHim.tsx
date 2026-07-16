@@ -1,31 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { Heart } from "lucide-react"
 import { CommonHero, CommonHeroSkeleton } from "@/components/sections/CommonHero"
+import { useHomepageSection } from "@/hooks/use-cms"
 
 const ACCENT = "#4b0082"
 
 export function HeroHim() {
-  const [sectionData, setSectionData] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const res = await fetch("/api/admin/cms/homepage-sections?key=gifts-for-him")
-        if (res.ok) {
-          const json = await res.json()
-          if (json) setSectionData(json)
-        }
-      } catch (err) {
-        console.warn("Failed to load gifts-for-him hero section settings:", err)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    loadData()
-  }, [])
+  const { data: sectionData, isLoading } = useHomepageSection("gifts-for-him")
 
   if (isLoading) {
     return <CommonHeroSkeleton />
