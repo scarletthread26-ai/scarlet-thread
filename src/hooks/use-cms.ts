@@ -214,3 +214,15 @@ export function useSaveHomepageSection() {
   });
 }
 
+export function useGallery() {
+  return useQuery<any[]>({
+    queryKey: ["gallery"],
+    queryFn: async () => {
+      const res = await fetch("/api/gallery");
+      if (!res.ok) throw new Error("Failed to fetch gallery");
+      return res.json();
+    },
+  });
+}
+
+

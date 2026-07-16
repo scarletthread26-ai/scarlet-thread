@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { buttonVariants } from "@/components/ui/button";
+import { useHomepageSection, useGallery } from "@/hooks/use-cms";
+import { useSettings } from "@/hooks/use-settings";
 
 const placeholderImages = [
   "/images/scarlet-about5.png",
@@ -31,51 +33,18 @@ const placeholderImages = [
 ];
 
 export default function AboutPage() {
-  const [sectionData, setSectionData] = useState<any>(null);
-  const [galleryImages, setGalleryImages] = useState<string[]>([]);
-  const [settings, setSettings] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: sectionData, isLoading: isCmsLoading } = useHomepageSection("about");
+  const { data: galleryJson, isLoading: isGalleryLoading } = useGallery();
+  const { data: settings, isLoading: isSettingsLoading } = useSettings();
 
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const [aboutRes, galleryRes, settingsRes] = await Promise.all([
-          fetch("/api/admin/cms/homepage-sections?key=about"),
-          fetch("/api/gallery"),
-          fetch("/api/admin/settings")
-        ]);
+  const isLoading = isCmsLoading || isGalleryLoading || isSettingsLoading;
 
-        if (aboutRes.ok) {
-          const aboutJson = await aboutRes.json();
-          if (aboutJson) {
-            setSectionData(aboutJson);
-          }
-        }
-
-        if (galleryRes.ok) {
-          const galleryJson = await galleryRes.json();
-          if (Array.isArray(galleryJson)) {
-            const images = galleryJson
-              .filter((item: any) => item.media_type === "image" && item.media_url)
-              .map((item: any) => item.media_url);
-            setGalleryImages(images);
-          }
-        }
-
-        if (settingsRes.ok) {
-          const settingsJson = await settingsRes.json();
-          if (settingsJson) {
-            setSettings(settingsJson);
-          }
-        }
-      } catch (err) {
-        console.warn("Failed to load about / gallery / settings data:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    loadData();
-  }, []);
+  const galleryImages = React.useMemo(() => {
+    if (!galleryJson || !Array.isArray(galleryJson)) return [];
+    return galleryJson
+      .filter((item: any) => item.media_type === "image" && item.media_url)
+      .map((item: any) => item.media_url);
+  }, [galleryJson]);
 
   if (isLoading) {
     return (
@@ -86,9 +55,9 @@ export default function AboutPage() {
   }
 
   // Fallbacks with dynamic SEO keyword placement
-  const title = "Discover The Scarlet Thread";
-  const subtitle = "Bringing Your Gift Ideas To Life";
-  const description = "At Scarlet Thread, we believe every gift should tell a story. We create beautifully personalized gifts UAE residents adore, celebrating life's most meaningful moments—from birthdays and anniversaries to newborn arrivals, weddings, and special milestones. Every product is crafted with love, attention to detail, and a personal touch that makes every gift unforgettable.";
+  const title = sectionData?.title || "Discover The Scarlet Thread";
+  const subtitle = sectionData?.subtitle || "Bringing Your Gift Ideas To Life";
+  const description = sectionData?.content?.description || "At Scarlet Thread, we believe every gift should tell a story. We create beautifully personalized gifts UAE residents adore, celebrating life's most meaningful moments—from birthdays and anniversaries to newborn arrivals, weddings, and special milestones. Every product is crafted with love, attention to detail, and a personal touch that makes every gift unforgettable.";
 
   const getActiveImages = () => {
     if (galleryImages.length === 0) {

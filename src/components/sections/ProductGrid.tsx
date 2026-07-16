@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useProducts } from "@/hooks/use-products"
+import { useHomepageSection } from "@/hooks/use-cms"
 
 // Static products fallback removed
 
@@ -84,25 +85,7 @@ function ProductGridSkeleton() {
 
 export function ProductGrid() {
   const { data: dbProducts = [], isLoading } = useProducts()
-  const [sectionData, setSectionData] = React.useState<any>(null)
-  const [isCmsLoading, setIsCmsLoading] = React.useState(true)
-
-  React.useEffect(() => {
-    async function loadSection() {
-      try {
-        const res = await fetch("/api/admin/cms/homepage-sections?key=featured-products")
-        if (res.ok) {
-          const json = await res.json()
-          if (json) setSectionData(json)
-        }
-      } catch (err) {
-        console.warn("Failed to load featured products section config:", err)
-      } finally {
-        setIsCmsLoading(false)
-      }
-    }
-    loadSection()
-  }, [])
+  const { data: sectionData, isLoading: isCmsLoading } = useHomepageSection("featured-products")
 
   const showSkeleton = isLoading || isCmsLoading
 
