@@ -34,9 +34,7 @@ export function HeroHer() {
       title={title}
       subtitle={subtitle}
       primaryHref="/products"
-      primaryLabel="Shop Best Sellers"
-      secondaryHref="/products?category=gifts-for-her"
-      secondaryLabel="Explore Collection"
+      primaryLabel="Shop Now"
 
       desktopImage={desktopImage}
       mobileImage={mobileImage}

@@ -220,7 +220,6 @@ export function CommonHero({
               </motion.p>
             )} */}
 
-            {/* CTA buttons */}
             <motion.div
               variants={fadeUp(0.8, 40)}
               className="mb-6 md:mb-10 flex flex-wrap items-center gap-2.5"
@@ -228,34 +227,12 @@ export function CommonHero({
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.96 }}>
                 <Link
                   href={primaryHref}
-                  className="inline-flex h-10 md:h-11 items-center rounded-full px-6 text-[0.78rem] md:text-sm font-bold text-white shadow transition-all duration-200 hover:-translate-y-px active:translate-y-0"
+                  className="inline-flex h-10 md:h-11 items-center rounded-[5px] px-6 text-[0.78rem] md:text-sm font-bold text-white shadow transition-all duration-200 hover:-translate-y-px active:translate-y-0"
                   style={{ backgroundColor: accentColor }}
                 >
                   {primaryLabel}
                 </Link>
               </motion.div>
-
-              {secondaryHref && (
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.96 }} className="hidden md:block">
-                  <Link
-                    href={secondaryHref}
-                    className="inline-flex h-10 md:h-11 items-center rounded-full border bg-white/60 px-6 text-[0.78rem] md:text-sm font-semibold backdrop-blur-sm transition-all duration-200 hover:bg-white hover:-translate-y-px active:translate-y-0"
-                    style={{
-                      borderColor: `${accentColor}99`,
-                      color: accentColor,
-                    }}
-                  >
-                    {secondaryLabel}
-                    <motion.div
-                      animate={{ x: [0, 5, 0] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                      className="inline-block"
-                    >
-                      <ArrowRight className="ml-1 h-4 w-4" />
-                    </motion.div>
-                  </Link>
-                </motion.div>
-              )}
             </motion.div>
 
 
@@ -285,8 +262,7 @@ export function CommonHeroSkeleton() {
             <div className="w-3/4 md:w-full max-w-lg h-10 md:h-14 bg-slate-200 dark:bg-slate-800 rounded mb-4" />
             <div className="w-2/3 md:w-3/4 max-w-sm h-4 bg-slate-200 dark:bg-slate-800 rounded mb-8" />
             <div className="flex gap-4">
-              <div className="w-36 h-11 bg-slate-200 dark:bg-slate-800 rounded-full" />
-              <div className="w-40 h-11 bg-slate-200 dark:bg-slate-800 rounded-full hidden md:block" />
+              <div className="w-36 h-11 bg-slate-200 dark:bg-slate-800 rounded-[5px]" />
             </div>
           </div>
           <div className="flex-1 hidden md:block" />

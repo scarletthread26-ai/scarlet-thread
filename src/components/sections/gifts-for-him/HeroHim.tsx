@@ -35,9 +35,7 @@ export function HeroHim() {
       subtitle={subtitle}
       bodyText="Personalized with names, dates, quotes, and memories that last forever."
       primaryHref="/products"
-      primaryLabel="Shop Best Sellers"
-      secondaryHref="/products?category=gifts-for-him"
-      secondaryLabel="Explore Collection"
+      primaryLabel="Shop Now"
 
       desktopImage={desktopImage}
       mobileImage={mobileImage}

@@ -33,9 +33,7 @@ export function HeroKids() {
       title={title}
       subtitle={subtitle}
       primaryHref="/products"
-      primaryLabel="Shop Best Sellers"
-      secondaryHref="/products?category=kids-babies"
-      secondaryLabel="Explore Collection"
+      primaryLabel="Shop Now"
 
       desktopImage={desktopImage}
       mobileImage={mobileImage}
