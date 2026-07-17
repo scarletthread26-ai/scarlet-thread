@@ -82,7 +82,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const supabase = await createClient();
+    const supabase = await createServerClient();
 
     // Fetch the gallery item media_url to delete it from Cloudinary
     const { data: item } = await supabase
