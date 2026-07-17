@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useHomepageSection, useSaveHomepageSection } from "@/hooks/use-cms";
 import { ArrowLeft, Save, Loader2, Info } from "lucide-react";
 import Link from "next/link";
+import { ImageUpload } from "@/components/admin/image-upload";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 
@@ -250,6 +251,21 @@ export default function HowItWorksEditorPage({ isTabbed = false }: { isTabbed?: 
                           rows={2}
                           className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-805 bg-white dark:bg-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600 dark:text-slate-200 transition leading-relaxed"
                           placeholder="Describe this step..."
+                        />
+                      </div>
+                      
+                      <div className="md:col-span-2 space-y-1.5 mt-2 border-t border-slate-100 dark:border-slate-805 pt-4">
+                        <label className="block text-[10px] font-bold text-slate-550 dark:text-slate-400 uppercase tracking-wider mb-1">
+                          Step Image
+                        </label>
+                        <ImageUpload
+                          bucket="cms"
+                          value={step.image ? [step.image] : []}
+                          onChange={(urls) => updateStep(idx, "image", urls[0] || "")}
+                          onRemove={() => updateStep(idx, "image", "")}
+                          maxFiles={1}
+                          gridClassName="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"
+                          previewClassName="aspect-square w-full max-w-[200px]"
                         />
                       </div>
                     </div>

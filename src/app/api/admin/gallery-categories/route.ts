@@ -50,8 +50,8 @@ export async function GET() {
     const supabase = await createClient();
     const adminSupabase = getServiceRoleClient();
 
-    // 1. Fetch main categories (top-level)
-    const { data: mainCats } = await supabase.from("categories").select("*").is("parent_id", null);
+    // 1. Fetch all categories
+    const { data: mainCats } = await supabase.from("categories").select("*");
 
     // 2. Fetch existing gallery categories
     const { data: galCats } = await supabase.from("gallery_categories").select("*");

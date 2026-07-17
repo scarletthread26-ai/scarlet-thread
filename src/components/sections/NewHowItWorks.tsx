@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
@@ -39,68 +39,17 @@ const arrowRightVariants = {
     transition: { duration: 0.5, ease: "easeOut" as const },
   },
 }
+// Visual color palette per step — not mock data, purely a theme
+const STEP_COLORS = ["#FDF4FF", "#F4F6FF", "#FFF9F4", "#F4FFF7"]
 
-const defaultSteps = [
-  {
-    number: "01",
-    title: "Select & Prepay",
-    description:
-      "Find your favorite base product (hoodie, tee, cap, etc.) and complete secure payment to lock in your order slot.",
-    image: "/images/heropage/scarlet-heartbag.png",
-    color: "#FDF4FF",
-  },
-  {
-    number: "02",
-    title: "Whatsapp Us Details",
-    description:
-      "Check your email confirmation for your Order id # and a direct link to chat with us on WhatsApp. Share your design idea!",
-    image: "/images/heropage/scarlet-phone.png",
-    color: "#F4F6FF",
-  },
-  {
-    number: "03",
-    title: "Mockup & Approval",
-    description:
-      "We create a realistic digital mockup for your review. Give us your final 'Thumbs Up' before we craft!",
-    image: "/images/heropage/scarlet-laptop.png",
-    color: "#FFF9F4",
-  },
-  {
-    number: "04",
-    title: "We Craft & Ship!",
-    description:
-      "Once approved, our team produces your unique gift with care and ships it straight to your door!",
-    image: "/images/heropage/scarlet-delivery.png",
-    color: "#F4FFF7",
-  },
-]
 
 export function NewHowItWorks() {
-  const [isDesktop, setIsDesktop] = useState(false)
-  const { data: section } = useHomepageSection("how-it-works")
+  const { data: section, isLoading } = useHomepageSection("how-it-works")
 
-  useEffect(() => {
-    const media = window.matchMedia("(min-width: 768px)")
-    setIsDesktop(media.matches)
-    const listener = (e: MediaQueryListEvent) => setIsDesktop(e.matches)
-    media.addEventListener("change", listener)
-    return () => media.removeEventListener("change", listener)
-  }, [])
+  if (isLoading || !section) return null
 
-  const title = section?.title || "Creating Your Perfect Custom Gift"
-  const formattedTitle =
-    typeof title === "string"
-      ? title.split(/(Custom Gift)/i).map((part: string, i: number) =>
-          part.toLowerCase() === "custom gift" ? (
-            <span key={i} className="text-primary">
-              {part}
-            </span>
-          ) : (
-            part
-          )
-        )
-      : title
-  const steps = section?.content?.steps || defaultSteps
+  const title: string = section.title || ""
+  const steps: any[] = section.content?.steps || []
 
   return (
     <section className="md:py-5 md:py-2 bg-white">
@@ -116,18 +65,8 @@ export function NewHowItWorks() {
               viewport={{ once: true, amount: 0.3 }}
               variants={headingVariants}
             >
-            Creating your perfect <br className="md:hidden" /> <span className="text-primary ">Custom Gift</span> 
+              {title}
             </motion.h2>
-            <motion.p
-              className="text-[13px] md:text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed mt-2"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              variants={headingVariants}
-            >
-              Our simple 4-step process makes creating your perfect custom gift
-              quick and effortless
-            </motion.p>
           </div>
 
           {/* ── MOBILE: Vertical stacked cards ── */}
@@ -139,10 +78,9 @@ export function NewHowItWorks() {
             variants={containerVariants}
           >
             {steps.map((step: any, index: number) => {
-              const s = defaultSteps[index] ?? {}
-              const num = step.number ?? s.number ?? String(index + 1)
-              const bg = step.color ?? s.color ?? "#ffffff"
-              const img = s.image
+              const num = step.number ?? String(index + 1)
+              const bg = step.color || STEP_COLORS[index % STEP_COLORS.length] || "#ffffff"
+              const img = step.image
               const isLast = index === steps.length - 1
 
               return (
@@ -186,9 +124,9 @@ export function NewHowItWorks() {
                   number={step.number || String(index + 1)}
                   title={step.title}
                   desc={step.description || step.desc}
-                  image={defaultSteps[index]?.image}
+                  image={step.image}
                   link={index === 0 ? "/products" : undefined}
-                  bgColor={step.color || defaultSteps[index]?.color || "#ffffff"}
+                  bgColor={step.color || STEP_COLORS[index % STEP_COLORS.length] || "#ffffff"}
                 />
 
                 {index < steps.length - 1 && (

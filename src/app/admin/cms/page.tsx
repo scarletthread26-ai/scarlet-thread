@@ -42,6 +42,13 @@ export default function CMSHubPage() {
       href: "/admin/cms/kids-babies",
       color: "text-amber-600 bg-amber-50 dark:bg-amber-950/20 border-amber-100/50 dark:border-amber-900/30",
     },
+    {
+      title: "Gallery Page Settings",
+      description: "Customize Hero banner headers, descriptive subtext, and banner image slides for Gallery catalog.",
+      icon: FileText,
+      href: "/admin/cms/gallery",
+      color: "text-teal-600 bg-teal-50 dark:bg-teal-950/20 border-teal-100/50 dark:border-teal-900/30",
+    },
   ];
 
   return (

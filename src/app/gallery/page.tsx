@@ -14,11 +14,22 @@ export default async function GalleryPage({
   const supabase = await createClient();
 
   // Fetch active gallery categories
-  const { data: categories = [] } = await supabase
+  const { data: categoriesData } = await supabase
     .from("gallery_categories")
     .select("id, name, slug")
     .eq("is_active", true)
     .order("name", { ascending: true });
+
+  const categories = categoriesData || [];
+
+  // Fetch subcategories to filter out main categories
+  const { data: subcategoryRecords } = await supabase
+    .from("categories")
+    .select("slug")
+    .not("parent_id", "is", null);
+
+  const subcategorySlugs = new Set(subcategoryRecords?.map((s) => s.slug) || []);
+  const subCategoriesOnly = categories.filter((c) => subcategorySlugs.has(c.slug));
 
   // Fetch gallery items joining categories
   let query = supabase
@@ -41,7 +52,7 @@ export default async function GalleryPage({
   return (
     <div className="flex flex-col min-h-screen">
       <HeroGallery />
-      <GalleryFilter categories={categories || []} activeCategory={category} />
+      <GalleryFilter categories={subCategoriesOnly} activeCategory={category} />
       <MasonryGrid items={items || []} activeCategory={category} />
     </div>
   );
