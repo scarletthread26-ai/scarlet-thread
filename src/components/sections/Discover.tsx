@@ -105,10 +105,18 @@ export function Discover() {
   // Mobile: up to 6 images in a static 2-col grid
   const mobileImages = galleryImages.slice(0, 6);
 
-  const hasDesktopImages = desktopImages.length >= 3;
-  const col1Images = desktopImages.slice(0, 3);
-  const col2Images = desktopImages.slice(3, 6);
-  const col3Images = desktopImages.slice(6, 9);
+  const hasDesktopImages = desktopImages.length > 0;
+
+  // Fill array so we always have at least 3 images to distribute across 3 columns
+  let filledImages = [...desktopImages];
+  while (filledImages.length > 0 && filledImages.length < 3) {
+    filledImages = [...filledImages, ...desktopImages];
+  }
+
+  // Distribute evenly across 3 columns
+  const col1Images = filledImages.filter((_, i) => i % 3 === 0);
+  const col2Images = filledImages.filter((_, i) => i % 3 === 1);
+  const col3Images = filledImages.filter((_, i) => i % 3 === 2);
 
   return (
     <section className="pt-24  pb-8 bg-white  ">

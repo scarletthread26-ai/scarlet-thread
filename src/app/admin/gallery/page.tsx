@@ -14,6 +14,7 @@ import { toast } from "sonner";
 const gallerySchema = z.object({
   media_url: z.string().min(1, "Please upload an image"),
   category_id: z.string().min(1, "Please select a category"),
+  sub_category_id: z.string().optional(),
 });
 
 type GalleryFormValues = z.infer<typeof gallerySchema>;
@@ -34,10 +35,19 @@ export default function GalleryPage() {
   });
 
   const { data: categories = [] } = useQuery<any[]>({
-    queryKey: ["admin", "gallery-categories"],
+    queryKey: ["admin", "categories"],
     queryFn: async () => {
-      const res = await fetch("/api/admin/gallery-categories");
-      if (!res.ok) throw new Error("Failed to fetch gallery categories");
+      const res = await fetch("/api/admin/categories");
+      if (!res.ok) throw new Error("Failed to fetch categories");
+      return res.json();
+    },
+  });
+
+  const { data: subcategories = [] } = useQuery<any[]>({
+    queryKey: ["admin", "subcategories"],
+    queryFn: async () => {
+      const res = await fetch("/api/admin/subcategories");
+      if (!res.ok) throw new Error("Failed to fetch subcategories");
       return res.json();
     },
   });
@@ -101,10 +111,14 @@ export default function GalleryPage() {
   });
 
   const mediaUrl = watch("media_url");
+  const currentCategoryId = watch("category_id");
+  const filteredSubcategories = subcategories.filter((sc: any) => sc.parent_id === currentCategoryId);
 
   const onSubmit = async (values: GalleryFormValues) => {
+    const finalCategoryId = values.sub_category_id || values.category_id;
     const payload = {
-      ...values,
+      media_url: values.media_url,
+      category_id: finalCategoryId,
       title: "Gallery Image",
       description: "",
       media_type: "image",
@@ -122,7 +136,12 @@ export default function GalleryPage() {
 
   const handleEdit = (item: any) => {
     setEditingId(item.id);
-    reset({ media_url: item.media_url, category_id: item.category_id || "" });
+    const isSub = subcategories.find((s: any) => s.id === item.category_id);
+    if (isSub) {
+      reset({ media_url: item.media_url, category_id: isSub.parent_id, sub_category_id: item.category_id });
+    } else {
+      reset({ media_url: item.media_url, category_id: item.category_id || "", sub_category_id: "" });
+    }
   };
 
   const handleDelete = async () => {
@@ -163,23 +182,46 @@ export default function GalleryPage() {
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {/* Category select */}
-              <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Category
-                </label>
-                <select
-                  {...register("category_id")}
-                  className="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 outline-none transition text-sm shadow-sm"
-                >
-                  <option value="">Select Category</option>
-                  {categories.map((cat: any) => (
-                    <option key={cat.id} value={cat.id}>{cat.name}</option>
-                  ))}
-                </select>
-                {errors.category_id && (
-                  <span className="text-xs text-red-500 block mt-0.5">{errors.category_id.message}</span>
-                )}
+              <div className="space-y-4">
+                {/* Category select */}
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Category
+                  </label>
+                  <select
+                    {...register("category_id")}
+                    onChange={(e) => {
+                      setValue("category_id", e.target.value);
+                      setValue("sub_category_id", ""); // Reset subcategory when category changes
+                    }}
+                    className="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 outline-none transition text-sm shadow-sm"
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map((cat: any) => (
+                      <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    ))}
+                  </select>
+                  {errors.category_id && (
+                    <span className="text-xs text-red-500 block mt-0.5">{errors.category_id.message}</span>
+                  )}
+                </div>
+
+                {/* Subcategory select */}
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Subcategory
+                  </label>
+                  <select
+                    {...register("sub_category_id")}
+                    disabled={!currentCategoryId}
+                    className="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-100 outline-none transition text-sm shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <option value="">{currentCategoryId ? "None" : "Select Category First"}</option>
+                    {filteredSubcategories.map((cat: any) => (
+                      <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               {/* Image upload */}

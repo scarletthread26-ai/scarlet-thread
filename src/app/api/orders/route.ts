@@ -182,8 +182,8 @@ export async function POST(request: Request) {
     const customerName = shippingAddress.full_name || "Customer";
 
     if (customerEmail) {
-      const logoUrl = "https://res.cloudinary.com/drfklf0je/image/upload/v1783778363/ibhfukxnrdfurjhxwdyc.png";
-      const nameUrl = "https://res.cloudinary.com/drfklf0je/image/upload/v1783779041/tevdupbjfcknxzde7q6g.png";
+      const logoUrl = "https://res.cloudinary.com/drfklf0je/image/upload/v1784273908/logo_zupjz4.png";
+      const nameUrl = "https://res.cloudinary.com/drfklf0je/image/upload/v1784273926/name_rcxh3k.png";
 
       const emailHtml = `
         <div style="font-family: sans-serif; max-width: 600px; color: #333;">
@@ -228,8 +228,8 @@ export async function POST(request: Request) {
     const adminEmailHtml = `
       <div style="font-family: sans-serif; max-width: 600px; color: #333;">
         <div style="text-align: center; margin-bottom: 20px;">
-          <img src="https://res.cloudinary.com/drfklf0je/image/upload/v1783778363/ibhfukxnrdfurjhxwdyc.png" alt="Scarlet Thread Logo" style="height: 50px; width: auto; vertical-align: middle; margin-right: 15px;" />
-          <img src="https://res.cloudinary.com/drfklf0je/image/upload/v1783779041/tevdupbjfcknxzde7q6g.png" alt="The Scarlet Thread" style="height: 35px; width: auto; vertical-align: middle;" />
+          <img src="https://res.cloudinary.com/drfklf0je/image/upload/v1784273908/logo_zupjz4.png" alt="Scarlet Thread Logo" style="height: 50px; width: auto; vertical-align: middle; margin-right: 15px;" />
+          <img src="https://res.cloudinary.com/drfklf0je/image/upload/v1784273926/name_rcxh3k.png" alt="The Scarlet Thread" style="height: 35px; width: auto; vertical-align: middle;" />
         </div>
         <h1 style="color: #c026d3;">New Order Received!</h1>
         <p>A new order <strong>#${finalOrder.order_number || finalOrder.id.substring(0, 8)}</strong> has been placed by ${customerName} (${customerEmail || 'Guest'}).</p>

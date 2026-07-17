@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient as createServerClient } from "@/lib/supabase/server";
+import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { deleteFromCloudinary } from "@/lib/cloudinary";
 
@@ -8,8 +9,40 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const supabase = await createClient();
+    const supabase = await createServerClient();
+    const supabaseAdmin = createAdminClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
     const body = await request.json();
+
+    // Ensure the category exists in gallery_categories to prevent foreign key errors
+    if (body.category_id) {
+      const { data: existingCat } = await supabaseAdmin
+        .from("gallery_categories")
+        .select("id")
+        .eq("id", body.category_id)
+        .maybeSingle();
+
+      if (!existingCat) {
+        // Fetch from main categories
+        const { data: mainCat } = await supabaseAdmin
+          .from("categories")
+          .select("*")
+          .eq("id", body.category_id)
+          .single();
+
+        if (mainCat) {
+          await supabaseAdmin.from("gallery_categories").insert({
+            id: mainCat.id,
+            name: mainCat.name,
+            slug: mainCat.slug,
+            description: mainCat.description || "",
+            is_active: true,
+          });
+        }
+      }
+    }
 
     // If media_url is provided, clean up the old image from Cloudinary if it has changed
     if (body.media_url !== undefined) {
@@ -38,10 +71,8 @@ export async function PATCH(
     if (error) throw error;
     return NextResponse.json(data);
   } catch (error: any) {
-    console.warn("Supabase gallery item PATCH failed. Simulating local success:", error.message || error);
-    const { id } = await params;
-    const body = await request.clone().json();
-    return NextResponse.json({ id, ...body });
+    console.error("Supabase gallery item PATCH failed:", error.message || error);
+    return NextResponse.json({ error: error.message || "Failed to update gallery item" }, { status: 500 });
   }
 }
 

@@ -13,16 +13,11 @@ export function HeroHim() {
     return <CommonHeroSkeleton />
   }
 
-  const title = sectionData?.title || "Make Every Gift Personal"
-  const subtitle =
-    sectionData?.subtitle ||
-    "Thoughtfully embroidered gifts for husbands, boyfriends, fathers, brothers and best friends."
-  const desktopImage =
-    sectionData?.content?.image_desktop ||
-    "/images/forhimpage/scarlet-forhimbanner.png"
-  const mobileImage =
-    sectionData?.content?.image_mobile ||
-    "/images/forhimpage/forhim-mobile-banner.png"
+  const title = sectionData?.title ?? ""
+  const subtitle = sectionData?.subtitle ?? ""
+  const bodyText = sectionData?.content?.body_text ?? ""
+  const desktopImage = sectionData?.content?.image_desktop ?? ""
+  const mobileImage = sectionData?.content?.image_mobile ?? ""
 
   return (
     <CommonHero
@@ -33,7 +28,7 @@ export function HeroHim() {
       accentColor={ACCENT}
       title={title}
       subtitle={subtitle}
-      bodyText="Personalized with names, dates, quotes, and memories that last forever."
+      bodyText={bodyText}
       primaryHref="/products"
       primaryLabel="Shop Now"
 

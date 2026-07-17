@@ -27,6 +27,34 @@ export async function POST(request: Request) {
     );
     const body = await request.json();
 
+    // Ensure the category exists in gallery_categories to prevent foreign key errors
+    if (body.category_id) {
+      const { data: existingCat } = await supabaseAdmin
+        .from("gallery_categories")
+        .select("id")
+        .eq("id", body.category_id)
+        .maybeSingle();
+
+      if (!existingCat) {
+        // Fetch from main categories
+        const { data: mainCat } = await supabaseAdmin
+          .from("categories")
+          .select("*")
+          .eq("id", body.category_id)
+          .single();
+
+        if (mainCat) {
+          await supabaseAdmin.from("gallery_categories").insert({
+            id: mainCat.id,
+            name: mainCat.name,
+            slug: mainCat.slug,
+            description: mainCat.description || "",
+            is_active: true,
+          });
+        }
+      }
+    }
+
     const { data, error } = await supabaseAdmin
       .from("gallery_items")
       .insert([body])
