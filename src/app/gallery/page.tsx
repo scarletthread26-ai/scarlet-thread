@@ -14,11 +14,13 @@ export default async function GalleryPage({
   const supabase = await createClient();
 
   // Fetch active gallery categories
-  const { data: categories = [] } = await supabase
+  const { data: categoriesData } = await supabase
     .from("gallery_categories")
     .select("id, name, slug")
     .eq("is_active", true)
     .order("name", { ascending: true });
+
+  const categories = categoriesData || [];
 
   // Fetch subcategories to filter out main categories
   const { data: subcategoryRecords } = await supabase
