@@ -141,6 +141,7 @@ export function ProductForm({
   const [isSkuEditable, setIsSkuEditable] = useState(false);
   const [isGeneratingSku, setIsGeneratingSku] = useState(false);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+  const [isSubCategoryDropdownOpen, setIsSubCategoryDropdownOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -272,7 +273,9 @@ export function ProductForm({
   const images = watch("images");
   const currentCategoryId = watch("category_id");
   const selectedCategory = categories.find((c: any) => c.id === currentCategoryId);
-  const filteredSubcategories = subcategories.filter(sc => sc.parent_id === currentCategoryId);
+  const filteredSubcategories = subcategories.filter((sc: any) => sc.parent_id === currentCategoryId);
+  const currentSubCategoryId = watch("sub_category_id");
+  const selectedSubCategory = subcategories.find((c: any) => c.id === currentSubCategoryId);
   const allowedFields = watch("allowed_fields");
   const allowedFonts = watch("allowed_fonts");
 
@@ -567,75 +570,157 @@ export function ProductForm({
                   </div>
                 </div>
 
-                <div className="space-y-1 relative">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Category Department
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
-                    className={cn(
-                      "w-full flex items-center justify-between bg-slate-50 dark:bg-black border rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-350 outline-none transition duration-200 text-sm shadow-sm cursor-pointer select-none text-left",
-                      errors.category_id
-                        ? "border-rose-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 bg-rose-50/10 dark:bg-rose-950/5"
-                        : "border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-                    )}
-                  >
-                    <span>
-                      {selectedCategory ? selectedCategory.name : "Select category..."}
-                    </span>
-                    <ChevronRight className={cn("w-4 h-4 text-slate-400 transition-transform duration-200", isCategoryDropdownOpen ? "rotate-90" : "")} />
-                  </button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1 relative">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      Category Department
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+                      className={cn(
+                        "w-full flex items-center justify-between bg-slate-50 dark:bg-black border rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-350 outline-none transition duration-200 text-sm shadow-sm cursor-pointer select-none text-left",
+                        errors.category_id
+                          ? "border-rose-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 bg-rose-50/10 dark:bg-rose-950/5"
+                          : "border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                      )}
+                    >
+                      <span>
+                        {selectedCategory ? selectedCategory.name : "Select category..."}
+                      </span>
+                      <ChevronRight className={cn("w-4 h-4 text-slate-400 transition-transform duration-200", isCategoryDropdownOpen ? "rotate-90" : "")} />
+                    </button>
 
-                  <AnimatePresence>
-                    {isCategoryDropdownOpen && (
-                      <>
-                        <div 
-                          className="fixed inset-0 z-10" 
-                          onClick={() => setIsCategoryDropdownOpen(false)}
-                        />
-                        <motion.div
-                          initial={{ opacity: 0, y: -5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -5 }}
-                          className="absolute left-0 right-0 mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-20 overflow-hidden py-1"
-                        >
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setValue("category_id", "", { shouldDirty: true, shouldValidate: true });
-                              setIsCategoryDropdownOpen(false);
-                            }}
-                            className="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800/50 transition font-medium text-slate-400"
+                    <AnimatePresence>
+                      {isCategoryDropdownOpen && (
+                        <>
+                          <div 
+                            className="fixed inset-0 z-10" 
+                            onClick={() => setIsCategoryDropdownOpen(false)}
+                          />
+                          <motion.div
+                            initial={{ opacity: 0, y: -5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -5 }}
+                            className="absolute left-0 right-0 mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-20 overflow-hidden py-1 max-h-60 overflow-y-auto"
                           >
-                            Select category...
-                          </button>
-                          {categories.map((cat: any) => (
                             <button
-                              key={cat.id}
                               type="button"
                               onClick={() => {
-                                setValue("category_id", cat.id, { shouldDirty: true, shouldValidate: true });
+                                setValue("category_id", "", { shouldDirty: true, shouldValidate: true });
+                                setValue("sub_category_id", "", { shouldDirty: true, shouldValidate: true });
                                 setIsCategoryDropdownOpen(false);
                               }}
-                              className={cn(
-                                "w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800/50 transition font-medium",
-                                currentCategoryId === cat.id 
-                                  ? "text-purple-600 dark:text-purple-400 bg-purple-50/40 dark:bg-purple-950/20" 
-                                  : "text-slate-700 dark:text-slate-350"
-                              )}
+                              className="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800/50 transition font-medium text-slate-400"
                             >
-                              {cat.name}
+                              Select category...
                             </button>
-                          ))}
-                        </motion.div>
-                      </>
-                    )}
-                  </AnimatePresence>
+                            {categories.map((cat: any) => (
+                              <button
+                                key={cat.id}
+                                type="button"
+                                onClick={() => {
+                                  setValue("category_id", cat.id, { shouldDirty: true, shouldValidate: true });
+                                  setValue("sub_category_id", "", { shouldDirty: true, shouldValidate: true });
+                                  setIsCategoryDropdownOpen(false);
+                                }}
+                                className={cn(
+                                  "w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800/50 transition font-medium",
+                                  currentCategoryId === cat.id 
+                                    ? "text-purple-600 dark:text-purple-400 bg-purple-50/40 dark:bg-purple-950/20" 
+                                    : "text-slate-700 dark:text-slate-350"
+                                )}
+                              >
+                                {cat.name}
+                              </button>
+                            ))}
+                          </motion.div>
+                        </>
+                      )}
+                    </AnimatePresence>
 
-                  {errors.category_id && (
-                    <span className="text-xs text-red-500 mt-0.5 block">{errors.category_id.message}</span>
-                  )}
+                    {errors.category_id && (
+                      <span className="text-xs text-red-500 mt-0.5 block">{errors.category_id.message}</span>
+                    )}
+                  </div>
+
+                  <div className="space-y-1 relative">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      Subcategory
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (currentCategoryId) {
+                          setIsSubCategoryDropdownOpen(!isSubCategoryDropdownOpen);
+                        } else {
+                          toast.error("Please select a Category first.");
+                        }
+                      }}
+                      className={cn(
+                        "w-full flex items-center justify-between bg-slate-50 dark:bg-black border rounded-xl py-2 px-3.5 text-slate-800 dark:text-slate-350 outline-none transition duration-200 text-sm shadow-sm cursor-pointer select-none text-left",
+                        !currentCategoryId ? "opacity-50 cursor-not-allowed bg-slate-100 dark:bg-slate-900/50" : "",
+                        errors.sub_category_id
+                          ? "border-rose-500 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 bg-rose-50/10 dark:bg-rose-950/5"
+                          : "border-slate-200 dark:border-slate-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                      )}
+                    >
+                      <span>
+                        {selectedSubCategory ? selectedSubCategory.name : (currentCategoryId ? "Select subcategory..." : "Select category first")}
+                      </span>
+                      <ChevronRight className={cn("w-4 h-4 text-slate-400 transition-transform duration-200", isSubCategoryDropdownOpen ? "rotate-90" : "")} />
+                    </button>
+
+                    <AnimatePresence>
+                      {isSubCategoryDropdownOpen && (
+                        <>
+                          <div 
+                            className="fixed inset-0 z-10" 
+                            onClick={() => setIsSubCategoryDropdownOpen(false)}
+                          />
+                          <motion.div
+                            initial={{ opacity: 0, y: -5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -5 }}
+                            className="absolute left-0 right-0 mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-20 overflow-hidden py-1 max-h-60 overflow-y-auto"
+                          >
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setValue("sub_category_id", "", { shouldDirty: true, shouldValidate: true });
+                                setIsSubCategoryDropdownOpen(false);
+                              }}
+                              className="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800/50 transition font-medium text-slate-400"
+                            >
+                              None
+                            </button>
+                            {filteredSubcategories.map((cat: any) => (
+                              <button
+                                key={cat.id}
+                                type="button"
+                                onClick={() => {
+                                  setValue("sub_category_id", cat.id, { shouldDirty: true, shouldValidate: true });
+                                  setIsSubCategoryDropdownOpen(false);
+                                }}
+                                className={cn(
+                                  "w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800/50 transition font-medium",
+                                  currentSubCategoryId === cat.id 
+                                    ? "text-purple-600 dark:text-purple-400 bg-purple-50/40 dark:bg-purple-950/20" 
+                                    : "text-slate-700 dark:text-slate-350"
+                                )}
+                              >
+                                {cat.name}
+                              </button>
+                            ))}
+                          </motion.div>
+                        </>
+                      )}
+                    </AnimatePresence>
+
+                    {errors.sub_category_id && (
+                      <span className="text-xs text-red-500 mt-0.5 block">{errors.sub_category_id.message}</span>
+                    )}
+                  </div>
                 </div>
               </div>
 

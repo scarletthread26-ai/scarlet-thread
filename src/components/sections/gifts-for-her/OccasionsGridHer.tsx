@@ -9,7 +9,7 @@ const occasions = [
     description: "Make her birthday extra special",
     bgColor: "bg-[#F5F3FF]",
     titleColor: "text-primary",
-    image: "/images/occassion/scarlet-occasionbox.png",
+    image: "/images/forherOccassion/scarlet-occasionbox.png",
   },
   {
     id: "anniversary",
@@ -17,7 +17,7 @@ const occasions = [
     description: "Celebrate your beautiful journey",
     bgColor: "bg-[#FFF5F5]",
     titleColor: "text-red-500",
-    image: "/images/occassion/scarlet-occasionbox2.png",
+    image: "/images/forherOccassion/scarlet-occasionbox2.png",
   },
   {
     id: "mothers-day",
@@ -25,7 +25,7 @@ const occasions = [
     description: "Thank her for everything",
     bgColor: "bg-[#FDF8EB]",
     titleColor: "text-orange-500",
-    image: "/images/occassion/scarlet-occasionbox3.png",
+    image: "/images/forherOccassion/scarlet-occasionbox3.png",
   },
   {
     id: "valentines",
@@ -33,7 +33,7 @@ const occasions = [
     description: "Send her love in the most special way",
     bgColor: "bg-[#FFF0F5]",
     titleColor: "text-pink-600",
-    image: "/images/occassion/scarlet-occasionbox4.png",
+    image: "/images/forherOccassion/scarlet-occasionbox4.png",
   },
 ]
 

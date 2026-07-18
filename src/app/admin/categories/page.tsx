@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from "@/hooks/use-categories";
 import { FolderTree, Plus, Edit, Trash2, Check, X, Loader2 } from "lucide-react";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SubcategoriesView } from "./subcategories-view";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -99,7 +101,14 @@ export default function CategoriesPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <Tabs defaultValue="categories" className="w-full">
+        <TabsList className="mb-6">
+          <TabsTrigger value="categories">Main Categories</TabsTrigger>
+          <TabsTrigger value="subcategories">Subcategories</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="categories">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left side: Add / Edit Form Card */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -246,16 +255,22 @@ export default function CategoriesPage() {
         </div>
       </div>
 
-      {/* Delete Confirmation Overlay */}
-      <ConfirmDialog
-        isOpen={!!deleteId}
-        onClose={() => setDeleteId(null)}
-        onConfirm={handleDelete}
-        isLoading={deleteMutation.isPending}
-        isDestructive={true}
-        title="Delete Category"
-        description="Are you sure you want to delete this category? This action will permanently remove it from the database."
-      />
+          {/* Delete Confirmation Overlay */}
+          <ConfirmDialog
+            isOpen={!!deleteId}
+            onClose={() => setDeleteId(null)}
+            onConfirm={handleDelete}
+            isLoading={deleteMutation.isPending}
+            isDestructive={true}
+            title="Delete Category"
+            description="Are you sure you want to delete this category? This action will permanently remove it from the database."
+          />
+        </TabsContent>
+
+        <TabsContent value="subcategories">
+          <SubcategoriesView />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

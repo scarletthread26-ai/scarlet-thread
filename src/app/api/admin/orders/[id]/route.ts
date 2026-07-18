@@ -119,8 +119,8 @@ export async function PATCH(
 
         // Use a permanent, publicly hosted URL (Cloudinary) for the email image so it always resolves 
         // properly in email clients like Gmail/Outlook, even when testing locally.
-        const logoUrl = "https://res.cloudinary.com/drfklf0je/image/upload/v1783778363/ibhfukxnrdfurjhxwdyc.png";
-        const nameUrl = "https://res.cloudinary.com/drfklf0je/image/upload/v1783779041/tevdupbjfcknxzde7q6g.png";
+        const logoUrl = "https://res.cloudinary.com/drfklf0je/image/upload/v1784273908/logo_zupjz4.png";
+        const nameUrl = "https://res.cloudinary.com/drfklf0je/image/upload/v1784273926/name_rcxh3k.png";
 
         if (status === "delivered") {
           emailSubject = `Your Scarlet Thread Order #${orderNumber} has been delivered!`;

@@ -58,6 +58,13 @@ export default function CMSHubPage() {
       href: "/admin/cms/faith-based",
       color: "text-indigo-600 bg-indigo-50 dark:bg-indigo-950/20 border-indigo-100/50 dark:border-indigo-900/30",
     },
+    {
+      title: "Gallery Page Settings",
+      description: "Customize Hero banner headers, descriptive subtext, and banner image slides for Gallery catalog.",
+      icon: FileText,
+      href: "/admin/cms/gallery",
+      color: "text-teal-600 bg-teal-50 dark:bg-teal-950/20 border-teal-100/50 dark:border-teal-900/30",
+    },
   ];
 
   return (
