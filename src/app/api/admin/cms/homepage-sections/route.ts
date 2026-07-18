@@ -40,6 +40,26 @@ const mockSections: Record<string, any> = {
       image_url: "/images/scarlet-couple.png"
     },
     is_active: true
+  },
+  "seasonal-gifts": {
+    section_key: "seasonal-gifts",
+    title: "Celebrate Every Season",
+    subtitle: "Personalized embroidered gifts for holidays, festivals, and special seasonal celebrations.",
+    content: {
+      image_desktop: "/images/seasonal-banner.png",
+      image_mobile: "/images/seasonal-banner-mobile.png"
+    },
+    is_active: true
+  },
+  "faith-based": {
+    section_key: "faith-based",
+    title: "Gifts of Faith & Love",
+    subtitle: "Beautifully embroidered spiritual and faith-based gifts that carry deep meaning.",
+    content: {
+      image_desktop: "/images/faith-banner.png",
+      image_mobile: "/images/faith-banner-mobile.png"
+    },
+    is_active: true
   }
 };
 
