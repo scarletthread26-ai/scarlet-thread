@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, Heart, User, ShoppingBag, Home, Gift, Baby, Star, Image, Menu, X, ChevronRight } from 'lucide-react'
+import { Search, Heart, User, ShoppingBag, Home, Gift, Baby, Star, Image, Menu, X, ChevronRight, Truck, MapPin, FileText, Phone } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { useCartStore } from '@/store/useCartStore'
 import { useWishlistStore } from '@/store/useWishlistStore'
@@ -24,18 +24,35 @@ export function Header() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [showBottomNav, setShowBottomNav] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const [showNavRow, setShowNavRow] = useState(true)
   const [user, setUser] = useState<any>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const lastScrollY = useRef(0)
 
   const isActive = (path: string) => {
     if (path === '/') return pathname === '/'
     return pathname?.startsWith(path)
   }
 
-  // ← ADD THIS: Show bottom nav only when scrolled down
+  // ← ADD THIS: Show bottom nav and shrink header on scroll
   useEffect(() => {
     const handleScroll = () => {
-      setShowBottomNav(window.scrollY > 60)
+      const currentScrollY = window.scrollY
+      const isScrolled = currentScrollY > 60
+      setScrolled(isScrolled)
+      setShowBottomNav(isScrolled)
+
+      if (currentScrollY <= 60) {
+        setShowNavRow(true)
+      } else if (currentScrollY > lastScrollY.current) {
+        // Scrolling down -> hide desktop Row 3 nav
+        setShowNavRow(false)
+      } else {
+        // Scrolling up -> show desktop Row 3 nav
+        setShowNavRow(true)
+      }
+      lastScrollY.current = currentScrollY
     }
     window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
@@ -108,6 +125,8 @@ export function Header() {
     { name: 'Gifts For Him', path: '/gifts-for-him', icon: Gift },
     { name: 'Gifts For Her', path: '/gifts-for-her', icon: Heart },
     { name: 'Kids & Babies', path: '/kids-babies', icon: Baby },
+    { name: 'Seasonal Gifts', path: '/seasonal-gifts', icon: Gift },
+    { name: 'Faith Based', path: '/faith-based', icon: Star },
     { name: 'Gallery', path: '/gallery', icon: Image },
   ]
 
@@ -130,10 +149,16 @@ export function Header() {
       <header className="fixed top-0 z-50 w-full border-b bg-white">
 
         {/* Announcement Bar */}
-        <div className="bg-primary text-primary-foreground py-2 text-center text-[12px] font-medium tracking-wider overflow-hidden">
-          <div className="hidden lg:block text-[10px] px-4">
-            • Free Shipping Above AED {settings?.free_shipping_min ?? 200} &nbsp;&nbsp;• Crafted With Love In UAE &nbsp;&nbsp;• Track Your Order
+        <div className="bg-[#31006e] text-primary-foreground py-2 text-center text-[12px] font-medium tracking-wider overflow-hidden border-b border-white/10">
+          {/* Desktop Announcement Bar */}
+          <div className="hidden lg:flex items-center justify-center gap-6 px-4">
+            <span className="flex items-center gap-1.5"><Truck className="h-3.5 w-3.5 shrink-0" /> Free Shipping Above AED {settings?.free_shipping_min ?? 200}</span>
+            <span className="opacity-50">•</span>
+            <span className="flex items-center gap-1.5"><Gift className="h-3.5 w-3.5 shrink-0" /> Crafted With Love In UAE</span>
+            <span className="opacity-50">•</span>
+            <Link href="/track-order" className="flex items-center gap-1.5 hover:underline"><MapPin className="h-3.5 w-3.5 shrink-0" /> Track Your Order</Link>
           </div>
+          {/* Mobile Announcement Bar */}
           <div className="lg:hidden overflow-hidden">
             <motion.div
               className="flex gap-12 whitespace-nowrap"
@@ -142,19 +167,24 @@ export function Header() {
             >
               {(() => {
                 const items = [
-                  `• Free Shipping Above AED ${settings?.free_shipping_min ?? 200}`,
-                  "• Crafted With Love In UAE",
-                  "• Track Your Order",
+                  `Free Shipping Above AED ${settings?.free_shipping_min ?? 200}`,
+                  "Crafted With Love In UAE",
+                  "Track Your Order",
                 ];
                 return [...items, ...items, ...items, ...items];
               })().map((item, index) => (
-                <span key={index} className="shrink-0">{item}</span>
+                <span key={index} className="shrink-0 flex items-center gap-1.5">
+                  {index % 3 === 0 && <Truck className="h-3.5 w-3.5 shrink-0" />}
+                  {index % 3 === 1 && <Gift className="h-3.5 w-3.5 shrink-0" />}
+                  {index % 3 === 2 && <MapPin className="h-3.5 w-3.5 shrink-0" />}
+                  {item}
+                </span>
               ))}
             </motion.div>
           </div>
         </div>
 
-        <div className="flex h-18 items-center justify-between px-2 sm:px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto w-full">
+        <div className="flex h-20 items-center justify-between px-2 sm:px-6 md:px-12 lg:px-16 max-w-[1400px] mx-auto w-full">
 
           {/* Logo */}
           <div className="flex items-center">
@@ -172,21 +202,19 @@ export function Header() {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                href={link.path}
-                className={`relative transition-colors font-semibold text-[12px] uppercase  hover:text-primary py-1 ${
-                  isActive(link.path) ? 'text-primary' : 'text-slate-700'
-                }`}
-              >
-                {link.name}
-
-              </Link>
-            ))}
-          </nav>
+          {/* Wide Desktop Search Bar */}
+          <div className="hidden lg:flex flex-1 max-w-xl mx-8 items-center border border-slate-200 rounded-full px-4 py-2 bg-[#F9F9FB] focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20 transition-all">
+            <Search className="h-[18px] w-[18px] text-muted-foreground mr-2 shrink-0" />
+            <form onSubmit={handleSearch} className="flex-1">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search products..."
+                className="w-full bg-transparent text-[13px] text-foreground outline-none placeholder:text-muted-foreground"
+              />
+            </form>
+          </div>
 
           {/* Actions */}
           <div className="flex items-center gap-2 lg:gap-3">
@@ -202,91 +230,74 @@ export function Header() {
               {searchOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
             </button>
 
-            {/* Desktop Search */}
-            <div className="hidden lg:flex items-center border border-border/80 rounded-full px-3 py-1.5 w-[220px] xl:w-[260px] bg-white focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20 transition-all mr-2">
-              <Search className="h-[18px] w-[18px] text-muted-foreground mr-2 shrink-0" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault()
-                    handleSearch(e)
-                  }
-                }}
-                placeholder="Search products..."
-                className="flex-1 bg-transparent text-[13px] text-foreground outline-none placeholder:text-muted-foreground"
-              />
+            {/* Desktop Actions (Account and Cart) */}
+            <div className="hidden lg:flex items-center gap-4 text-slate-700">
+              {/* Account Dropdown */}
+              {user ? (
+                <div className="relative group">
+                  <Link href="/account" className="flex items-center gap-1.5 hover:text-primary transition-colors py-1.5 select-none text-sm font-semibold cursor-pointer">
+                    <User className="h-5 w-5 text-slate-600" />
+                    <span>Account</span>
+                  </Link>
+
+                  {/* User Dropdown Menu */}
+                  <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-border shadow-xl rounded-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="px-4 py-2 border-b border-border/50 mb-1">
+                      <p className="text-sm font-bold text-foreground truncate">Hi, {firstName}</p>
+                      <p className="text-[10px] text-muted-foreground truncate">{user.email}</p>
+                    </div>
+                    <Link href="/account" className="block px-4 py-2 text-sm text-foreground hover:bg-muted/50 hover:text-primary transition-colors">My Account</Link>
+                    <Link href="/orders" className="block px-4 py-2 text-sm text-foreground hover:bg-muted/50 hover:text-primary transition-colors">My Orders</Link>
+                    <Link href="/wishlist" className="px-4 py-2 text-sm text-foreground hover:bg-muted/50 hover:text-primary transition-colors flex justify-between items-center">
+                      Wishlist
+                      {wishlistCount > 0 && <span className="bg-primary text-primary-foreground text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-bold">{wishlistCount}</span>}
+                    </Link>
+                    <div className="h-px bg-border/50 my-1" />
+                    <button
+                      onClick={async () => {
+                        const supabase = createClient()
+                        await supabase.auth.signOut()
+                        useWishlistStore.getState().clearWishlist()
+                        setUser(null)
+                        router.push('/')
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <Link href="/login" className="flex items-center gap-1.5 hover:text-primary transition-colors py-1.5 select-none text-sm font-semibold cursor-pointer">
+                  <User className="h-5 w-5 text-slate-600" />
+                  <span>Account</span>
+                </Link>
+              )}
+
+              {/* Vertical line divider */}
+              <div className="h-5 w-px bg-slate-200" />
+
+              {/* Cart Button */}
+              <button 
+                onClick={() => setDrawerOpen(true)}
+                className="relative flex items-center gap-1.5 hover:text-primary transition-colors py-1.5 cursor-pointer text-sm font-semibold"
+              >
+                <div className="relative">
+                  <ShoppingBag className="h-5 w-5 text-slate-600" />
+                  <motion.span 
+                    key={`header-${cartCount}`}
+                    initial={{ scale: 0.8 }}
+                    animate={{ scale: 1 }}
+                    className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-primary text-[9px] font-bold text-white flex items-center justify-center shadow-sm border border-white"
+                  >
+                    {cartCount}
+                  </motion.span>
+                </div>
+                <span>Cart</span>
+              </button>
             </div>
 
-            {user ? (
-              <div className="relative group hidden lg:block">
-                <Link href="/account" className="flex items-center gap-2 px-3 py-1 rounded-full border border-border/60 bg-white hover:bg-muted/50 transition-all text-left text-foreground select-none">
-                  <User className="h-[18px] w-[18px] text-purple-650 shrink-0" />
-                  <div className="flex flex-col leading-none text-xs pr-1">
-                    <span className="text-[9px] text-muted-foreground font-medium">Hi, {firstName}</span>
-                    <span className="font-bold text-slate-800 dark:text-slate-200 mt-0.5 flex items-center gap-0.5 text-[11px]">
-                      Account
-                      <ChevronRight className="w-2.5 h-2.5 rotate-90 text-slate-450 mt-0.5" />
-                    </span>
-                  </div>
-                </Link>
-
-                {/* User Dropdown (Logged In Only) */}
-                <div className="absolute top-full right-0 mt-1.5 w-52 bg-white border border-border shadow-xl rounded-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <div className="px-4 py-2 border-b border-border/50 mb-1">
-                    <p className="text-sm font-bold text-foreground truncate">Hi, {firstName}</p>
-                    <p className="text-[10px] text-muted-foreground truncate">{user.email}</p>
-                  </div>
-                  <Link href="/account" className="block px-4 py-2 text-sm text-foreground hover:bg-muted/50 hover:text-primary transition-colors">My Account</Link>
-                  <Link href="/orders" className="block px-4 py-2 text-sm text-foreground hover:bg-muted/50 hover:text-primary transition-colors">My Orders</Link>
-                  <Link href="/wishlist" className="px-4 py-2 text-sm text-foreground hover:bg-muted/50 hover:text-primary transition-colors flex justify-between items-center">
-                    Wishlist
-                    {wishlistCount > 0 && <span className="bg-primary text-primary-foreground text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-bold">{wishlistCount}</span>}
-                  </Link>
-                  <div className="h-px bg-border/50 my-1" />
-                  <button
-                    onClick={async () => {
-                      const supabase = createClient()
-                      await supabase.auth.signOut()
-                      useWishlistStore.getState().clearWishlist()
-                      setUser(null)
-                      router.push('/')
-                    }}
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                  >
-                    Sign Out
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <Link href="/login" className="hidden lg:flex items-center gap-2 px-3 py-1 rounded-full border border-border/60 bg-white hover:bg-muted/50 transition-all text-left text-foreground select-none">
-                <User className="h-[18px] w-[18px] text-slate-450 shrink-0" />
-                <div className="flex flex-col leading-none text-xs pr-1">
-                  <span className="text-[9px] text-muted-foreground font-medium">Hello, Sign in</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-200 mt-0.5 text-[11px]">Account</span>
-                </div>
-              </Link>
-            )}
-
-
-            <button 
-              onClick={() => setDrawerOpen(true)}
-              className="relative flex items-center justify-center w-10 h-10 rounded-full bg-primary/5 hover:bg-primary/10 transition-colors text-foreground cursor-pointer"
-            >
-              <ShoppingBag className="h-[18px] w-[18px]" />
-              <motion.span 
-                key={`header-${cartCount}`}
-                initial={{ scale: 0.8 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                className="absolute -top-1 -right-1 h-[18px] w-[18px] rounded-full bg-[#31006E] text-[10px] font-bold text-white flex items-center justify-center shadow-sm border border-white"
-              >
-                {cartCount}
-              </motion.span>
-            </button>
-
+            {/* Mobile Menu Hamburger */}
             <button
               className="lg:hidden flex items-center justify-center w-10 h-10 text-foreground hover:bg-muted/50 transition-colors rounded-full ml-1"
               onClick={() => {
@@ -299,6 +310,27 @@ export function Header() {
             </button>
           </div>
         </div>
+
+        {/* Centered Desktop Navigation Bar (centered below) */}
+        <nav className={`hidden lg:flex w-full bg-white justify-center gap-8 px-4 transition-all duration-300 overflow-hidden ${
+          showNavRow 
+            ? 'lg:max-h-16 lg:py-3.5 lg:opacity-100 border-t border-slate-100 shadow-sm' 
+            : 'lg:max-h-0 lg:py-0 lg:opacity-0 border-none shadow-none pointer-events-none'
+        }`}>
+          {navLinks.filter(link => link.path !== '/').map((link) => (
+            <Link
+              key={link.path}
+              href={link.path}
+              className={`relative transition-colors font-bold text-[11px] uppercase tracking-wider hover:text-primary py-0.5 ${
+                isActive(link.path) 
+                  ? 'text-primary border-b-2 border-primary' 
+                  : 'text-slate-700'
+              }`}
+            >
+              {link.name}
+            </Link>
+          ))}
+        </nav>
 
         {/* Search Bar Dropdown */}
         <AnimatePresence>

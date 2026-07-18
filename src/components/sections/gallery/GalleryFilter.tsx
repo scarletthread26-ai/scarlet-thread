@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Grip, UserRound, Sparkles, Baby, Gift, Package, Home } from "lucide-react";
+import { Grip, UserRound, Sparkles, Baby, Gift, Package, Home, Star } from "lucide-react";
 
 interface Category {
   id: string;
@@ -20,6 +20,8 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   her: <Sparkles className="w-4 h-4" />,
   "kids-babies": <Baby className="w-4 h-4" />,
   kids: <Baby className="w-4 h-4" />,
+  "seasonal-gifts": <Gift className="w-4 h-4" />,
+  "faith-based": <Star className="w-4 h-4" />,
   anniversary: <Gift className="w-4 h-4" />,
   couple: <UserRound className="w-4 h-4" />,
   occasions: <Gift className="w-4 h-4" />,

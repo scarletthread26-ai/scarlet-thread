@@ -58,6 +58,8 @@ export function CraftedGallerySection({
       if (category === "her" && catName.includes("her")) return true;
       if (category === "him" && catName.includes("him")) return true;
       if (category === "kids" && (catName.includes("kid") || catName.includes("bab"))) return true;
+      if (category === "seasonal" && catName.includes("season")) return true;
+      if (category === "faith" && (catName.includes("faith") || catName.includes("relig") || catName.includes("god") || catName.includes("spirit"))) return true;
       if (category === "occasions" && catName.includes("occasion")) return true;
       return false;
     });
