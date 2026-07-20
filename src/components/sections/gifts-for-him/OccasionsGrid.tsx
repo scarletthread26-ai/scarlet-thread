@@ -1,15 +1,13 @@
-"use client"
+import { DynamicOccasionsGrid } from "@/components/sections/DynamicOccasionsGrid"
 
-import { OccasionsGrid } from "@/components/sections/OccasionsGrid"
-
-const occasions = [
+const defaultOccasions = [
   {
     id: "birthday",
     title: "Birthday Gifts",
     description: "Make his birthday extra special",
     bgColor: "bg-[#FAFAFA]",
     titleColor: "text-foreground",
-    image: "/images/forhimpage/scarlet-blackbox.png",
+    image: "/images/forhimOccassion/scarlet-blackbox.png",
   },
   {
     id: "anniversary",
@@ -17,7 +15,7 @@ const occasions = [
     description: "Celebrate your special bond",
     bgColor: "bg-[#FFF5F5]",
     titleColor: "text-red-500",
-    image: "/images/forhimpage/scarlet-redbox2.png",
+    image: "/images/forhimOccassion/scarlet-redbox2.png",
   },
   {
     id: "fathers-day",
@@ -25,7 +23,7 @@ const occasions = [
     description: "Thank him for being your hero",
     bgColor: "bg-[#FDF8EB]",
     titleColor: "text-foreground",
-    image: "/images/forhimpage/scarlet-superdeal.png",
+    image: "/images/forhimOccassion/scarlet-superdeal.png",
   },
   {
     id: "boyfriend",
@@ -33,10 +31,17 @@ const occasions = [
     description: "Because he deserves the best",
     bgColor: "bg-[#F5F3FF]",
     titleColor: "text-primary",
-    image: "/images/forhimpage/scarlet-hubbyhoodie.png",
+    image: "/images/forhimOccassion/scarlet-hubbyhoodie.png",
   },
 ]
 
 export function OccasionsGridHim() {
-  return <OccasionsGrid occasions={occasions} heading={<>Gifts For Every <span className="text-primary">Occasion</span></>} />
+  return (
+    <DynamicOccasionsGrid 
+      sectionKey="gifts-for-him" 
+      fallbackSectionKey="gift-for-him"
+      defaultHeading={<>Gifts For Every <span className="text-primary">Occasion</span></>} 
+      defaultOccasions={defaultOccasions}
+    />
+  )
 }

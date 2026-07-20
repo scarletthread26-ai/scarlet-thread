@@ -1,76 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
-const mockProducts = [
-  {
-    id: "f3a0e660-31e0-4966-9e1f-7b0028ed2cd4",
-    name: "Personalized Hooded Towel",
-    slug: "personalized-hooded-towel",
-    price: 89.00,
-    compare_at_price: 119.00,
-    stock_status: "in_stock",
-    stock_quantity: 45,
-    is_active: true,
-    featured: true,
-    is_personalized: true,
-    customization_enabled: true,
-    personalization_price: 15.00,
-    category_id: "d3a0e660-31e0-4966-9e1f-7b0028ed2cd2",
-    categories: { name: "Kids & Babies" },
-    images: [{ url: "https://images.unsplash.com/photo-1519689680058-324335c77ebe?auto=format&fit=crop&w=300&q=80", is_primary: true }]
-  },
-  {
-    id: "a3a0e660-31e0-4966-9e1f-7b0028ed2cd5",
-    name: "Mama Heart Hoodie",
-    slug: "mama-heart-hoodie",
-    price: 149.00,
-    compare_at_price: 199.00,
-    stock_status: "in_stock",
-    stock_quantity: 20,
-    is_active: true,
-    featured: true,
-    is_personalized: true,
-    customization_enabled: true,
-    personalization_price: 25.00,
-    category_id: "c3a0e660-31e0-4966-9e1f-7b0028ed2cd1",
-    categories: { name: "Gifts For Her" },
-    images: [{ url: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=300&q=80", is_primary: true }]
-  },
-  {
-    id: "13a0e660-31e0-4966-9e1f-7b0028ed2cd6",
-    name: "Bride Cosmetic Pouch",
-    slug: "bride-cosmetic-pouch",
-    price: 69.00,
-    compare_at_price: 99.00,
-    stock_status: "in_stock",
-    stock_quantity: 12,
-    is_active: true,
-    featured: true,
-    is_personalized: true,
-    customization_enabled: true,
-    personalization_price: 10.00,
-    category_id: "c3a0e660-31e0-4966-9e1f-7b0028ed2cd1",
-    categories: { name: "Gifts For Her" },
-    images: [{ url: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=300&q=80", is_primary: true }]
-  },
-  {
-    id: "23a0e660-31e0-4966-9e1f-7b0028ed2cd7",
-    name: "Leather Wallet with Initials",
-    slug: "leather-wallet-initials",
-    price: 129.00,
-    compare_at_price: 159.00,
-    stock_status: "in_stock",
-    stock_quantity: 8,
-    is_active: true,
-    featured: false,
-    is_personalized: true,
-    customization_enabled: true,
-    personalization_price: 15.00,
-    category_id: "b3a0e660-31e0-4966-9e1f-7b0028ed2cd0",
-    categories: { name: "Gifts For Him" },
-    images: [{ url: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=300&q=80", is_primary: true }]
-  }
-];
 
 export async function GET() {
   try {
@@ -81,7 +11,7 @@ export async function GET() {
       .from("products")
       .select(`
         *,
-        categories:categories!products_category_id_fkey(name),
+        categories:categories!products_category_id_fkey(name, slug),
         product_images(url, is_primary),
         reviews(rating)
       `)

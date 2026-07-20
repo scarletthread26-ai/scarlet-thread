@@ -67,7 +67,7 @@ export function ProductCard({ product, className, buttonClassName, customTopRigh
       name: product.name,
       price: product.price,
       compareAtPrice: product.compare_at_price || null,
-      image: product.image || "/images/scarlet-lovedgift1.png",
+      image: product.image || "",
       slug: product.slug || String(product.id),
       stockStatus: "in_stock"
     }
@@ -91,7 +91,7 @@ export function ProductCard({ product, className, buttonClassName, customTopRigh
       name: product.name,
       price: product.price,
       quantity: 1,
-      image: product.image || "/images/scarlet-lovedgift1.png",
+      image: product.image || "",
       personalization: null
     }
 

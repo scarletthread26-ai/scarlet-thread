@@ -226,12 +226,35 @@ export async function DELETE(
     const { id } = await params;
     const supabase = await createClient();
 
-    // Fetch product images first to delete from Cloudinary
+    // 1. Check if the product has associated orders to prevent deletion errors
+    const { data: orderItems } = await supabase
+      .from("order_items")
+      .select("id")
+      .eq("product_id", id)
+      .limit(1);
+
+    if (orderItems && orderItems.length > 0) {
+      return NextResponse.json(
+        { error: "Cannot delete this product because it has associated orders. Please 'Archive' it instead to preserve order history." },
+        { status: 400 }
+      );
+    }
+
+    // 2. Fetch product images first to delete from Cloudinary AFTER DB deletion
     const { data: dbImages } = await supabase
       .from("product_images")
       .select("url")
       .eq("product_id", id);
 
+    // 3. Delete from database (Cascading deletes on product_images will handle image DB records automatically)
+    const { error } = await supabase
+      .from("products")
+      .delete()
+      .eq("id", id);
+
+    if (error) throw error;
+
+    // 4. Delete images from Cloudinary ONLY if DB deletion was successful
     if (dbImages && dbImages.length > 0) {
       for (const img of dbImages) {
         if (img.url) {
@@ -244,17 +267,12 @@ export async function DELETE(
       }
     }
 
-    // Cascading deletes on product_images will handle image records automatically in DB
-    const { error } = await supabase
-      .from("products")
-      .delete()
-      .eq("id", id);
-
-    if (error) throw error;
     return NextResponse.json({ success: true, id });
   } catch (error: any) {
-    console.warn("Supabase product deletion failed. Simulating local success:", error.message || error);
-    const { id } = await params;
-    return NextResponse.json({ success: true, id });
+    console.error("Supabase product deletion failed:", error.message || error);
+    return NextResponse.json(
+      { error: error.message || "Failed to delete product" },
+      { status: 500 }
+    );
   }
 }

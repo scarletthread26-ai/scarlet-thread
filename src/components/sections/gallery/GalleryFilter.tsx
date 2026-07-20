@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
-import { Grip, UserRound, Sparkles, Baby, Gift, Package, Home } from "lucide-react";
+import { Grip, UserRound, Sparkles, Baby, Gift, Package, Home, Star } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
 
 interface Category {
   id: string;
@@ -14,27 +17,53 @@ interface GalleryFilterProps {
 
 const ICON_MAP: Record<string, React.ReactNode> = {
   all: <Grip className="w-4 h-4" />,
+  "gifts-for-him": <UserRound className="w-4 h-4" />,
   him: <UserRound className="w-4 h-4" />,
+  "gifts-for-her": <Sparkles className="w-4 h-4" />,
   her: <Sparkles className="w-4 h-4" />,
+  "kids-babies": <Baby className="w-4 h-4" />,
   kids: <Baby className="w-4 h-4" />,
+  "seasonal-gifts": <Gift className="w-4 h-4" />,
+  "faith-based": <Star className="w-4 h-4" />,
+  anniversary: <Gift className="w-4 h-4" />,
+  couple: <UserRound className="w-4 h-4" />,
   occasions: <Gift className="w-4 h-4" />,
   hampers: <Package className="w-4 h-4" />,
   home: <Home className="w-4 h-4" />,
 };
 
 export function GalleryFilter({ categories, activeCategory }: GalleryFilterProps) {
+  const [isScrollingUp, setIsScrollingUp] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY <= 60) {
+        setIsScrollingUp(true);
+      } else if (currentScrollY > lastScrollY.current) {
+        setIsScrollingUp(false);
+      } else {
+        setIsScrollingUp(true);
+      }
+      lastScrollY.current = currentScrollY;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const tabs = [
     { id: "all", label: "All Creations", icon: ICON_MAP.all, active: activeCategory === "all" || !activeCategory },
     ...categories.map((cat) => ({
-      id: cat.slug,
+      id: cat.id,
       label: cat.name,
       icon: ICON_MAP[cat.slug] || <Grip className="w-4 h-4" />,
-      active: activeCategory === cat.slug,
+      active: activeCategory === cat.id,
     })),
   ];
 
   return (
-    <section id="gallery-view" className="py-4 bg-white sticky top-25 z-40 border-b border-border/50 shadow-sm  scroll-mt-20">
+    <section id="gallery-view" className={`pt-3 pb-3 bg-white sticky z-40 border-b border-border/50 shadow-sm scroll-mt-32 transition-all duration-300 ${isScrollingUp ? "top-[114px] lg:top-[164px]" : "top-[114px]"}`}>
       <div className="container mx-auto px-4">
         <div className="flex overflow-x-auto gap-3  hide-scrollbar justify-start xl:justify-center">
           {tabs.map((tab) => (

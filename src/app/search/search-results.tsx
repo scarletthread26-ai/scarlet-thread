@@ -243,11 +243,11 @@ export default function SearchResults() {
                   name: product.name,
                   price: product.price,
                   compare_at_price: product.compare_at_price,
-                  image: product.images?.[0]?.url || "/images/scarlet-lovedgift1.png",
+                  image: product.images?.[0]?.url || "",
                   imagePlaceholder: product.name ? product.name.split(" ")[0] : "Custom",
                   rating: product.rating || 0,
                   reviews: product.reviews || 0,
-                  category: product.categories?.name || "Custom apparel",
+                  category: product.categories?.name || "",
                   slug: product.slug,
                   bestSeller: product.best_seller
                 };
@@ -300,11 +300,11 @@ export default function SearchResults() {
                 name: product.name,
                 price: product.price,
                 compare_at_price: product.compare_at_price,
-                image: product.images?.[0]?.url || "/images/scarlet-lovedgift1.png",
+                image: product.images?.[0]?.url || "",
                 imagePlaceholder: product.name ? product.name.split(" ")[0] : "Custom",
                 rating: product.rating || 0,
                 reviews: product.reviews || 0,
-                category: product.categories?.name || "Custom apparel",
+                category: product.categories?.name || "",
                 slug: product.slug,
                 bestSeller: product.best_seller
               };

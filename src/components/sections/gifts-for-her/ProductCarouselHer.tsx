@@ -21,7 +21,7 @@ export function ProductCarouselHer() {
 
   const displayProducts = React.useMemo(() => {
     const catProducts = dbProducts.filter(
-      (p: any) => p.is_active && p.categories?.name === "Gifts For Her"
+      (p: any) => p.is_active && (p.categories?.slug === "gift-for-her" || p.categories?.slug === "gifts-for-her")
     )
     return catProducts.map((p) => ({
       id: p.id,
@@ -30,7 +30,7 @@ export function ProductCarouselHer() {
       compare_at_price: p.compare_at_price,
       rating: p.rating || 0,
       reviews: p.reviews || 0,
-      image: p.images?.[0]?.url || "/images/scarlet-lovedgift1.png",
+      image: p.images?.[0]?.url || "",
       imagePlaceholder: p.name ? p.name.split(" ")[0] : "Custom",
       bestSeller: p.featured,
       slug: p.slug,
@@ -38,7 +38,24 @@ export function ProductCarouselHer() {
     }))
   }, [dbProducts])
 
-  if (displayProducts.length === 0) return null
+  if (displayProducts.length === 0) {
+    return (
+      <section className="py-10 lg:py-6 bg-white overflow-hidden">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="text-center mb-4">
+            <h2 className="md:text-3xl text-2xl font-heading font-bold flex items-center justify-center gap-2">
+              Most Loved Gifts For <span className="text-primary">Her</span>
+            </h2>
+            <p className="text-sm text-muted-foreground">Handpicked with love, just for her</p>
+          </div>
+          <div className="flex flex-col items-center justify-center py-16 gap-3 rounded-2xl border border-slate-100 bg-slate-50">
+            <span className="text-3xl">🎁</span>
+            <p className="text-sm font-semibold text-slate-400">Products not available</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section className="py-10 lg:py-6 bg-white overflow-hidden">
@@ -50,9 +67,9 @@ export function ProductCarouselHer() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="md:text-center text-start mb-4"
+          className="text-center mb-4"
         >
-          <h2 className="md:text-3xl text-2xl font-heading font-bold flex items-center md:justify-center gap-2">
+          <h2 className="md:text-3xl text-2xl font-heading font-bold flex items-center justify-center gap-2">
             Most Loved Gifts For <span className="text-primary">Her</span>{" "}
             {/* <motion.div
               animate={{

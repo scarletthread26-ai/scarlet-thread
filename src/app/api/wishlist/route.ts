@@ -1,25 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
-// Sample mock wishlist items
-let mockWishlist: any[] = [
-  {
-    id: "wish-1",
-    user_id: "mock-user-id",
-    product_id: "f3a0e660-31e0-4966-9e1f-7b0028ed2cd4",
-    created_at: new Date().toISOString(),
-    products: {
-      id: "f3a0e660-31e0-4966-9e1f-7b0028ed2cd4",
-      name: "Personalized Hooded Towel",
-      slug: "personalized-hooded-towel",
-      price: 89.00,
-      compare_at_price: 119.00,
-      stock_status: "in_stock",
-      product_images: [{ url: "https://images.unsplash.com/photo-1519689680058-324335c77ebe?auto=format&fit=crop&w=300&q=80", is_primary: true }]
-    }
-  }
-];
-
 export async function GET() {
   try {
     const supabase = await createClient();
@@ -46,7 +27,7 @@ export async function GET() {
       .eq("user_id", user.id);
 
     if (error) throw error;
-    
+
     // Map product images
     const mapped = data.map((item: any) => ({
       ...item,
@@ -58,8 +39,8 @@ export async function GET() {
 
     return NextResponse.json(mapped);
   } catch (error: any) {
-    console.warn("Supabase wishlist GET failed. Returning mock wishlist:", error.message || error);
-    return NextResponse.json(mockWishlist);
+    console.error("Supabase wishlist GET failed:", error.message || error);
+    return NextResponse.json([]);
   }
 }
 
@@ -98,7 +79,7 @@ export async function POST(request: Request) {
         .from("wishlists")
         .delete()
         .eq("id", existing.id);
-      
+
       if (delError) throw delError;
       return NextResponse.json({ toggled: false, message: "Removed from wishlist" });
     } else {
@@ -116,34 +97,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ toggled: true, data, message: "Added to wishlist" });
     }
   } catch (error: any) {
-    console.warn("Supabase wishlist toggle failed. Simulating local success:", error.message || error);
-    
-    if (!productId) {
-      return NextResponse.json({ error: "Product ID is required" }, { status: 400 });
-    }
-
-    const existingIndex = mockWishlist.findIndex(item => item.product_id === productId);
-    if (existingIndex !== -1) {
-      mockWishlist.splice(existingIndex, 1);
-      return NextResponse.json({ toggled: false, message: "Removed from wishlist" });
-    } else {
-      const newItem = {
-        id: Math.random().toString(36).substring(2, 9),
-        user_id: "mock-user-id",
-        product_id: productId,
-        created_at: new Date().toISOString(),
-        products: {
-          id: productId,
-          name: "Mock Wishlisted Product",
-          slug: "mock-wishlist-product",
-          price: 99.00,
-          compare_at_price: 129.00,
-          stock_status: "in_stock",
-          product_images: [{ url: "https://images.unsplash.com/photo-1519689680058-324335c77ebe?auto=format&fit=crop&w=300&q=80", is_primary: true }]
-        }
-      };
-      mockWishlist.push(newItem);
-      return NextResponse.json({ toggled: true, data: newItem, message: "Added to wishlist" });
-    }
+    console.error("Supabase wishlist toggle failed:", error.message || error);
+    return NextResponse.json(
+      { error: error.message || "Failed to update wishlist" },
+      { status: 500 }
+    );
   }
 }
+

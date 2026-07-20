@@ -14,14 +14,10 @@ export function HeroKids() {
     return <CommonHeroSkeleton />
   }
 
-  const title = sectionData?.title || "Little Moments, Made Personal"
-  const subtitle =
-    sectionData?.subtitle ||
-    "Adorable embroidered gifts for your little ones, stitched with love and care."
-  const desktopImage =
-    sectionData?.content?.image_desktop || "/images/scrlet-babiesbanne.png"
-  const mobileImage =
-    sectionData?.content?.image_mobile || "/images/scrlet-babiesbanne.png"
+  const title = sectionData?.title ?? ""
+  const subtitle = sectionData?.subtitle ?? ""
+  const desktopImage = sectionData?.content?.image_desktop ?? ""
+  const mobileImage = sectionData?.content?.image_mobile ?? ""
 
   return (
     <CommonHero

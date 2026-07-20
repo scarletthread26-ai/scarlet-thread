@@ -9,6 +9,8 @@ import {
   ShoppingBag,
   Heart,
   Sparkles,
+  Gift,
+  Star,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -41,7 +43,28 @@ export default function CMSHubPage() {
       icon: Sparkles,
       href: "/admin/cms/kids-babies",
       color: "text-amber-600 bg-amber-50 dark:bg-amber-950/20 border-amber-100/50 dark:border-amber-900/30",
-    }
+    },
+    {
+      title: "Seasonal Gifts Page",
+      description: "Customize Hero banner headers, descriptive subtext, and banner image slides for Seasonal catalog.",
+      icon: Gift,
+      href: "/admin/cms/seasonal-gifts",
+      color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100/50 dark:border-emerald-900/30",
+    },
+    {
+      title: "Faith Based Page",
+      description: "Customize Hero banner headers, descriptive subtext, and banner image slides for Faith Based catalog.",
+      icon: Star,
+      href: "/admin/cms/faith-based",
+      color: "text-indigo-600 bg-indigo-50 dark:bg-indigo-950/20 border-indigo-100/50 dark:border-indigo-900/30",
+    },
+    {
+      title: "Gallery Page Settings",
+      description: "Customize Hero banner headers, descriptive subtext, and banner image slides for Gallery catalog.",
+      icon: FileText,
+      href: "/admin/cms/gallery",
+      color: "text-teal-600 bg-teal-50 dark:bg-teal-950/20 border-teal-100/50 dark:border-teal-900/30",
+    },
   ];
 
   return (

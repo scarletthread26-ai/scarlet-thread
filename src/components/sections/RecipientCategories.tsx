@@ -4,11 +4,12 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 
+// Desktop: 3 cards
 const categories = [
   {
     id: "him",
-    title: "HIM",
-    image: "/images/newsection/man.png",
+    title: "FOR HIM",
+    image: "/images/recipientCategories/man.png",
     bgColor: "bg-[#bf99d9]",
     textColor: "text-white",
     accentColor: "bg-white/70",
@@ -16,8 +17,8 @@ const categories = [
   },
   {
     id: "her",
-    title: "HER",
-    image: "/images/newsection/lady.png",
+    title: "FOR HER",
+    image: "/images/recipientCategories/lady.png",
     bgColor: "bg-[#fadcdd]",
     textColor: "text-white",
     accentColor: "bg-[#E5485A]/70",
@@ -25,11 +26,51 @@ const categories = [
   },
   {
     id: "kids",
-    title: "KIDS",
-    image: "/images/newsection/kids.png",
+    title: " FOR KIDS & BABIES",
+    image: "/images/recipientCategories/kids.png",
     bgColor: "bg-[#fad2ad]",
-    textColor: "text-[#E5485A]",
+    textColor: "text-white",
     accentColor: "bg-[#E5485A]/70",
+    href: "/kids-babies",
+  },
+];
+
+// Mobile: 4 cards (Kids & Babies split)
+const mobileCategories = [
+  {
+    id: "him",
+    title: "FOR HIM",
+    image: "/images/recipientCategories/man.png",
+    bgColor: "bg-[#bf99d9]",
+    textColor: "text-white",
+    accentColor: "bg-white/70",
+    href: "/gifts-for-him",
+  },
+  {
+    id: "her",
+    title: "FOR HER",
+    image: "/images/recipientCategories/lady.png",
+    bgColor: "bg-[#fadcdd]",
+    textColor: "text-white",
+    accentColor: "bg-[#E5485A]/70",
+    href: "/gifts-for-her",
+  },
+  {
+    id: "kids",
+    title: "FOR KIDS",
+    image: "/images/recipientCategories/kids.png",
+    bgColor: "bg-[#fad2ad]",
+    textColor: "text-white",
+    accentColor: "bg-[#E5485A]/70",
+    href: "/kids-babies",
+  },
+  {
+    id: "babies",
+    title: "FOR BABIES",
+    image: "/images/recipientCategories/babie.png",
+    bgColor: "bg-[#b8e0f7]",
+    textColor: "text-white",
+    accentColor: "bg-white/70",
     href: "/kids-babies",
   },
 ];
@@ -51,9 +92,10 @@ export function RecipientCategories() {
           </p>
         </div>
 
-        {/* MOBILE: Single-column stacked cards */}
-        <div className="flex flex-col gap-5 sm:hidden mt-6">
-          {categories.map((cat, index) => (
+        {/* MOBILE: Horizontal scrollable row of 4 cards */}
+        {/* MOBILE: 2-column grid of 4 cards */}
+        <div className="grid grid-cols-2 gap-3 sm:hidden mt-6">
+          {mobileCategories.map((cat, index) => (
             <motion.div
               key={cat.id}
               initial={{ opacity: 0, y: 20 }}
@@ -61,35 +103,35 @@ export function RecipientCategories() {
               viewport={{ once: true }}
               transition={{ duration: 0.45, delay: index * 0.1 }}
             >
-              <Link href={cat.href} className="block relative h-[150px]">
+              <Link href={cat.href} className="block relative h-[150px]">  
                 {/* Background Card */}
                 <div
                   className={`absolute inset-0 rounded-2xl ${cat.bgColor} shadow-sm`}
                 />
 
                 {/* Text — bottom-left */}
-                <div className="absolute left-5 bottom-5 z-20 pointer-events-none">
+                <div className="absolute left-4 bottom-4 z-20 pointer-events-none">
                   <span
-                    className={`block text-[36px] font-black tracking-wide leading-none ${cat.textColor} drop-shadow-sm`}
+                    className={`block text-[15px] font-black tracking-wide leading-none ${cat.textColor} drop-shadow-sm`}
                   >
                     {cat.title}
                   </span>
                   {/* Underline accent */}
                   <span
-                    className={`block mt-1.5 h-[3px] w-8 rounded-full ${cat.accentColor}`}
+                    className={`block mt-1.5 h-[3px] w-6 rounded-full ${cat.accentColor}`}
                   />
                 </div>
 
                 {/* Person image — right side, inside the box */}
-                <div 
+                <div
                   className="absolute inset-0 z-10 pointer-events-none overflow-hidden rounded-2xl"
                 >
-                  <div className="absolute right-0 bottom-0 h-full w-[55%] origin-bottom">
+                  <div className="absolute right-0 bottom-0 h-full w-[100%] origin-bottom">
                     <Image
                       src={cat.image}
                       alt={cat.title}
                       fill
-                      sizes="55vw"
+                      sizes="80vw"
                       className="object-contain object-right-bottom drop-shadow-md"
                     />
                   </div>
@@ -118,7 +160,7 @@ export function RecipientCategories() {
 
                 {/* Title */}
                 <div className="relative h-full flex flex-col justify-end px-8 md:px-10 lg:px-12 pb-8 z-30 pointer-events-none group-hover:-translate-y-1 transition-transform duration-300">
-                  <span className={`text-[22px] md:text-3xl lg:text-4xl font-sans font-black tracking-wide ${cat.textColor} drop-shadow-sm leading-none`}>
+                  <span className={`text-[22px] text-nowrap md:text-3xl lg:text-2xl font-sans font-black tracking-wide ${cat.textColor} drop-shadow-sm leading-none`}>
                     {cat.title}
                   </span>
                   <span className={`block mt-1.5 h-[3px] w-8 rounded-full ${cat.accentColor} transition-all duration-300 group-hover:w-12`} />

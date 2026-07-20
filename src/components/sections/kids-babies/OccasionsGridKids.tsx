@@ -1,15 +1,13 @@
-"use client"
+import { DynamicOccasionsGrid } from "@/components/sections/DynamicOccasionsGrid"
 
-import { OccasionsGrid } from "@/components/sections/OccasionsGrid"
-
-const occasions = [
+const defaultOccasions = [
   {
     id: "baby-shower",
     title: "Baby Shower Gifts",
     description: "Welcome the little one with a personalized touch.",
     bgColor: "bg-[#F5F3FF]",
     titleColor: "text-[#9B59B6]",
-    image: "/images/scarlet-occassion1.png",
+    image: "/images/forKidsOccassion/scarlet-occassion1.png",
   },
   {
     id: "first-birthday",
@@ -17,7 +15,7 @@ const occasions = [
     description: "Celebrate their first big milestone in style.",
     bgColor: "bg-[#FFF5F5]",
     titleColor: "text-[#FF69B4]",
-    image: "/images/scarlet-occassion2.png",
+    image: "/images/forKidsOccassion/scarlet-occassion2.png",
   },
   {
     id: "naming-ceremony",
@@ -25,7 +23,7 @@ const occasions = [
     description: "Make their special day even more memorable.",
     bgColor: "bg-[#FDF8EB]",
     titleColor: "text-orange-500",
-    image: "/images/scarlet-occassion3.png",
+    image: "/images/forKidsOccassion/scarlet-occassion3.png",
   },
   {
     id: "return-gifts",
@@ -33,10 +31,17 @@ const occasions = [
     description: "Thank your loved ones with cute & useful gifts.",
     bgColor: "bg-[#FFF0F5]",
     titleColor: "text-[#FF69B4]",
-    image: "/images/scarlet-occassion4.png",
+    image: "/images/forKidsOccassion/scarlet-occassion4.png",
   },
 ]
 
 export function OccasionsGridKids() {
-  return <OccasionsGrid occasions={occasions} heading={<>Gifts For Every <span className="text-primary">Occasion</span></>} />
+  return (
+    <DynamicOccasionsGrid 
+      sectionKey="kids-babies" 
+      fallbackSectionKey="kids-and-babies"
+      defaultHeading={<>Gifts For Every <span className="text-primary">Occasion</span></>} 
+      defaultOccasions={defaultOccasions}
+    />
+  )
 }

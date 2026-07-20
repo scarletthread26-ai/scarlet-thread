@@ -3,41 +3,22 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { useHomepageSection } from "@/hooks/use-cms";
 
-const occasions = [
-  {
-    id: "anniversary",
-    cursiveText: "Anniversary",
-    mainText: "gifts",
-    image: "/images/anu/anniversarry.png", // Using a fallback image if specific ones don't exist
-    href: "/products?category=anniversary",
-  },
-  {
-    id: "birthday",
-    cursiveText: "Birthday",
-    mainText: "Gifts",
-    image: "/images/anu/kidsgift.png",
-    href: "/products?category=birthday",
-  },
-  {
-    id: "seasonal",
-    cursiveText: "Seasonal",
-    mainText: "Gifts",
-    image: "/images/anu/seasonal.png",
-    href: "/products?category=seasonal",
-  },
-    {
-    id: "hoodie",
-    cursiveText: "Hoodie",
-    mainText: "Gifts",
-    image: "/images/anu/hooodie.png",
-    href: "/products?category=hoodie",
-  },
-  
 
-];
 
 export function ForEveryOccasion() {
+  const { data: section } = useHomepageSection("occasions");
+  
+  const headingStr = section?.content?.heading || "For Every Occasion";
+  const description = section?.content?.description || "Discover thoughtfully curated gifts perfect for every celebration and milestone, making your special moments even more memorable.";
+  const cards = section?.content?.cards || [];
+
+  // Split heading to color the last word
+  const words = headingStr.split(" ");
+  const lastWord = words.pop();
+  const firstPart = words.join(" ");
+
   return (
     <section className=" pb-5  bg-white overflow-hidden">
       <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 lg:px-16">
@@ -50,16 +31,17 @@ export function ForEveryOccasion() {
           className="mb-5 sm:mb-10 text-center"
         >
           <h2 className="text-[28px] md:text-2xl lg:text-3xl font-heading font-bold text-foreground text-center mb-2 sm:mb-3">
-            For Every <span className="text-primary">Occasion</span>
+            {firstPart} {firstPart && <span className="text-primary">{lastWord}</span>}
+            {!firstPart && <span className="text-primary">{lastWord}</span>}
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
-            Discover thoughtfully curated gifts perfect for every celebration and milestone, making your special moments even more memorable.
+            {description}
           </p>
         </motion.div>
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
-          {occasions.map((occ, index) => (
+          {cards.map((occ: any, index: number) => (
             <motion.div
               key={occ.id}
               initial={{ opacity: 0, scale: 0.95, y: 20 }}

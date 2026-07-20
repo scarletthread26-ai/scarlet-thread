@@ -25,14 +25,10 @@ export interface CraftedGallerySectionProps {
   category: string
   /** Link href for "View More Creations" button */
   galleryHref: string
-  /** Fallback images used when the API returns nothing */
-  fallbackImages: GalleryImage[]
   /** Background colour class for the section, e.g. "bg-white" */
   bgColor?: string
   /** Card background colour class, e.g. "bg-[#f8f4f1]" */
   cardBg?: string
-  /** Minimum images before mixing in fallbacks (default 5) */
-  minImages?: number
   /** Optional description text displayed below the heading */
   description?: React.ReactNode
 }
@@ -44,10 +40,8 @@ export function CraftedGallerySection({
   heading,
   category,
   galleryHref,
-  fallbackImages,
   bgColor = "bg-white",
   cardBg = "bg-white",
-  minImages = 5,
   description,
 }: CraftedGallerySectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -55,16 +49,18 @@ export function CraftedGallerySection({
 
   // ── Build display list (merge with fallback when sparse) ─────────────────
   const displayImages: GalleryImage[] = (() => {
-    if (isLoading) return fallbackImages;
+    if (isLoading) return [];
 
     const filteredProducts = dbProducts.filter((p: any) => {
       if (category === "all") return true;
-      if (!p.categories?.name) return false;
-      const catName = p.categories.name.toLowerCase();
-      if (category === "her" && catName.includes("her")) return true;
-      if (category === "him" && catName.includes("him")) return true;
-      if (category === "kids" && (catName.includes("kid") || catName.includes("bab"))) return true;
-      if (category === "occasions" && catName.includes("occasion")) return true;
+      if (!p.categories?.slug) return false;
+      const slug = p.categories.slug;
+      if (category === "her" && (slug === "gift-for-her" || slug === "gifts-for-her")) return true;
+      if (category === "him" && (slug === "gift-for-him" || slug === "gifts-for-him")) return true;
+      if (category === "kids" && (slug === "kids-babies" || slug === "kids-and-babies")) return true;
+      if (category === "seasonal" && slug === "seasonal-gifts") return true;
+      if (category === "faith" && slug === "faith-based") return true;
+      if (category === "occasions" && slug === "occasions") return true;
       return false;
     });
 
@@ -77,20 +73,17 @@ export function CraftedGallerySection({
       }))
       .slice(0, 5)
 
-    if (fromApi.length === 0) return fallbackImages
-    if (fromApi.length < minImages) {
-      const merged: GalleryImage[] = [...fromApi]
-      const needed = minImages - fromApi.length
-      for (let i = 0; i < needed; i++) {
-        merged.push(fallbackImages[i % fallbackImages.length])
-      }
-      return merged
-    }
+    if (fromApi.length === 0) return []
     return fromApi
   })()
 
+  // Don't render the section at all if there are no products
+  if (displayImages.length === 0) {
+    return null;
+  }
+
   return (
-    <section className={`pt-10 pb-10 sm:py-16 overflow-hidden`}>
+    <section className={`pt-10 pb-10 md:pt-0  overflow-hidden`}>
       <motion.div
         variants={scaleUp(1.02, 0)}
         initial="hidden"

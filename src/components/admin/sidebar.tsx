@@ -132,7 +132,6 @@ export function Sidebar({ isCollapsed, setIsCollapsed, onMobileClose }: SidebarP
         { href: "/admin/cms", label: "CMS Pages", icon: FileText },
         { href: "/admin/blogs", label: "Blogs", icon: Newspaper },
         { href: "/admin/gallery", label: "Gallery", icon: FolderOpen },
-        { href: "/admin/media", label: "Media Library", icon: ImageIcon },
         { href: "/admin/notifications", label: "Notifications", icon: BellRing },
       ],
     },

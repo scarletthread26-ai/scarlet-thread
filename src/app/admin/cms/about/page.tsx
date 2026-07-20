@@ -14,8 +14,6 @@ export default function AboutSectionEditorPage({ isTabbed = false }: { isTabbed?
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [description, setDescription] = useState("");
-  const [buttonText, setButtonText] = useState("");
-  const [buttonLink, setButtonLink] = useState("");
 
   useEffect(() => {
     if (section) {
@@ -23,8 +21,6 @@ export default function AboutSectionEditorPage({ isTabbed = false }: { isTabbed?
       setSubtitle(section.subtitle || "Bringing Your Gift Ideas To Life");
       const content = section.content || {};
       setDescription(content.description || "");
-      setButtonText(content.button_text || "Read Our Story");
-      setButtonLink(content.button_link || "/about");
     }
   }, [section]);
 
@@ -36,17 +32,13 @@ export default function AboutSectionEditorPage({ isTabbed = false }: { isTabbed?
     const originalSubtitle = section.subtitle || "Bringing Your Gift Ideas To Life";
     const content = section.content || {};
     const originalDescription = content.description || "";
-    const originalButtonText = content.button_text || "Read Our Story";
-    const originalButtonLink = content.button_link || "/about";
 
     return (
       title !== originalTitle ||
       subtitle !== originalSubtitle ||
-      description !== originalDescription ||
-      buttonText !== originalButtonText ||
-      buttonLink !== originalButtonLink
+      description !== originalDescription
     );
-  }, [title, subtitle, description, buttonText, buttonLink, section, isLoading]);
+  }, [title, subtitle, description, section, isLoading]);
 
   const handleDiscard = () => {
     if (section) {
@@ -54,8 +46,6 @@ export default function AboutSectionEditorPage({ isTabbed = false }: { isTabbed?
       setSubtitle(section.subtitle || "Bringing Your Gift Ideas To Life");
       const content = section.content || {};
       setDescription(content.description || "");
-      setButtonText(content.button_text || "Read Our Story");
-      setButtonLink(content.button_link || "/about");
     }
     toast.info("Changes discarded");
   };
@@ -67,8 +57,8 @@ export default function AboutSectionEditorPage({ isTabbed = false }: { isTabbed?
       subtitle,
       content: {
         description,
-        button_text: buttonText,
-        button_link: buttonLink,
+        button_text: "Read Our Story",
+        button_link: "/about",
       },
       is_active: true,
     });
@@ -190,33 +180,7 @@ export default function AboutSectionEditorPage({ isTabbed = false }: { isTabbed?
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
-                      Button Text
-                    </label>
-                    <input
-                      type="text"
-                      value={buttonText}
-                      onChange={(e) => setButtonText(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-805 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600 dark:text-slate-200 transition"
-                      placeholder="Read Our Story"
-                    />
-                  </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
-                      Button Link (URL)
-                    </label>
-                    <input
-                      type="text"
-                      value={buttonLink}
-                      onChange={(e) => setButtonLink(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-805 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600 dark:text-slate-200 transition"
-                      placeholder="/about"
-                    />
-                  </div>
-                </div>
               </div>
             </motion.div>
           </div>
