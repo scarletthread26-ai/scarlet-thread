@@ -47,9 +47,10 @@ export function OccasionsGrid({
           transition={{ duration: 0.55 }}
           className="text-center mb-8 sm:mb-10"
         >
-          <h2 className="text-2xl md:text-3xl font-heading font-bold inline-flex items-center justify-center gap-2">
+          <h2 className="text-2xl md:text-3xl font-heading font-bold">
             {heading}
-            {/* {showHeartIcon && (
+          </h2>
+          {/* {showHeartIcon && (
               <motion.span
                 animate={{ scale: [1, 1.25, 1], rotate: [0, 5, -5, 0] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
@@ -58,7 +59,6 @@ export function OccasionsGrid({
                 <Heart className="w-5 h-5 text-primary fill-transparent" />
               </motion.span>
             )} */}
-          </h2>
         </motion.div>
 
         {/* ── Grid ── */}
@@ -66,9 +66,8 @@ export function OccasionsGrid({
           variants={staggerContainer(0.1, 0.05)}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: "-50px" }}
+          viewport={{ once: true, margin: "0px" }}
           className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6"
-          style={{ transformStyle: "preserve-3d" }}
         >
           {occasions.map((occ) => (
             <Link key={occ.id} href={occ.href ?? "/products"} className="block h-full">
@@ -103,6 +102,34 @@ export function OccasionsGrid({
             </Link>
           ))}
         </motion.div>
+      </div>
+    </section>
+  )
+}
+
+export function OccasionsGridSkeleton() {
+  return (
+    <section className="pb-10 sm:py-14 bg-white overflow-hidden">
+      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 lg:px-16">
+        <div className="text-center mb-8 sm:mb-10">
+          <div className="w-64 h-8 bg-slate-200 dark:bg-slate-800 rounded mx-auto animate-pulse" />
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="bg-slate-100 dark:bg-slate-800/50 rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 relative overflow-hidden flex flex-col h-full min-h-[180px] sm:min-h-[210px] md:min-h-[210px] animate-pulse"
+            >
+              <div className="w-[65%] sm:w-[60%]">
+                <div className="w-full h-5 bg-slate-200 dark:bg-slate-700 rounded mb-2" />
+                <div className="w-3/4 h-3 bg-slate-200 dark:bg-slate-700 rounded mb-1" />
+                <div className="w-1/2 h-3 bg-slate-200 dark:bg-slate-700 rounded mb-4" />
+                <div className="w-20 h-3 bg-slate-200 dark:bg-slate-700 rounded" />
+              </div>
+              <div className="absolute right-1 bottom-5 w-[48%] sm:w-[45%] aspect-square translate-y-3 bg-slate-200 dark:bg-slate-700 rounded-full" />
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )

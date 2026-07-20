@@ -36,7 +36,7 @@ export function ProductCarouselSeasonal() {
       <section className="py-10 lg:py-6 bg-white overflow-hidden">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-8">
-            <h2 className="md:text-3xl text-2xl font-heading font-bold flex items-center justify-center gap-2">
+            <h2 className="md:text-3xl text-2xl font-heading font-bold">
               Most Loved Seasonal <span className="text-primary">Gifts</span>
             </h2>
             <p className="text-sm text-muted-foreground mt-1">Handpicked custom creations for every holiday</p>
@@ -62,7 +62,7 @@ export function ProductCarouselSeasonal() {
           transition={{ duration: 0.8 }}
           className="text-center mb-8"
         >
-          <h2 className="md:text-3xl text-2xl font-heading font-bold flex items-center justify-center gap-2">
+          <h2 className="md:text-3xl text-2xl font-heading font-bold">
             Most Loved Seasonal <span className="text-primary">Gifts</span>
           </h2>
           <p className="text-sm text-muted-foreground mt-1">

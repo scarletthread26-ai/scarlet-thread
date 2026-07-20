@@ -6,7 +6,7 @@ import {  HeartIcon } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { FloatingFeatureBar } from "./FloatingFeatureBar"
-import { useHeroSlides } from "@/hooks/use-cms"
+import { useHeroContext } from "@/contexts/HeroContext"
 
 
 // ---------------------------------------------------------------------------
@@ -107,7 +107,7 @@ function formatHeroTitle(titleStr: string) {
 // Hero
 // ---------------------------------------------------------------------------
 export function Hero() {
-  const { data: rawSlides } = useHeroSlides()
+  const { rawSlides, isLoading } = useHeroContext()
   const [current, setCurrent] = useState(0)
   const [paused, setPaused] = useState(false)
   const [delay, setDelay] = useState(5000)
