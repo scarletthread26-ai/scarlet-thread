@@ -6,6 +6,7 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { WhatsAppWidget } from "./WhatsAppWidget";
 import { MiniCartDrawer } from "../cart/MiniCartDrawer";
+import { HeroProvider } from "@/contexts/HeroContext";
 
 export function StorefrontLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -24,7 +25,7 @@ export function StorefrontLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <>
+    <HeroProvider>
       <Header />
       <main className="flex-1 pt-[114px] lg:pt-[164px] sm:pb-16 lg:pb-0">
         {children}
@@ -32,6 +33,6 @@ export function StorefrontLayout({ children }: { children: React.ReactNode }) {
       <Footer />
       <WhatsAppWidget />
       <MiniCartDrawer />
-    </>
+    </HeroProvider>
   );
 }
