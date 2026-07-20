@@ -7,9 +7,10 @@ export default function KidsBabiesPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <HeroKids />
-      <ProductCarouselKids />
-      <OccasionsGridKids />
       <CraftedGalleryKids />
+      <OccasionsGridKids />
+      <ProductCarouselKids />
+
     </div>
   )
 }

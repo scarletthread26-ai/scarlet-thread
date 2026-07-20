@@ -7,9 +7,9 @@ export default function GiftsForHerPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <HeroHer />
-      <ProductCarouselHer />
-      <OccasionsGridHer />
       <CraftedGalleryHer />
+      <OccasionsGridHer />
+      <ProductCarouselHer />
     </div>
   )
 }

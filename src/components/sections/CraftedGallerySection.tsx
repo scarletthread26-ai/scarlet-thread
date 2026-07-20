@@ -53,14 +53,14 @@ export function CraftedGallerySection({
 
     const filteredProducts = dbProducts.filter((p: any) => {
       if (category === "all") return true;
-      if (!p.categories?.name) return false;
-      const catName = p.categories.name.toLowerCase();
-      if (category === "her" && catName.includes("her")) return true;
-      if (category === "him" && catName.includes("him")) return true;
-      if (category === "kids" && (catName.includes("kid") || catName.includes("bab"))) return true;
-      if (category === "seasonal" && catName.includes("season")) return true;
-      if (category === "faith" && (catName.includes("faith") || catName.includes("relig") || catName.includes("god") || catName.includes("spirit"))) return true;
-      if (category === "occasions" && catName.includes("occasion")) return true;
+      if (!p.categories?.slug) return false;
+      const slug = p.categories.slug;
+      if (category === "her" && (slug === "gift-for-her" || slug === "gifts-for-her")) return true;
+      if (category === "him" && (slug === "gift-for-him" || slug === "gifts-for-him")) return true;
+      if (category === "kids" && (slug === "kids-babies" || slug === "kids-and-babies")) return true;
+      if (category === "seasonal" && slug === "seasonal-gifts") return true;
+      if (category === "faith" && slug === "faith-based") return true;
+      if (category === "occasions" && slug === "occasions") return true;
       return false;
     });
 
@@ -83,7 +83,7 @@ export function CraftedGallerySection({
   }
 
   return (
-    <section className={`pt-10 pb-10 sm:py-16 overflow-hidden`}>
+    <section className={`pt-10 pb-10 md:pt-0  overflow-hidden`}>
       <motion.div
         variants={scaleUp(1.02, 0)}
         initial="hidden"

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import { useHomepageSection, useSaveHomepageSection } from "@/hooks/use-cms";
+import { useCategories } from "@/hooks/use-categories";
 import { ArrowLeft, Save, Loader2, Info } from "lucide-react";
 import { ImageUpload } from "@/components/admin/image-upload";
 import Link from "next/link";
@@ -29,11 +30,16 @@ export function CategoryLandingEditor({
 }: CategoryLandingEditorProps) {
   const { data: section, isLoading } = useHomepageSection(sectionKey);
   const saveMutation = useSaveHomepageSection();
+  const { data: allCategories, isLoading: isLoadingCategories } = useCategories();
 
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [desktopImage, setDesktopImage] = useState<string[]>([]);
   const [mobileImage, setMobileImage] = useState<string[]>([]);
+  
+  // Occasions configuration state
+  const [occasionsHeading, setOccasionsHeading] = useState("");
+  const [occasionsSubcategories, setOccasionsSubcategories] = useState<string[]>([]);
 
   useEffect(() => {
     if (section) {
@@ -42,11 +48,15 @@ export function CategoryLandingEditor({
       const content = section.content || {};
       setDesktopImage(content.image_desktop ? [content.image_desktop] : [defaultDesktopImage]);
       setMobileImage(content.image_mobile ? [content.image_mobile] : [defaultMobileImage]);
+      setOccasionsHeading(content.occasions?.heading || "Gifts For Every Occasion");
+      setOccasionsSubcategories(content.occasions?.subcategories || []);
     } else {
       setTitle(defaultTitle);
       setSubtitle(defaultSubtitle);
       setDesktopImage([defaultDesktopImage]);
       setMobileImage([defaultMobileImage]);
+      setOccasionsHeading("Gifts For Every Occasion");
+      setOccasionsSubcategories([]);
     }
   }, [section, defaultTitle, defaultSubtitle, defaultDesktopImage, defaultMobileImage]);
 
@@ -58,17 +68,25 @@ export function CategoryLandingEditor({
     const originalSubtitle = (section?.subtitle) || defaultSubtitle;
     const originalDesktop = (section?.content?.image_desktop) || defaultDesktopImage;
     const originalMobile = (section?.content?.image_mobile) || defaultMobileImage;
+    const originalOccasionsHeading = (section?.content?.occasions?.heading) || "Gifts For Every Occasion";
+    const originalOccasionsSubcategories = (section?.content?.occasions?.subcategories) || [];
 
     const currentDesktop = desktopImage[0] || "";
     const currentMobile = mobileImage[0] || "";
+
+    const hasSubcategoriesChanged = 
+      originalOccasionsSubcategories.length !== occasionsSubcategories.length || 
+      !originalOccasionsSubcategories.every((id: string) => occasionsSubcategories.includes(id));
 
     return (
       title !== originalTitle ||
       subtitle !== originalSubtitle ||
       currentDesktop !== originalDesktop ||
-      currentMobile !== originalMobile
+      currentMobile !== originalMobile ||
+      occasionsHeading !== originalOccasionsHeading ||
+      hasSubcategoriesChanged
     );
-  }, [title, subtitle, desktopImage, mobileImage, section, defaultTitle, defaultSubtitle, defaultDesktopImage, defaultMobileImage, isLoading]);
+  }, [title, subtitle, desktopImage, mobileImage, occasionsHeading, occasionsSubcategories, section, defaultTitle, defaultSubtitle, defaultDesktopImage, defaultMobileImage, isLoading]);
 
   const handleDiscard = () => {
     if (section) {
@@ -76,11 +94,15 @@ export function CategoryLandingEditor({
       setSubtitle(section.subtitle || defaultSubtitle);
       setDesktopImage(section.content?.image_desktop ? [section.content.image_desktop] : [defaultDesktopImage]);
       setMobileImage(section.content?.image_mobile ? [section.content.image_mobile] : [defaultMobileImage]);
+      setOccasionsHeading(section.content?.occasions?.heading || "Gifts For Every Occasion");
+      setOccasionsSubcategories(section.content?.occasions?.subcategories || []);
     } else {
       setTitle(defaultTitle);
       setSubtitle(defaultSubtitle);
       setDesktopImage([defaultDesktopImage]);
       setMobileImage([defaultMobileImage]);
+      setOccasionsHeading("Gifts For Every Occasion");
+      setOccasionsSubcategories([]);
     }
     toast.info("Changes discarded");
   };
@@ -91,8 +113,13 @@ export function CategoryLandingEditor({
       title,
       subtitle,
       content: {
-        image_desktop: desktopImage[0] || defaultDesktopImage,
+        ...section?.content,
+        image_desktop: desktopImage[0] || mobileImage[0] || defaultDesktopImage,
         image_mobile: mobileImage[0] || desktopImage[0] || defaultMobileImage,
+        occasions: {
+          heading: occasionsHeading,
+          subcategories: occasionsSubcategories
+        }
       },
       is_active: true,
     });
@@ -234,6 +261,98 @@ export function CategoryLandingEditor({
                 maxFiles={1}
                 bucket="cms"
               />
+            </motion.div>
+          </div>
+          
+          {/* Bottom Panel: Occasions Configuration */}
+          <div className="lg:col-span-3 space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="p-6 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/85 rounded-2xl shadow-sm space-y-4"
+            >
+              <h2 className="text-base font-bold text-slate-800 dark:text-slate-100">
+                Gift for Occasion Section
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Configure the occasions section shown on this page. Select up to 4 subcategories to feature.
+              </p>
+
+              <div className="space-y-4 pt-2">
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                    Section Heading
+                  </label>
+                  <input
+                    type="text"
+                    value={occasionsHeading}
+                    onChange={(e) => setOccasionsHeading(e.target.value)}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-805 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600 dark:text-slate-200 transition"
+                    placeholder="Gifts For Every Occasion"
+                  />
+                  <p className="text-[10px] text-slate-450 mt-1 flex items-center gap-1.5">
+                    <Info className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+                    The last word will automatically render in the page's primary highlight color.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                    Select Subcategories (Max 4)
+                  </label>
+                  {isLoadingCategories ? (
+                    <div className="flex items-center gap-2 text-sm text-slate-500">
+                      <Loader2 className="w-4 h-4 animate-spin" /> Loading categories...
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                      {allCategories?.map((category) => {
+                        const isSelected = occasionsSubcategories.includes(category.id);
+                        const isDisabled = !isSelected && occasionsSubcategories.length >= 4;
+                        
+                        return (
+                          <label
+                            key={category.id}
+                            className={`flex items-start gap-2.5 p-3 rounded-xl border transition cursor-pointer ${
+                              isSelected
+                                ? "border-purple-500 bg-purple-50 dark:bg-purple-900/20 dark:border-purple-500"
+                                : isDisabled
+                                ? "border-slate-200 dark:border-slate-800 opacity-50 cursor-not-allowed"
+                                : "border-slate-200 dark:border-slate-800 hover:border-purple-300 dark:hover:border-purple-700 bg-slate-50 dark:bg-slate-900/50"
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              disabled={isDisabled}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  if (occasionsSubcategories.length < 4) {
+                                    setOccasionsSubcategories([...occasionsSubcategories, category.id]);
+                                  }
+                                } else {
+                                  setOccasionsSubcategories(occasionsSubcategories.filter(id => id !== category.id));
+                                }
+                              }}
+                              className="mt-0.5 rounded text-purple-600 focus:ring-purple-500 border-slate-300 cursor-pointer disabled:cursor-not-allowed"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p className={`text-sm font-medium truncate ${isSelected ? "text-purple-900 dark:text-purple-200" : "text-slate-700 dark:text-slate-300"}`}>
+                                {category.name}
+                              </p>
+                            </div>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  )}
+                  <p className="text-[10px] text-slate-450 mt-2 flex items-center gap-1.5">
+                    <Info className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+                    Selected subcategories must have an image and description to display properly on the storefront.
+                  </p>
+                </div>
+              </div>
             </motion.div>
           </div>
         </div>

@@ -21,7 +21,7 @@ export function ProductCarouselKids() {
 
   const displayProducts = React.useMemo(() => {
     const catProducts = dbProducts.filter(
-      (p: any) => p.is_active && p.categories?.name === "Kids & Babies"
+      (p: any) => p.is_active && (p.categories?.slug === "kids-babies" || p.categories?.slug === "kids-and-babies")
     )
     return catProducts.map((p) => ({
       id: p.id,
@@ -43,10 +43,10 @@ export function ProductCarouselKids() {
       <section className="py-10 lg:py-6 bg-white overflow-hidden">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-8">
-            <h2 className="md:text-3xl text-2xl font-heading font-bold flex items-center md:justify-center gap-2">
+            <h2 className="md:text-3xl text-2xl font-heading font-bold flex items-center justify-center gap-2">
               Most Loved <span className="text-primary">Kids &amp; Baby</span> Gifts
             </h2>
-            <p className="text-sm text-muted-foreground mt-1 md:text-center text-start">Handpicked favorites for your little stars</p>
+            <p className="text-sm text-muted-foreground mt-1 text-center">Handpicked favorites for your little stars</p>
           </div>
           <div className="flex flex-col items-center justify-center py-16 gap-3 rounded-2xl border border-slate-100 bg-slate-50">
             <span className="text-3xl">🎁</span>
@@ -69,7 +69,7 @@ export function ProductCarouselKids() {
           transition={{ duration: 0.8 }}
           className="text-center mb-8"
         >
-          <h2 className="md:text-3xl text-2xl font-heading font-bold flex items-center md:justify-center gap-2">
+          <h2 className="md:text-3xl text-2xl font-heading font-bold flex items-center justify-center gap-2">
             Most Loved <span className="text-primary">Kids & Baby</span> Gifts{" "}
             {/* <motion.div
               animate={{
@@ -85,7 +85,7 @@ export function ProductCarouselKids() {
               <Heart className="w-5 h-5 text-primary fill-transparent" />
             </motion.div> */}
           </h2>
-          <p className="text-sm text-muted-foreground mt-1 md:text-center text-start">
+          <p className="text-sm text-muted-foreground mt-1 text-center">
             Handpicked favorites for your little stars
           </p>
         </motion.div>

@@ -12,9 +12,9 @@ export default function SeasonalGiftsPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <HeroSeasonal />
-      <ProductCarouselSeasonal />
-      <OccasionsGridSeasonal />
       <CraftedGallerySeasonal />
+      <OccasionsGridSeasonal />
+      <ProductCarouselSeasonal />
     </div>
   )
 }

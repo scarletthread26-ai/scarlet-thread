@@ -142,16 +142,16 @@ export function ProductGrid() {
 
         {/* Heading */}
         <motion.div
-          className="text-left md:text-center mb-10 md:mb-5"
+          className="text-center mb-10 md:mb-5"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.55, ease: "easeOut" }}
         >
-          <h2 className="text-[22px] md:text-3xl font-bold flex items-center justify-start md:justify-center gap-2">
+          <h2 className="text-[22px] md:text-3xl font-bold flex items-center justify-center gap-2">
             {formatLovedGiftsTitle(title)}
           </h2>
-          <p className="text-muted-foreground text-sm mt-2 max-w-xl md:mx-auto">
+          <p className="text-muted-foreground text-sm mt-2 max-w-xl mx-auto">
             {subtitle}
           </p>
         </motion.div>

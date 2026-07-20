@@ -71,10 +71,10 @@ export function useProductCard(product: any) {
 /* ─── Mobile: vertical card (2-col grid) ─── */
 export function MobileProductCard({ product }: { product: any }) {
   const href = `/product/${product.slug || product.id}`
-  const { isWishlisted, hasDiscount, discountPercent, handleWishlistToggle } = useProductCard(product)
+  const { isWishlisted, hasDiscount, discountPercent, handleWishlistToggle, handleAddToCart } = useProductCard(product)
 
   return (
-    <Link href={href} className="group flex flex-col h-full bg-white rounded-xl overflow-hidden ">
+    <Link href={href} className="group flex flex-col h-full bg-white rounded-xl overflow-hidden shadow-sm border border-slate-100">
       {/* ── Image ── */}
       <div className="relative w-full aspect-square bg-[#F7F7F7]">
         {product.image ? (
@@ -137,16 +137,27 @@ export function MobileProductCard({ product }: { product: any }) {
           </div>
         ) : null}
 
-        {/* Price + strikethrough on SAME line */}
-        <div className="flex items-baseline gap-1.5 flex-wrap mt-auto">
-          <span className="font-extrabold text-[13px] text-[#1a1a1a] leading-tight">
-            AED {product.price}
-          </span>
-          {hasDiscount && (
-            <span className="text-[10px] text-slate-400 line-through leading-none">
-              AED {product.compare_at_price}
+        {/* Price + Add to cart */}
+        <div className="flex flex-row items-end justify-between mt-auto">
+          <div className="flex flex-col">
+            <span className="font-extrabold text-[13px] text-[#1a1a1a] leading-tight">
+              AED {product.price}
             </span>
-          )}
+            {hasDiscount ? (
+              <span className="text-[10px] text-slate-400 line-through leading-none mt-1">
+                AED {product.compare_at_price}
+              </span>
+            ) : (
+              <span className="text-[10px] text-transparent leading-none mt-1 select-none">-</span>
+            )}
+          </div>
+          <button
+            onClick={handleAddToCart}
+            className="w-7 h-7 rounded-[6px] shrink-0 bg-[#4a0b70] text-white flex items-center justify-center hover:bg-[#34074f] transition-colors z-20"
+            aria-label="Add to cart"
+          >
+            <ShoppingCart className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
     </Link>

@@ -12,9 +12,9 @@ export default function FaithBasedPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <HeroFaith />
-      <ProductCarouselFaith />
-      <OccasionsGridFaith />
       <CraftedGalleryFaith />
+      <OccasionsGridFaith />
+      <ProductCarouselFaith />
     </div>
   )
 }

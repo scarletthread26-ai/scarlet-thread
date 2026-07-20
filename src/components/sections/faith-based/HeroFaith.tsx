@@ -14,16 +14,10 @@ export function HeroFaith() {
     return <CommonHeroSkeleton />
   }
 
-  const title = sectionData?.title || "Gifts of Faith & Love"
-  const subtitle =
-    sectionData?.subtitle ||
-    "Beautifully embroidered spiritual and faith-based gifts that carry deep meaning."
-  const desktopImage =
-    sectionData?.content?.image_desktop ||
-    "/images/faith-banner.png"
-  const mobileImage =
-    sectionData?.content?.image_mobile ||
-    "/images/faith-banner-mobile.png"
+  const title = sectionData?.title ?? ""
+  const subtitle = sectionData?.subtitle ?? ""
+  const desktopImage = sectionData?.content?.image_desktop ?? ""
+  const mobileImage = sectionData?.content?.image_mobile ?? ""
 
   return (
     <CommonHero

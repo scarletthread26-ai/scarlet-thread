@@ -11,7 +11,7 @@ export async function GET() {
       .from("products")
       .select(`
         *,
-        categories:categories!products_category_id_fkey(name),
+        categories:categories!products_category_id_fkey(name, slug),
         product_images(url, is_primary),
         reviews(rating)
       `)

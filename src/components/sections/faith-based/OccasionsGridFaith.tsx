@@ -1,8 +1,6 @@
-"use client"
+import { DynamicOccasionsGrid } from "@/components/sections/DynamicOccasionsGrid"
 
-import { OccasionsGrid } from "@/components/sections/OccasionsGrid"
-
-const occasions = [
+const defaultOccasions = [
   {
     id: "calligraphy",
     title: "Islamic Calligraphy",
@@ -38,5 +36,11 @@ const occasions = [
 ]
 
 export function OccasionsGridFaith() {
-  return <OccasionsGrid occasions={occasions} heading={<>Gifts of <span className="text-primary">Devotion</span> & Blessings</>} />
+  return (
+    <DynamicOccasionsGrid 
+      sectionKey="faith-based" 
+      defaultHeading={<>Gifts of <span className="text-primary">Devotion</span> & Blessings</>} 
+      defaultOccasions={defaultOccasions}
+    />
+  )
 }
