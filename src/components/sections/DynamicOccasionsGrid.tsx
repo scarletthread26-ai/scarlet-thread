@@ -3,7 +3,7 @@
 import React, { useMemo } from "react"
 import { useHomepageSection } from "@/hooks/use-cms"
 import { useSubcategories } from "@/hooks/use-subcategories"
-import { OccasionsGrid } from "@/components/sections/OccasionsGrid"
+import { OccasionsGrid, OccasionsGridSkeleton } from "@/components/sections/OccasionsGrid"
 
 // Sequence of background and text colors to use for dynamic occasions
 const COLOR_SCHEMES = [
@@ -69,7 +69,11 @@ export function DynamicOccasionsGrid({ sectionKey, fallbackSectionKey, defaultHe
     return { occasions: mappedOccasions, heading: formattedHeading }
   }, [mainSectionData, fallbackData, fallbackSectionKey, allCategories, defaultHeading, defaultOccasions, accentColor])
 
-  if (!isLoadingSection && !isLoadingFallback && !isLoadingCategories && occasions.length === 0) {
+  if (isLoadingSection || isLoadingFallback || isLoadingCategories) {
+    return <OccasionsGridSkeleton />
+  }
+
+  if (occasions.length === 0) {
     return null
   }
 

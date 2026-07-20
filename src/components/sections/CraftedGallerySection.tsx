@@ -99,7 +99,7 @@ export function CraftedGallerySection({
           transition={{ duration: 0.5 }}
           className="text-center mb-8 sm:mb-10"
         >
-          <h2 className="text-2xl md:text-3xl font-heading font-bold inline-flex items-center md:justify-center gap-2">
+          <h2 className="text-2xl md:text-3xl font-heading font-bold">
             {heading}
           </h2>
           {description && (
