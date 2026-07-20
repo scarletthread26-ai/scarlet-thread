@@ -9,6 +9,7 @@ import { Star, SlidersHorizontal, ArrowRight, Loader2, ChevronDown, Check } from
 import { Button } from "@/components/ui/button";
 import { useProducts } from "@/hooks/use-products";
 import { useCategories } from "@/hooks/use-categories";
+import { useSubcategories } from "@/hooks/use-subcategories";
 import { useCartStore } from "@/store/useCartStore";
 import { toast } from "sonner";
 import { ProductCard } from "@/components/product/ProductCard";
@@ -26,7 +27,9 @@ export function ProductCatalog() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get("category");
 
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("All");
+  const [selectedMainCategoryId, setSelectedMainCategoryId] = useState<string>("All");
+  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string>("All");
+  const [expandedCategoryId, setExpandedCategoryId] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState("featured");
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
 
@@ -43,7 +46,7 @@ export function ProductCatalog() {
         container.scrollTo({ left: scrollLeft, behavior: "smooth" });
       }
     }
-  }, [selectedCategoryId]);
+  }, [selectedSubcategoryId]);
   // Listen to realtime changes on products table
   useRealtime({
     table: "products",
@@ -62,19 +65,33 @@ export function ProductCatalog() {
 
   const { data: products = [], isLoading: productsLoading } = useProducts();
   const { data: categories = [], isLoading: categoriesLoading } = useCategories();
+  const { data: subcategories = [], isLoading: subcategoriesLoading } = useSubcategories();
 
   useEffect(() => {
-    if (categoryParam && categories.length > 0) {
-      const matchedCat = categories.find(
+    if (categoryParam && categories.length > 0 && subcategories.length > 0) {
+      const matchedMainCat = categories.find(
         (c) =>
           c.slug?.toLowerCase() === categoryParam.toLowerCase() ||
           c.name?.toLowerCase() === categoryParam.toLowerCase()
       );
-      if (matchedCat) {
-        setSelectedCategoryId(matchedCat.id);
+      if (matchedMainCat) {
+        setSelectedMainCategoryId(matchedMainCat.id);
+        setSelectedSubcategoryId("All");
+        setExpandedCategoryId(matchedMainCat.id);
+      } else {
+        const matchedSubCat = subcategories.find(
+          (c) =>
+            c.slug?.toLowerCase() === categoryParam.toLowerCase() ||
+            c.name?.toLowerCase() === categoryParam.toLowerCase()
+        );
+        if (matchedSubCat) {
+          setSelectedMainCategoryId(matchedSubCat.parent_id || "All");
+          setSelectedSubcategoryId(matchedSubCat.id);
+          setExpandedCategoryId(matchedSubCat.parent_id || "All");
+        }
       }
     }
-  }, [categoryParam, categories]);
+  }, [categoryParam, categories, subcategories]);
 
   // Filter active products
   const activeProducts = useMemo(() => {
@@ -83,9 +100,15 @@ export function ProductCatalog() {
 
   // Filter products by selected category
   const filteredProducts = useMemo(() => {
-    let result = selectedCategoryId === "All"
-      ? activeProducts
-      : activeProducts.filter((p) => p.category_id === selectedCategoryId);
+    let result = activeProducts;
+    
+    if (selectedMainCategoryId !== "All") {
+      result = result.filter((p) => p.category_id === selectedMainCategoryId);
+    }
+    
+    if (selectedSubcategoryId !== "All") {
+      result = result.filter((p) => p.sub_category_id === selectedSubcategoryId);
+    }
 
     switch (sortBy) {
       case "price-asc":
@@ -103,11 +126,15 @@ export function ProductCatalog() {
         break;
     }
     return result;
-  }, [activeProducts, selectedCategoryId, sortBy]);
+  }, [activeProducts, selectedMainCategoryId, selectedSubcategoryId, sortBy]);
 
   const activeCategories = useMemo(() => {
     return categories.filter((c) => c.is_active);
   }, [categories]);
+
+  const activeSubcategories = useMemo(() => {
+    return subcategories.filter((c) => c.is_active && c.parent_id === selectedMainCategoryId);
+  }, [subcategories, selectedMainCategoryId]);
 
   const isLoading = productsLoading || categoriesLoading;
 
@@ -145,9 +172,13 @@ export function ProductCatalog() {
               </h3>
               <div className="flex flex-col gap-1">
                 <button
-                  onClick={() => setSelectedCategoryId("All")}
+                  onClick={() => {
+                    setSelectedMainCategoryId("All");
+                    setSelectedSubcategoryId("All");
+                    setExpandedCategoryId(null);
+                  }}
                   className={`text-left text-xs px-3 py-2.5 rounded-[10px] font-bold transition-all duration-200 block cursor-pointer ${
-                    selectedCategoryId === "All"
+                    selectedMainCategoryId === "All"
                       ? "bg-purple-700 text-white shadow-md shadow-purple-600/10"
                       : "text-slate-600 dark:text-slate-400 hover:bg-purple-50 dark:hover:bg-purple-950/20 hover:text-purple-700"
                   }`}
@@ -155,11 +186,78 @@ export function ProductCatalog() {
                   All Products
                 </button>
                 {activeCategories.map((cat) => {
-                  const isActive = selectedCategoryId === cat.id;
+                  const isActive = selectedMainCategoryId === cat.id;
+                  const catSubcategories = subcategories.filter(c => c.is_active && c.parent_id === cat.id);
+                  const hasSubcategories = catSubcategories.length > 0;
+                  const isExpanded = expandedCategoryId === cat.id;
+
+                  if (hasSubcategories) {
+                    return (
+                      <div key={cat.id} className={`flex flex-col rounded-[10px] overflow-hidden transition-all duration-300 ${isActive ? 'bg-primary text-white shadow-md shadow-purple-600/10' : 'bg-transparent text-slate-600 dark:text-slate-400'}`}>
+                        <button
+                          onClick={() => {
+                            if (isActive) {
+                              setExpandedCategoryId(isExpanded ? null : cat.id);
+                            } else {
+                              setSelectedMainCategoryId(cat.id);
+                              setSelectedSubcategoryId("All");
+                              setExpandedCategoryId(cat.id);
+                            }
+                          }}
+                          className={`text-left text-xs px-3 py-2.5 font-bold flex items-center justify-between w-full transition-colors ${isActive ? 'hover:bg-white/10 active:bg-white/20' : 'hover:bg-purple-50 dark:hover:bg-purple-950/20 hover:text-purple-700'}`}
+                        >
+                          <span>{cat.name}</span>
+                          <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isExpanded ? 'rotate-180 opacity-90' : 'opacity-50'}`} />
+                        </button>
+                        
+                        <AnimatePresence initial={false}>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              className="overflow-hidden"
+                            >
+                              <div className={`flex flex-col gap-0.5 px-2 pb-2 pt-0.5 border-t mt-0.5 ${isActive ? 'border-white/10' : 'border-slate-200 dark:border-slate-800'}`}>
+                                <button
+                                  onClick={() => setSelectedSubcategoryId("All")}
+                                  className={`text-left text-[11px] px-2 py-1.5 rounded-lg font-medium transition-colors ${
+                                    selectedSubcategoryId === "All"
+                                      ? (isActive ? "bg-white/25 font-bold text-white" : "bg-purple-100 dark:bg-purple-900/40 text-purple-700 font-bold")
+                                      : (isActive ? "text-white/80 hover:bg-white/15 hover:text-white" : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700")
+                                  }`}
+                                >
+                                  All {cat.name}
+                                </button>
+                                {catSubcategories.map((sub) => (
+                                  <button
+                                    key={sub.id}
+                                    onClick={() => setSelectedSubcategoryId(sub.id)}
+                                    className={`text-left text-[11px] px-2 py-1.5 rounded-lg font-medium transition-colors ${
+                                      selectedSubcategoryId === sub.id
+                                        ? (isActive ? "bg-white/25 font-bold text-white" : "bg-purple-100 dark:bg-purple-900/40 text-purple-700 font-bold")
+                                        : (isActive ? "text-white/80 hover:bg-white/15 hover:text-white" : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700")
+                                    }`}
+                                  >
+                                    {sub.name}
+                                  </button>
+                                ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  }
+
                   return (
                     <button
                       key={cat.id}
-                      onClick={() => setSelectedCategoryId(cat.id)}
+                      onClick={() => {
+                        setSelectedMainCategoryId(cat.id);
+                        setSelectedSubcategoryId("All");
+                        setExpandedCategoryId(null);
+                      }}
                       className={`text-left text-xs px-3 py-2.5 rounded-[10px] font-bold transition-all h-12 duration-200 block cursor-pointer ${
                         isActive
                           ? "bg-primary text-white shadow-md shadow-purple-600/10"
@@ -239,10 +337,13 @@ export function ProductCatalog() {
             className="flex lg:hidden overflow-x-auto gap-2 pb-2 scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] -mx-4 px-4 scroll-smooth"
           >
             <button
-              onClick={() => setSelectedCategoryId("All")}
-              data-active={selectedCategoryId === "All"}
+              onClick={() => {
+                setSelectedMainCategoryId("All");
+                setSelectedSubcategoryId("All");
+              }}
+              data-active={selectedMainCategoryId === "All"}
               className={`shrink-0 text-xs px-4 py-2 rounded-full font-bold transition ${
-                selectedCategoryId === "All"
+                selectedMainCategoryId === "All"
                   ? "bg-purple-600 text-white"
                   : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
               }`}
@@ -250,15 +351,36 @@ export function ProductCatalog() {
               All Products
             </button>
             {activeCategories.map((cat) => {
-              const isActive = selectedCategoryId === cat.id;
+              const isActive = selectedMainCategoryId === cat.id;
+              
+              if (isActive && activeSubcategories.length > 0) {
+                return (
+                  <div key={cat.id} className="relative flex shrink-0">
+                    <select
+                      value={selectedSubcategoryId}
+                      onChange={(e) => setSelectedSubcategoryId(e.target.value)}
+                      className="shrink-0 text-xs pl-4 pr-2 py-2 rounded-full font-bold bg-purple-600 text-white focus:outline-none shadow-md shadow-purple-600/20 cursor-pointer"
+                    >
+                      <option value="All">{cat.name}</option>
+                      {activeSubcategories.map((sub) => (
+                        <option key={sub.id} value={sub.id}>{sub.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                );
+              }
+
               return (
                 <button
                   key={cat.id}
-                  onClick={() => setSelectedCategoryId(cat.id)}
+                  onClick={() => {
+                    setSelectedMainCategoryId(cat.id);
+                    setSelectedSubcategoryId("All");
+                  }}
                   data-active={isActive}
                   className={`shrink-0 text-xs px-4 py-2 rounded-full font-bold transition ${
                     isActive
-                      ? "bg-purple-600 text-white"
+                      ? "bg-purple-600 text-white shadow-md shadow-purple-600/20"
                       : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
                   }`}
                 >

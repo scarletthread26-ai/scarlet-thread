@@ -8,9 +8,9 @@ export default function GiftsForHimPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <HeroHim />
-      <ProductCarousel />
-      <OccasionsGridHim />
       <CraftedGallery />
+      <OccasionsGridHim />
+      <ProductCarousel />
     </div>
   )
 }

@@ -1,8 +1,6 @@
-"use client"
+import { DynamicOccasionsGrid } from "@/components/sections/DynamicOccasionsGrid"
 
-import { OccasionsGrid } from "@/components/sections/OccasionsGrid"
-
-const occasions = [
+const defaultOccasions = [
   {
     id: "christmas",
     title: "Christmas & New Year",
@@ -38,5 +36,11 @@ const occasions = [
 ]
 
 export function OccasionsGridSeasonal() {
-  return <OccasionsGrid occasions={occasions} heading={<>Gifts For Every <span className="text-primary">Celebration</span></>} />
+  return (
+    <DynamicOccasionsGrid 
+      sectionKey="seasonal-gifts" 
+      defaultHeading={<>Gifts For Every <span className="text-primary">Celebration</span></>} 
+      defaultOccasions={defaultOccasions}
+    />
+  )
 }

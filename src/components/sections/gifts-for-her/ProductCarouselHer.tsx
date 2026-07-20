@@ -21,7 +21,7 @@ export function ProductCarouselHer() {
 
   const displayProducts = React.useMemo(() => {
     const catProducts = dbProducts.filter(
-      (p: any) => p.is_active && p.categories?.name === "Gifts For Her"
+      (p: any) => p.is_active && (p.categories?.slug === "gift-for-her" || p.categories?.slug === "gifts-for-her")
     )
     return catProducts.map((p) => ({
       id: p.id,
@@ -42,8 +42,8 @@ export function ProductCarouselHer() {
     return (
       <section className="py-10 lg:py-6 bg-white overflow-hidden">
         <div className="container mx-auto px-4 max-w-7xl">
-          <div className="md:text-center text-start mb-4">
-            <h2 className="md:text-3xl text-2xl font-heading font-bold flex items-center md:justify-center gap-2">
+          <div className="text-center mb-4">
+            <h2 className="md:text-3xl text-2xl font-heading font-bold flex items-center justify-center gap-2">
               Most Loved Gifts For <span className="text-primary">Her</span>
             </h2>
             <p className="text-sm text-muted-foreground">Handpicked with love, just for her</p>
@@ -67,9 +67,9 @@ export function ProductCarouselHer() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="md:text-center text-start mb-4"
+          className="text-center mb-4"
         >
-          <h2 className="md:text-3xl text-2xl font-heading font-bold flex items-center md:justify-center gap-2">
+          <h2 className="md:text-3xl text-2xl font-heading font-bold flex items-center justify-center gap-2">
             Most Loved Gifts For <span className="text-primary">Her</span>{" "}
             {/* <motion.div
               animate={{

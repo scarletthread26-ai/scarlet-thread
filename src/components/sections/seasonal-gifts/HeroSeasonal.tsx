@@ -14,16 +14,10 @@ export function HeroSeasonal() {
     return <CommonHeroSkeleton />
   }
 
-  const title = sectionData?.title || "Celebrate Every Season"
-  const subtitle =
-    sectionData?.subtitle ||
-    "Personalized embroidered gifts for holidays, festivals, and special seasonal celebrations."
-  const desktopImage =
-    sectionData?.content?.image_desktop ||
-    "/images/seasonal-banner.png"
-  const mobileImage =
-    sectionData?.content?.image_mobile ||
-    "/images/seasonal-banner-mobile.png"
+  const title = sectionData?.title ?? ""
+  const subtitle = sectionData?.subtitle ?? ""
+  const desktopImage = sectionData?.content?.image_desktop ?? ""
+  const mobileImage = sectionData?.content?.image_mobile ?? ""
 
   return (
     <CommonHero

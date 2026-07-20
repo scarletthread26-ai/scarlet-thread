@@ -45,9 +45,9 @@ export function OccasionsGrid({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.55 }}
-          className="md:text-center text-start mb-8 sm:mb-10"
+          className="text-center mb-8 sm:mb-10"
         >
-          <h2 className="text-2xl md:text-3xl font-heading font-bold inline-flex items-center md:justify-center gap-2">
+          <h2 className="text-2xl md:text-3xl font-heading font-bold inline-flex items-center justify-center gap-2">
             {heading}
             {/* {showHeartIcon && (
               <motion.span

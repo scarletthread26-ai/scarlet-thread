@@ -13,16 +13,10 @@ export function HeroHer() {
     return <CommonHeroSkeleton />
   }
 
-  const title = sectionData?.title || "Made for Her, Personalized with Love"
-  const subtitle =
-    sectionData?.subtitle ||
-    "Thoughtful, personalized & embroidered gifts that celebrate the most special women in your life."
-  const desktopImage =
-    sectionData?.content?.image_desktop ||
-    "/images/forher/scarlet-forherbanner-image.png"
-  const mobileImage =
-    sectionData?.content?.image_mobile ||
-    "/images/forher/scarlet-forhermobile.png"
+  const title = sectionData?.title ?? ""
+  const subtitle = sectionData?.subtitle ?? ""
+  const desktopImage = sectionData?.content?.image_desktop ?? ""
+  const mobileImage = sectionData?.content?.image_mobile ?? ""
 
   return (
     <CommonHero
