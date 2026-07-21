@@ -8,6 +8,8 @@ export const metadata = {
   description: "Celebrate every season with our beautiful, personalized custom embroidered gifts.",
 }
 
+import CategoryFAQ from "@/components/sections/CategoryFAQ"
+
 export default function SeasonalGiftsPage() {
   return (
     <div className="flex flex-col min-h-screen">
@@ -15,6 +17,7 @@ export default function SeasonalGiftsPage() {
       <CraftedGallerySeasonal />
       <OccasionsGridSeasonal />
       <ProductCarouselSeasonal />
+      <CategoryFAQ categorySlug="seasonal-gifts" />
     </div>
   )
 }
