@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 export function ForEveryOccasion() {
   const { data: section } = useHomepageSection("occasions");
   const router = useRouter();
-  const [selectedOccasion, setSelectedOccasion] = useState<{ id: string, title: string } | null>(null);
+  const [selectedOccasion, setSelectedOccasion] = useState<{ id: string, title: string, href?: string, slug?: string } | null>(null);
 
   const headingStr = section?.content?.heading || "For Every Occasion";
   const description = section?.content?.description || "Discover thoughtfully curated gifts perfect for every celebration and milestone, making your special moments even more memorable.";
@@ -62,7 +62,26 @@ export function ForEveryOccasion() {
                 onClick={(e) => {
                   if (isSpecialOccasion) {
                     e.preventDefault();
-                    setSelectedOccasion({ id: occ.id, title: `${occ.cursiveText} ${occ.mainText}` });
+                    
+                    let slug = "";
+                    try {
+                      const urlStr = occ.href || "";
+                      if (urlStr.includes("?")) {
+                         const searchParams = new URLSearchParams(urlStr.split("?")[1]);
+                         slug = searchParams.get("subcategory") || searchParams.get("category") || "";
+                      } else {
+                         slug = occ.cursiveText?.toLowerCase().replace(/\s+/g, '-') || "";
+                      }
+                    } catch (err) {
+                      slug = occ.cursiveText?.toLowerCase().replace(/\s+/g, '-') || "";
+                    }
+
+                    setSelectedOccasion({ 
+                      id: occ.id, 
+                      title: `${occ.cursiveText} ${occ.mainText}`,
+                      href: occ.href,
+                      slug: slug
+                    } as any);
                   }
                 }}
               >
@@ -122,8 +141,7 @@ export function ForEveryOccasion() {
               {/* For Him Card */}
               <button
                 onClick={() => {
-                  const subcategorySlug = selectedOccasion?.title ? selectedOccasion.title.toLowerCase().replace(/\s+/g, '-') : '';
-                  const url = `/products?category=gifts-for-him&subcategory=${subcategorySlug}`;
+                  const url = `/products?category=gifts-for-him&subcategory=${(selectedOccasion as any)?.slug || ''}`;
                   router.push(url);
                   setSelectedOccasion(null);
                 }}
@@ -151,8 +169,7 @@ export function ForEveryOccasion() {
               {/* For Her Card */}
               <button
                 onClick={() => {
-                  const subcategorySlug = selectedOccasion?.title ? selectedOccasion.title.toLowerCase().replace(/\s+/g, '-') : '';
-                  const url = `/products?category=gifts-for-her&subcategory=${subcategorySlug}`;
+                  const url = `/products?category=gifts-for-her&subcategory=${(selectedOccasion as any)?.slug || ''}`;
                   router.push(url);
                   setSelectedOccasion(null);
                 }}
@@ -188,7 +205,7 @@ export function ForEveryOccasion() {
             {/* Continue Button */}
             <button
               onClick={() => {
-                const url = `/products?category=${selectedOccasion?.title}`;
+                const url = selectedOccasion?.href || `/products`;
                 router.push(url);
                 setSelectedOccasion(null);
               }}

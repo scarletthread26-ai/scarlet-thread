@@ -26,7 +26,8 @@ import {
   Menu,
   BellRing,
   Newspaper,
-  FolderOpen
+  FolderOpen,
+  MessageCircleQuestion
 } from "lucide-react";
 import { ConfirmDialog } from "./confirm-dialog";
 import { toast } from "sonner";
@@ -129,6 +130,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed, onMobileClose }: SidebarP
       title: "Marketing & CMS",
       items: [
         { href: "/admin/reviews", label: "Reviews", icon: MessageSquare },
+        { href: "/admin/faqs", label: "Category FAQs", icon: MessageCircleQuestion },
         { href: "/admin/cms", label: "CMS Pages", icon: FileText },
         { href: "/admin/blogs", label: "Blogs", icon: Newspaper },
         { href: "/admin/gallery", label: "Gallery", icon: FolderOpen },
