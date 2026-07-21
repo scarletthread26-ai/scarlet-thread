@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import { useHomepageSection, useSaveHomepageSection } from "@/hooks/use-cms";
+import { useCategories } from "@/hooks/use-categories";
+import { useSubcategories } from "@/hooks/use-subcategories";
 import { ArrowLeft, Save, Loader2, Plus, Trash2 } from "lucide-react";
 import { ImageUpload } from "@/components/admin/image-upload";
 import Link from "next/link";
@@ -21,6 +23,8 @@ const defaultCards: OccasionCard[] = [];
 export default function OccasionsEditorPage({ isTabbed = false }: { isTabbed?: boolean }) {
   const { data: section, isLoading } = useHomepageSection("occasions");
   const saveMutation = useSaveHomepageSection();
+  const { data: categories = [] } = useCategories();
+  const { data: subcategories = [] } = useSubcategories();
 
   const [heading, setHeading] = useState("");
   const [description, setDescription] = useState("");
@@ -43,10 +47,7 @@ export default function OccasionsEditorPage({ isTabbed = false }: { isTabbed?: b
       prev.map((card, idx) => {
         if (idx === index) {
           const updatedCard = { ...card, [field]: value };
-          if (field === "cursiveText") {
-            const slug = value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
-            updatedCard.href = `/products?category=${slug}`;
-          }
+          // Removed auto-generation of href from cursiveText to allow manual selection
           return updatedCard;
         }
         return card;
@@ -275,20 +276,31 @@ export default function OccasionsEditorPage({ isTabbed = false }: { isTabbed?: b
                     <div className="md:col-span-2">
                       <div className="flex items-center gap-2 mb-1">
                         <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                          Link (href)
+                          Link (href) / Category Select
                         </label>
-                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
-                          🔒 Auto-generated
-                        </span>
                       </div>
-                      <input
-                        type="text"
+                      <select
                         value={card.href}
-                        disabled
-                        className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-805 bg-slate-50 dark:bg-slate-900/50 text-xs text-slate-400 dark:text-slate-500 outline-none cursor-not-allowed select-none"
-                        placeholder="e.g., /products?category=anniversary"
-                      />
-                      <p className="text-[10px] text-slate-400 mt-1">This link is automatically generated from the Cursive Text.</p>
+                        onChange={(e) => updateCard(idx, "href", e.target.value)}
+                        className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-805 bg-white dark:bg-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600 dark:text-slate-200 transition"
+                      >
+                        <option value="" disabled>Select a category or subcategory</option>
+                        {categories.map((cat: any) => (
+                          <option key={cat.id} value={`/products?category=${cat.slug}`}>
+                            {cat.name}
+                          </option>
+                        ))}
+                        {subcategories.map((sub: any) => {
+                          const parent = categories.find((c: any) => c.id === sub.parent_id);
+                          const parentSlug = parent ? parent.slug : "unknown";
+                          return (
+                            <option key={sub.id} value={`/products?category=${parentSlug}&subcategory=${sub.slug}`}>
+                              {parent ? `${parent.name} -> ` : ""}{sub.name}
+                            </option>
+                          );
+                        })}
+                      </select>
+                      <p className="text-[10px] text-slate-400 mt-1">Select the category or subcategory this card should link to.</p>
                     </div>
                     <div className="md:col-span-2">
                       <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">

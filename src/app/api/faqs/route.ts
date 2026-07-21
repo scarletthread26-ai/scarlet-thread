@@ -76,24 +76,46 @@ const DEFAULT_FAQS = [
   }
 ];
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const category = searchParams.get("category");
+
     const supabase = await createClient();
-    const { data, error } = await supabase
+    let query = supabase
       .from("faqs")
       .select("*")
       .eq("is_active", true)
       .order("display_order", { ascending: true });
 
+    if (category) {
+      query = query.eq("category", category);
+    }
+
+    const { data, error } = await query;
+
     if (error) throw error;
 
     if (!data || data.length === 0) {
+      if (category) {
+        const filteredDefaults = DEFAULT_FAQS.filter((f) => f.category === category);
+        // We will return empty array if it's a specific category and no FAQs exist, instead of all defaults
+        return NextResponse.json(filteredDefaults);
+      }
       return NextResponse.json(DEFAULT_FAQS);
     }
 
     return NextResponse.json(data);
   } catch (error: any) {
     console.warn("Supabase faqs GET failed. Returning mock FAQs:", error.message || error);
+    const { searchParams } = new URL(request.url);
+    const category = searchParams.get("category");
+    
+    if (category) {
+      const filteredDefaults = DEFAULT_FAQS.filter((f) => f.category === category);
+      return NextResponse.json(filteredDefaults);
+    }
+
     return NextResponse.json(DEFAULT_FAQS);
   }
 }

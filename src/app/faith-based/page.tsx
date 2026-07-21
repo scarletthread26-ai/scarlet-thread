@@ -8,6 +8,8 @@ export const metadata = {
   description: "Beautifully embroidered spiritual and faith-based gifts that carry deep meaning.",
 }
 
+import CategoryFAQ from "@/components/sections/CategoryFAQ"
+
 export default function FaithBasedPage() {
   return (
     <div className="flex flex-col min-h-screen">
@@ -15,6 +17,7 @@ export default function FaithBasedPage() {
       <CraftedGalleryFaith />
       <OccasionsGridFaith />
       <ProductCarouselFaith />
+      <CategoryFAQ categorySlug="faith-based-gifts" />
     </div>
   )
 }

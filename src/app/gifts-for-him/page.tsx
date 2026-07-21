@@ -3,6 +3,8 @@ import { ProductCarousel } from "@/components/sections/gifts-for-him/ProductCaro
 import { OccasionsGridHim } from "@/components/sections/gifts-for-him/OccasionsGrid"
 import { CraftedGallery } from "@/components/sections/gifts-for-him/CraftedGallery"
 
+import CategoryFAQ from "@/components/sections/CategoryFAQ"
+
 // Force route compilation rebuild to clear hydration desync
 export default function GiftsForHimPage() {
   return (
@@ -11,6 +13,7 @@ export default function GiftsForHimPage() {
       <CraftedGallery />
       <OccasionsGridHim />
       <ProductCarousel />
+      <CategoryFAQ categorySlug="gifts-for-him" />
     </div>
   )
 }

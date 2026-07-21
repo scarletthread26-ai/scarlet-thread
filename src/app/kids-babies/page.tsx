@@ -3,6 +3,8 @@ import { ProductCarouselKids } from "@/components/sections/kids-babies/ProductCa
 import { OccasionsGridKids } from "@/components/sections/kids-babies/OccasionsGridKids"
 import { CraftedGalleryKids } from "@/components/sections/kids-babies/CraftedGalleryKids"
 
+import CategoryFAQ from "@/components/sections/CategoryFAQ"
+
 export default function KidsBabiesPage() {
   return (
     <div className="flex flex-col min-h-screen">
@@ -10,7 +12,7 @@ export default function KidsBabiesPage() {
       <CraftedGalleryKids />
       <OccasionsGridKids />
       <ProductCarouselKids />
-
+      <CategoryFAQ categorySlug="kids-babies" />
     </div>
   )
 }
