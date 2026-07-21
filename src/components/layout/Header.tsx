@@ -317,7 +317,7 @@ export function Header() {
             ? 'lg:max-h-16 lg:py-3.5 lg:opacity-100 border-t border-slate-100 shadow-sm' 
             : 'lg:max-h-0 lg:py-0 lg:opacity-0 border-none shadow-none pointer-events-none'
         }`}>
-          {navLinks.filter(link => link.path !== '/').map((link) => (
+          {navLinks.map((link) => (
             <Link
               key={link.path}
               href={link.path}
