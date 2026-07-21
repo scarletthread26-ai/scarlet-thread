@@ -26,6 +26,7 @@ const sortOptions = [
 export function ProductCatalog() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get("category");
+  const subCategoryParam = searchParams.get("subcategory");
 
   const [selectedMainCategoryId, setSelectedMainCategoryId] = useState<string>("All");
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string>("All");
@@ -69,15 +70,39 @@ export function ProductCatalog() {
 
   useEffect(() => {
     if (categoryParam && categories.length > 0 && subcategories.length > 0) {
-      const matchedMainCat = categories.find(
-        (c) =>
-          c.slug?.toLowerCase() === categoryParam.toLowerCase() ||
-          c.name?.toLowerCase() === categoryParam.toLowerCase()
+      const normalizedCategoryParam = categoryParam.toLowerCase().replace(/-/g, ' ');
+      let matchedMainCat = categories.find(
+        (c) => c.slug?.toLowerCase() === categoryParam.toLowerCase() || c.name?.toLowerCase() === normalizedCategoryParam
       );
+      if (!matchedMainCat) {
+        matchedMainCat = categories.find((c) => c.name?.toLowerCase().includes(normalizedCategoryParam.replace('gifts ', '').replace(' gifts', '')));
+      }
       if (matchedMainCat) {
         setSelectedMainCategoryId(matchedMainCat.id);
-        setSelectedSubcategoryId("All");
         setExpandedCategoryId(matchedMainCat.id);
+        
+        if (subCategoryParam) {
+          const normalizedSubParam = subCategoryParam.toLowerCase().replace(/-/g, ' ');
+          const matchedSubCat = subcategories.find(
+            (c) => {
+              const subName = c.name?.toLowerCase() || "";
+              const param = subCategoryParam.toLowerCase();
+              return c.parent_id === matchedMainCat.id && (
+                c.slug?.toLowerCase() === param ||
+                subName === normalizedSubParam ||
+                (subName && subName.includes(normalizedSubParam.replace(' gifts', ''))) ||
+                (subName && normalizedSubParam.includes(subName))
+              );
+            }
+          );
+          if (matchedSubCat) {
+            setSelectedSubcategoryId(matchedSubCat.id);
+          } else {
+            setSelectedSubcategoryId("All");
+          }
+        } else {
+          setSelectedSubcategoryId("All");
+        }
       } else {
         const matchedSubCat = subcategories.find(
           (c) =>
@@ -91,7 +116,7 @@ export function ProductCatalog() {
         }
       }
     }
-  }, [categoryParam, categories, subcategories]);
+  }, [categoryParam, subCategoryParam, categories, subcategories]);
 
   // Filter active products
   const activeProducts = useMemo(() => {
