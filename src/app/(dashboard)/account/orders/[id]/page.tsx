@@ -10,9 +10,7 @@ import {
   Loader2, 
   ArrowLeft, 
   MapPin, 
-  Package, 
   Truck, 
-  Calendar, 
   CheckCircle2,
   Clock
 } from "lucide-react";

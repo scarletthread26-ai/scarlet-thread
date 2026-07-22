@@ -4,8 +4,6 @@ import React, { useState, useMemo, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useProducts } from "@/hooks/use-products";
 import { ProductCard } from "@/components/product/ProductCard";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { 
   Search, 
   X, 

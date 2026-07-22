@@ -13,7 +13,6 @@ import {
   Mail, 
   Phone, 
   Calendar, 
-  MapPin, 
   ShoppingBag, 
   DollarSign
 } from "lucide-react";

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useCartStore } from "@/store/useCartStore";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Trash2, Plus, Minus, ShoppingBag, Sparkles } from "lucide-react";
 import Link from "next/link";

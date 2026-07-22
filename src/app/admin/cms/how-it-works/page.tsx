@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import { useHomepageSection, useSaveHomepageSection } from "@/hooks/use-cms";
-import { ArrowLeft, Save, Loader2, Info } from "lucide-react";
+import { ArrowLeft, Save, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { motion, AnimatePresence } from "framer-motion";
@@ -47,11 +47,13 @@ export default function HowItWorksEditorPage({ isTabbed = false }: { isTabbed?: 
   const saveMutation = useSaveHomepageSection();
 
   const [title, setTitle] = useState("");
+  const [subtitle, setSubtitle] = useState("");
   const [steps, setSteps] = useState<StepItem[]>([]);
 
   useEffect(() => {
     if (section) {
       setTitle(section.title || "Creating Your Perfect Custom Gift");
+      setSubtitle(section.subtitle || "The simple path to personalized gifting excellence");
       const content = section.content || {};
       // Map to ensure description is mapped from desc if description is missing
       const rawSteps = content.steps || defaultSteps;
@@ -77,10 +79,12 @@ export default function HowItWorksEditorPage({ isTabbed = false }: { isTabbed?: 
     if (isLoading || !section) return false;
 
     const originalTitle = section.title || "Creating Your Perfect Custom Gift";
+    const originalSubtitle = section.subtitle || "The simple path to personalized gifting excellence";
     const content = section.content || {};
     const originalSteps = content.steps || defaultSteps;
 
     if (title !== originalTitle) return true;
+    if (subtitle !== originalSubtitle) return true;
     if (steps.length !== originalSteps.length) return true;
 
     for (let i = 0; i < steps.length; i++) {
@@ -98,11 +102,12 @@ export default function HowItWorksEditorPage({ isTabbed = false }: { isTabbed?: 
     }
 
     return false;
-  }, [title, steps, section, isLoading]);
+  }, [title, subtitle, steps, section, isLoading]);
 
   const handleDiscard = () => {
     if (section) {
       setTitle(section.title || "Creating Your Perfect Custom Gift");
+      setSubtitle(section.subtitle || "The simple path to personalized gifting excellence");
       const content = section.content || {};
       const rawSteps = content.steps || defaultSteps;
       setSteps(
@@ -121,7 +126,7 @@ export default function HowItWorksEditorPage({ isTabbed = false }: { isTabbed?: 
     await saveMutation.mutateAsync({
       section_key: "how-it-works",
       title,
-      subtitle: "The simple path to personalized gifting excellence",
+      subtitle,
       content: {
         steps,
       },
@@ -196,17 +201,31 @@ export default function HowItWorksEditorPage({ isTabbed = false }: { isTabbed?: 
             className="p-6 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/85 rounded-2xl shadow-sm space-y-6"
           >
             {/* Header config */}
-            <div>
-              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
-                Section Main Title
-              </label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-805 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600 dark:text-slate-200 transition font-semibold"
-                placeholder="Creating Your Perfect Custom Gift"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                  Section Main Title
+                </label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-805 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600 dark:text-slate-200 transition font-semibold"
+                  placeholder="Creating Your Perfect Custom Gift"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                  Section Subtitle
+                </label>
+                <input
+                  type="text"
+                  value={subtitle}
+                  onChange={(e) => setSubtitle(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-805 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600 dark:text-slate-200 transition font-semibold"
+                  placeholder="The simple path to personalized gifting excellence"
+                />
+              </div>
             </div>
 
             {/* Steps configuration */}

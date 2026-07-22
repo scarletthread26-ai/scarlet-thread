@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
 // Sample admin mock reviews for fallback
-let mockAdminReviews: any[] = [
+const mockAdminReviews: any[] = [
   {
     id: "rev-1",
     product_id: "f3a0e660-31e0-4966-9e1f-7b0028ed2cd4",

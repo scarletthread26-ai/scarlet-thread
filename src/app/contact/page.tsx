@@ -29,7 +29,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFDFE] pt-28 pb-16">
+    <div className="min-h-screen bg-[#FFFDFE] py-5">
       <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 md:px-12">
         
         {/* Header */}

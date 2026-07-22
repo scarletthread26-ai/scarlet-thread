@@ -3,9 +3,8 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Search, Calendar, Clock, ArrowRight, BookOpen, AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { getOptimizedImageUrl } from "@/lib/cloudinary-loader";
 
 export default function BlogsDirectoryPage() {

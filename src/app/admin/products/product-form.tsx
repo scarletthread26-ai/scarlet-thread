@@ -8,7 +8,7 @@ import * as z from "zod";
 import { useCategories } from "@/hooks/use-categories";
 import { useSubcategories } from "@/hooks/use-subcategories";
 import { ImageUpload } from "@/components/admin/image-upload";
-import { Loader2, ArrowLeft, Save, Sparkles, Lock, Unlock, ChevronRight } from "lucide-react";
+import { Loader2, ArrowLeft, Save, Lock, Unlock, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";

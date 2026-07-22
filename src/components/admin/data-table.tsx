@@ -18,7 +18,6 @@ import {
   ChevronsLeft,
   ChevronsRight,
   Search,
-  SlidersHorizontal,
 } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {

@@ -2,12 +2,11 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Sliders, Image as ImageIcon, BookOpen, ShoppingBag, MessageSquare, Heart, Workflow } from "lucide-react";
+import { ArrowLeft, Sliders, Image as ImageIcon, BookOpen, ShoppingBag, Heart, Workflow } from "lucide-react";
 import HeroSliderEditorPage from "../hero-slider/page";
 import BannersEditorPage from "../banners/page";
 import AboutSectionEditorPage from "../about/page";
 import FeaturedProductsEditorPage from "../featured-products/page";
-import TestimonialsPage from "../testimonials/page";
 import CTASectionEditorPage from "../cta/page";
 import HowItWorksEditorPage from "../how-it-works/page";
 import OccasionsEditorPage from "../occasions/page";

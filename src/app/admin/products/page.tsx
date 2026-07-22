@@ -10,7 +10,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
 
 export default function ProductsPage() {
   const router = useRouter();

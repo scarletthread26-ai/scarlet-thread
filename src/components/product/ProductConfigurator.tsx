@@ -2,9 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Heart, Star, Check, Ruler, Sparkles, ShoppingBag, ArrowRight, Loader2 } from "lucide-react";
+import { Star, Check, ShoppingBag, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
