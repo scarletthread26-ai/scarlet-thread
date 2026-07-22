@@ -2,10 +2,9 @@
 
 import * as React from "react"
 import { useRef } from "react"
-import { ChevronLeft, ChevronRight, Heart } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { ProductCard } from "@/components/product/ProductCard"
 import { MobileProductCard } from "@/components/sections/FeaturedBanner"
-import { cn } from "@/lib/utils"
 
 import { useProducts } from "@/hooks/use-products"
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Link as LinkIcon, Check, Send } from "lucide-react";
+import { Link as LinkIcon, Check } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWhatsapp, faFacebookF, faLinkedinIn } from "@fortawesome/free-brands-svg-icons";
 import { toast } from "sonner";

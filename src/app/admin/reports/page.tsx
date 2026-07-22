@@ -7,7 +7,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { 
   FileSpreadsheet, 
   Download, 
-  Search, 
   AlertCircle,
   TrendingUp,
   ChevronRight

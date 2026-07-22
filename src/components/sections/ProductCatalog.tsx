@@ -1,17 +1,12 @@
 "use client";
 
 import { useState, useMemo, useEffect, useRef } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, SlidersHorizontal, ArrowRight, Loader2, ChevronDown, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { SlidersHorizontal, Loader2, ChevronDown, Check } from "lucide-react";
 import { useProducts } from "@/hooks/use-products";
 import { useCategories } from "@/hooks/use-categories";
 import { useSubcategories } from "@/hooks/use-subcategories";
-import { useCartStore } from "@/store/useCartStore";
-import { toast } from "sonner";
 import { ProductCard } from "@/components/product/ProductCard";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRealtime } from "@/hooks/use-realtime";

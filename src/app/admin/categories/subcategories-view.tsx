@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useCategories } from "@/hooks/use-categories";
-import { Plus, Edit, Trash2, Check, X, Loader2, FolderTree } from "lucide-react";
+import { Plus, Edit, Trash2, Loader2, FolderTree } from "lucide-react";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { useForm } from "react-hook-form";

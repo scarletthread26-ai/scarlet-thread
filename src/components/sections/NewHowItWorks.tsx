@@ -57,16 +57,25 @@ export function NewHowItWorks() {
         <div className="rounded-[28px] py-8 sm:px-2 md:px-4 lg:px-6 md:py-12">
 
           {/* ── Heading ── */}
-          <div className="text-center mb-10 md:mb-16">
+          <div className="text-center mb-10 md:mb-16 flex flex-col items-center justify-center">
             <motion.h2
-              className="text-[26px] md:text-3xl font-bold text-[#1A1530] "
+              className="text-[22px] md:text-3xl font-bold text-[#1A1530] md:mb-4"
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
               variants={headingVariants}
             >
-              {title}
+              Creating Your Perfect <span className="text-primary"> Custom Gift</span>
             </motion.h2>
+            <motion.p
+              className="text-sm md:text-base text-gray-500 max-w-2xl mx-auto"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={headingVariants}
+            >
+              {section.subtitle || "The simple path to personalized gifting excellence"}
+            </motion.p>
           </div>
 
           {/* ── MOBILE: Vertical stacked cards ── */}
@@ -191,17 +200,17 @@ function MobileStepCard({
 
       {/* Text — right side */}
       <div className="flex flex-col flex-1 pt-1">
-        <h3 className="text-[15px] font-bold text-primary mb-1 leading-snug">
+        <h3 className="text-[15px] font-bold text-primary mb-1">
           {title}
         </h3>
-        <p className="text-[12px] text-black/70 leading-relaxed">{desc}</p>
+        <p className="text-[12px] text-black/70 leading-relaxed text-sm  font-medium leading-relaxed md:italic">{desc}</p>
       </div>
     </div>
   )
 
   if (link) {
     return (
-      <Link href={link} className="block">
+      <Link href={link} className="block text-sm  font-medium leading-relaxed text-purple-100">
         {inner}
       </Link>
     )
@@ -261,7 +270,7 @@ function DesktopStepCard({
           <h3 className="text-sm md:text-base font-bold text-primary mb-1 tracking-tight">
             {title}
           </h3>
-          <p className="text-[10px] md:text-[12px] text-black/80">{desc}</p>
+          <p className="text-[10px] md:text-[12px] text-black/80 text-sm  font-medium leading-relaxed md:italic">{desc}</p>
         </div>
       </div>
     </motion.div>
@@ -269,7 +278,7 @@ function DesktopStepCard({
 
   if (link) {
     return (
-      <Link href={link} className="flex-1 flex flex-col">
+      <Link href={link} className="flex-1 flex flex-col text-sm  font-medium leading-relaxed  text-purple-100">
         {content}
       </Link>
     )

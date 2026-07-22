@@ -1,17 +1,12 @@
 "use client"
 
 import * as React from "react"
-import { Heart } from "lucide-react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  type CarouselApi,
-} from "@/components/ui/carousel"
+
+
 import { useProducts } from "@/hooks/use-products"
 import { ProductCard } from "@/components/product/ProductCard"
 import { MobileProductCard } from "@/components/sections/FeaturedBanner"

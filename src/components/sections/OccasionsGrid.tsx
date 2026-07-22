@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ArrowRight, Heart } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { staggerContainer, cardPerspective } from "@/lib/animations"

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useCMSPages, useUpdateCMSPage, useCMSPage } from "@/hooks/use-cms";
-import { FileText, Save, ArrowLeft, Loader2, Globe, Eye } from "lucide-react";
+import { FileText, Save, ArrowLeft, Loader2 } from "lucide-react";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
 import Link from "next/link";
 import { motion } from "framer-motion";

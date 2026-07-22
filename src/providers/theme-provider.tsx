@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { usePathname } from "next/navigation";
 
 // Suppress the React 19 false positive warning caused by next-themes injecting a script tag
 if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {

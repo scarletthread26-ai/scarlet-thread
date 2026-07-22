@@ -9,7 +9,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Upload, Type, Palette, Move, Save } from 'lucide-react'
 import { toast } from 'sonner'
-import Image from 'next/image'
 
 interface ProductBuilderProps {
   productId: string;

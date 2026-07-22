@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useCartStore } from "@/store/useCartStore";
 import { useProducts } from "@/hooks/use-products";
-import { Heart, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
+import { Heart, Trash2, ShoppingBag } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
