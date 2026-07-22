@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from "@/hooks/use-categories";
-import { FolderTree, Plus, Edit, Trash2, Check, X, Loader2 } from "lucide-react";
+import { FolderTree, Plus, Edit, Trash2, Loader2 } from "lucide-react";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SubcategoriesView } from "./subcategories-view";

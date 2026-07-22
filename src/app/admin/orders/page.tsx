@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { useAdminOrders } from "@/hooks/use-orders";
 import { DataTable } from "@/components/admin/data-table";
 import { ColumnDef } from "@tanstack/react-table";
-import { Order } from "@/types";
 import { format } from "date-fns";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";

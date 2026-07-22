@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Image as ImageIcon, Plus, Edit, Trash2, Loader2, Tag, X } from "lucide-react";
+import { Image as ImageIcon, Plus, Edit, Trash2, Loader2 } from "lucide-react";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import { useForm } from "react-hook-form";

@@ -1,12 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { FolderTree, Plus, Edit, Trash2, ArrowLeft, Loader2, Save } from "lucide-react";
+import { FolderTree, Edit, Trash2, ArrowLeft, Loader2, Save } from "lucide-react";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import Link from "next/link";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export default function BlogCategoriesPage() {

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, Heart, User, ShoppingBag, Home, Gift, Baby, Star, Image, Menu, X, ChevronRight, Truck, MapPin, FileText, Phone } from 'lucide-react'
+import { Search, Heart, User, ShoppingBag, Home, Gift, Baby, Star, Image, Menu, X, ChevronRight, Truck, MapPin } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { useCartStore } from '@/store/useCartStore'
 import { useWishlistStore } from '@/store/useWishlistStore'

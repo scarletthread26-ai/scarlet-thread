@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { ShoppingBag, Heart, Calendar, ArrowRight, User, Loader2 } from "lucide-react";
+import { ShoppingBag, Heart, ArrowRight, User, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useWishlistStore } from "@/store/useWishlistStore";
 

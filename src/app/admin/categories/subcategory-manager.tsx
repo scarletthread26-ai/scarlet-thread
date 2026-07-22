@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Edit, Trash2, X, Check, FolderTree, ArrowRight } from "lucide-react";
+import { Edit, Trash2, Check, FolderTree, ArrowRight } from "lucide-react";
 import { useSubcategories, useCreateSubcategory, useUpdateSubcategory, useDeleteSubcategory } from "@/hooks/use-subcategories";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import { ImageUpload } from "@/components/admin/image-upload";

@@ -5,25 +5,17 @@ import { useRealtime } from "@/hooks/use-realtime";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { motion } from "framer-motion";
 import {
   LayoutDashboard,
   ShoppingBag,
   FolderTree,
-  Tags,
   Tag,
   Users,
   MessageSquare,
   FileText,
-  Settings,
-  Warehouse,
-  Truck,
-  RotateCcw,
   BarChart3,
-  Image as ImageIcon,
   LogOut,
   ChevronLeft,
-  Menu,
   BellRing,
   Newspaper,
   FolderOpen,

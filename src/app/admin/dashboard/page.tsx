@@ -7,18 +7,13 @@ import {
   ShoppingBag,
   Users,
   AlertTriangle,
-  TrendingUp,
   Clock,
   ArrowRight,
-  TrendingDown,
-  Warehouse,
-  ShoppingBag as OrderIcon,
   Truck,
   Save,
 } from "lucide-react";
 import { useSettings, useUpdateSettings } from "@/hooks/use-settings";
 import { StatCard } from "@/components/admin/stat-card";
-import { EmptyState } from "@/components/admin/empty-state";
 import {
   ResponsiveContainer,
   AreaChart,

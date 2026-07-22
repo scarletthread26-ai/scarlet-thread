@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import { useHomepageSection, useSaveHomepageSection } from "@/hooks/use-cms";
-import { ArrowLeft, Save, Loader2, Info } from "lucide-react";
+import { ArrowLeft, Save, Loader2 } from "lucide-react";
 import { ImageUpload } from "@/components/admin/image-upload";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";

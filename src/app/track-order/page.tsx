@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTrackOrder } from "@/hooks/use-orders";
-import { Search, Loader2, Package, Check, MapPin, Truck, Calendar, AlertTriangle } from "lucide-react";
+import { Search, Loader2, Package, Check, MapPin, Truck, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
@@ -71,10 +71,10 @@ function TrackOrderContent() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-16 max-w-4xl">
+    <div className="container mx-auto px-4 py-5 max-w-4xl">
       <div className="text-center mb-10">
-        <h1 className="text-3xl font-heading font-extrabold text-slate-800 dark:text-slate-100">Track Your Order</h1>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="text-3xl font-heading font-extrabold text-slate-800 dark:text-slate-100">Track Your <span className="text-primary">Order</span> </h1>
+        <p className="text-muted-foreground mt-2 text-sm">
           Enter your order number and contact details to verify real-time embroidery progress and shipment status.
         </p>
       </div>

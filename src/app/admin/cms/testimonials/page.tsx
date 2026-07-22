@@ -9,14 +9,12 @@ import {
   useHomepageSection,
   useSaveHomepageSection
 } from "@/hooks/use-cms";
-import { MessageSquare, Plus, Edit, Trash2, Star, Check, X, Loader2, Save, Settings, Heart } from "lucide-react";
+import { MessageSquare, Plus, Edit, Trash2, Star, Check, X, Loader2, Save, Settings } from "lucide-react";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { motion } from "framer-motion";
-import { toast } from "sonner";
 
 const testimonialSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),

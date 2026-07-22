@@ -103,9 +103,10 @@ export async function GET(request: Request) {
 }
 
 export async function PUT(request: Request) {
+  let body;
   try {
     const supabase = await createClient();
-    const body = await request.json();
+    body = await request.json();
 
     // Check if it's an array or a single object
     const isArray = Array.isArray(body);
@@ -127,6 +128,6 @@ export async function PUT(request: Request) {
     return NextResponse.json(isArray ? data : data[0]);
   } catch (error: any) {
     console.warn("Supabase homepage_sections PUT failed. Simulating local success:", error.message || error);
-    return NextResponse.json(await request.json());
+    return NextResponse.json(body || { success: true });
   }
 }

@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Calendar, Clock, ArrowLeft, ArrowRight, AlertCircle, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
