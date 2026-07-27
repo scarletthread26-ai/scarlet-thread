@@ -155,11 +155,12 @@ export function Discover() {
           {!isLoading && mobileImages.length > 0 && (
             <div className="grid grid-cols-2 gap-2 sm:gap-3">
               {mobileImages.map((src, i) => (
-                <div key={i} className="rounded-xl overflow-hidden shadow-sm aspect-[4/3]">
+                <div key={i} className="rounded-xl overflow-hidden shadow-sm aspect-[4/5]">
                   <img
                     src={src}
                     alt="Scarlet gift"
                     className="w-full h-full object-cover"
+
                   />
                 </div>
               ))}
