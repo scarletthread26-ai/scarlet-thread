@@ -10,27 +10,26 @@ import { useHeroContext } from "@/contexts/HeroContext"
 
 
 // ---------------------------------------------------------------------------
-// Animation variants
+// Animation variants (applied once on initial load)
 // ---------------------------------------------------------------------------
 const contentVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 0.5, ease: "easeOut" as const } },
-  exit: { opacity: 0, transition: { duration: 0.3, ease: "easeIn" as const } },
 }
 
 const headingVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 15 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const, delay: 0.05 } },
 }
 
 const descVariants = {
-  hidden: { opacity: 0, x: -32 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.55, ease: "easeOut" as const, delay: 0.3 } },
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" as const, delay: 0.2 } },
 }
 
 const btnVariants = {
-  hidden: { opacity: 0, x: -32 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.55, ease: "easeOut" as const, delay: 0.5 } },
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" as const, delay: 0.35 } },
 }
 
 // ---------------------------------------------------------------------------
@@ -155,10 +154,12 @@ export function Hero() {
     );
   }
 
-  const slide = slides[current]
-
-  const heroTitle = slide.title;
-  const heroSubtitle = slide.subtitle;
+  // Left-side text content remains sticky and static so only background auto-slides
+  const primarySlide = slides.find((s) => s.title) || slides[0];
+  const heroTitle = primarySlide?.title || "More Than a Gift. A Memory in the Making";
+  const heroSubtitle = primarySlide?.subtitle || "Whether you're celebrating someone special or treating yourself, make it uniquely personal.";
+  const buttonText = primarySlide?.buttonText || "Shop Collection";
+  const ctaLink = primarySlide?.ctaLink || "/products";
 
   return (
     <section
@@ -200,10 +201,9 @@ export function Hero() {
           );
         })}
 
-        {/* Content — overlaid directly on the background image, pinned near the top-left */}
+        {/* Content — sticky & calm over the background image, pinned near the top-left */}
         <div className="relative z-20 w-full h-full flex flex-col justify-start pt-32 px-5 sm:px-10 sm:pt-40">
           <motion.div
-            key={current}
             className="flex flex-col items-start space-y-2 w-full max-w-md"
             variants={contentVariants}
             initial="hidden"
@@ -231,10 +231,10 @@ export function Hero() {
             </motion.p>
 
             <motion.div className="pt-1 flex flex-col items-start gap-3 w-full" variants={btnVariants}>
-              {slide.buttonText && slide.ctaLink && (
-                <Link href={slide.ctaLink}>
+              {buttonText && ctaLink && (
+                <Link href={ctaLink}>
                   <Button size="lg" className="text-base h-12 px-8 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[10px] shadow-md transition-all">
-                    {slide.buttonText}
+                    {buttonText}
                   </Button>
                 </Link>
               )}
@@ -268,9 +268,8 @@ export function Hero() {
               <span>For Every Moment That Matters</span>
             </div>
 
-            {/* Animated content block */}
+            {/* Static Sticky Content Block (does not animate on slide change) */}
             <motion.div
-              key={current}
               className="space-y-5"
               variants={contentVariants}
               initial="hidden"
@@ -296,10 +295,10 @@ export function Hero() {
                 className="flex items-center gap-6 pt-2"
                 variants={btnVariants}
               >
-                {slide.buttonText && slide.ctaLink && (
-                  <Link href={slide.ctaLink}>
+                {buttonText && ctaLink && (
+                  <Link href={ctaLink}>
                     <Button size="lg" className="text-base h-12 px-8 bg-primary cursor-pointer hover:bg-primary/90 text-primary-foreground font-semibold rounded-[5px] shadow-md transition-all">
-                      {slide.buttonText}
+                      {buttonText}
                     </Button>
                   </Link>
                 )}
